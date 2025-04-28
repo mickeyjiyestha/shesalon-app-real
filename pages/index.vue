@@ -29,7 +29,7 @@ const hairstyles = [
   {
     imageUrl:
       "https://storage.googleapis.com/shesalon-hairstyle/Layered%20Shoulder%20Length%20Cut",
-    title: "Layered Shoulder Length",
+    title: "Layered Shoulder Length Cut",
     description: "Medium length cut with dynamic layers for movement",
   },
   {
@@ -40,7 +40,7 @@ const hairstyles = [
   },
   {
     imageUrl: "https://storage.googleapis.com/shesalon-hairstyle/Long%20Bob",
-    title: "Long Bob With Volume",
+    title: "Long Bob",
     description: "Shoulder-grazing bob with plenty of body and movement",
   },
   {

@@ -1,11 +1,11 @@
 <script setup>
 const brands = [
-  "https://storage.googleapis.com/shesalon-assets/Brand's%20Logo/Cerave",
-  "https://storage.googleapis.com/shesalon-assets/Brand's%20Logo/Cosrx",
-  "https://storage.googleapis.com/shesalon-assets/Brand's%20Logo/Lancome",
-  "https://storage.googleapis.com/shesalon-assets/Brand's%20Logo/Makarizo",
-  "https://storage.googleapis.com/shesalon-assets/Brand's%20Logo/Matrix",
-  "https://storage.googleapis.com/shesalon-assets/Brand's%20Logo/Msglow",
+  "https://storage.googleapis.com/shesalon-assets/Brand's%20Logo/CERAVE-LOGO.webp",
+  "https://storage.googleapis.com/shesalon-assets/Brand's%20Logo/COSRX-LOGO.webp",
+  "https://storage.googleapis.com/shesalon-assets/Brand's%20Logo/LANCOME-LOGO.webp",
+  "https://storage.googleapis.com/shesalon-assets/Brand's%20Logo/MAKARIZO-LOGO.webp",
+  "https://storage.googleapis.com/shesalon-assets/Brand's%20Logo/MATRIX-LOGO.webp",
+  "https://storage.googleapis.com/shesalon-assets/Brand's%20Logo/MSGLOW-LOGO.webp",
 ];
 </script>
 

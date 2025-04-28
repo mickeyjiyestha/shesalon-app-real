@@ -7,7 +7,6 @@
         class="w-full md:w-120 md:mr-45 rounded-2xl transform hover:scale-105 transition-all duration-500 ease-out hover:shadow-2xl"
         src="https://storage.googleapis.com/shesalon-assets/Services/service1.webp"
         alt=""
-        loading="lazy"
       />
     </div>
     <div class="slide-in from-right">
@@ -62,7 +61,6 @@
         class="w-full mb-5 md:w-120 md:mr-45 rounded-2xl transform hover:scale-105 transition-all duration-500 ease-out hover:shadow-2xl"
         src="https://storage.googleapis.com/shesalon-assets/Services/service2.webp"
         alt=""
-        loading="lazy"
       />
     </div>
   </div>
@@ -75,7 +73,6 @@
         class="w-full md:w-120 md:mr-45 rounded-2xl transform hover:scale-105 transition-all duration-500 ease-out hover:shadow-2xl"
         src="https://storage.googleapis.com/shesalon-assets/Services/service3.webp"
         alt=""
-        loading="lazy"
       />
     </div>
     <div class="slide-in from-right">
@@ -131,7 +128,6 @@
         class="w-full mb-5 md:w-120 md:mr-45 rounded-2xl transform hover:scale-105 transition-all duration-500 ease-out hover:shadow-2xl"
         src="https://storage.googleapis.com/shesalon-assets/Services/service4.webp"
         alt=""
-        loading="lazy"
       />
     </div>
   </div>
@@ -144,7 +140,6 @@
         class="w-full md:w-120 md:mr-45 rounded-2xl transform hover:scale-105 transition-all duration-500 ease-out hover:shadow-2xl"
         src="https://storage.googleapis.com/shesalon-assets/Services/service5.webp"
         alt=""
-        loading="lazy"
       />
     </div>
     <div class="slide-in from-right">

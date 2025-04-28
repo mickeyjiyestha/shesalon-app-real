@@ -30,9 +30,19 @@ const login = async () => {
     if (!response.ok) {
       throw new Error(result.message || "Login failed!");
     }
+
+    // Simpan token dan data user ke cookies
     Cookies.set("token", result.token, { expires: 1 });
+    Cookies.set("user", JSON.stringify(result.user), { expires: 1 });
+
     alert("Login successful!");
-    router.push("/");
+
+    // Arahkan ke halaman yang sesuai berdasarkan role
+    if (result.user.role === "admin") {
+      router.push("/admin");
+    } else {
+      router.push("/");
+    }
   } catch (error) {
     console.error("Error login:", error);
     alert(error.message || "An error occurred while login");
@@ -84,7 +94,6 @@ const login = async () => {
             alt="She Salon Logo"
           />
         </div>
-
         <!-- Welcome message di tengah -->
         <div
           class="text-center px-4 mt-20 md:mt-0 md:flex md:flex-col md:justify-center md:h-full"
