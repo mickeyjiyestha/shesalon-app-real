@@ -263,6 +263,7 @@ import {
 
 // State variables
 const bookings = ref([]);
+const config = useRuntimeConfig();  
 const sidebarOpen = ref(false);
 const loading = ref(true);
 const error = ref(null);
@@ -297,9 +298,7 @@ const fetchBookings = async () => {
     }
 
     const response = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/api/admin/bookings?page=${
-        currentPage.value
-      }`,
+      `${config.public.apiBaseUrl}/api/admin/bookings?page=${currentPage.value}`,
       {
         method: "GET",
         headers: {

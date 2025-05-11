@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import Cookies from "js-cookie"; // Import js-cookie
 const username = ref("");
 const password = ref("");
+const config = useRuntimeConfig();
 const router = useRouter();
 const login = async () => {
   try {
@@ -11,20 +12,17 @@ const login = async () => {
       username: username.value,
       password: password.value,
     });
-    const response = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/api/auth/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "69420",
-        },
-        body: JSON.stringify({
-          username: username.value,
-          password: password.value,
-        }),
-      }
-    );
+    const response = await fetch(`${config.public.apiBaseUrl}/api/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "69420",
+      },
+      body: JSON.stringify({
+        username: username.value,
+        password: password.value,
+      }),
+    });
     const result = await response.json();
     console.log("Response API:", result);
     if (!response.ok) {
@@ -34,8 +32,6 @@ const login = async () => {
     // Simpan token dan data user ke cookies
     Cookies.set("token", result.token, { expires: 1 });
     Cookies.set("user", JSON.stringify(result.user), { expires: 1 });
-
-    alert("Login successful!");
 
     // Arahkan ke halaman yang sesuai berdasarkan role
     if (result.user.role === "admin") {

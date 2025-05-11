@@ -5,7 +5,7 @@ import { useRouter } from "vue-router";
 import ProfileDropdown from "@/components/ProfileDropdown.vue";
 import FaceScanner from "@/components/FaceScanner.vue";
 import LoginModal from "@/components/LoginModal.vue";
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const config = useRuntimeConfig();
 
 const router = useRouter();
 const isMenuOpen = ref(false);
@@ -90,14 +90,17 @@ const fetchUser = async () => {
       throw new Error("Token not found");
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-        "ngrok-skip-browser-warning": "69420",
-      },
-    });
+    const response = await fetch(
+      `${config.public.apiBaseUrl}/api/auth/profile`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "69420",
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Failed to fetch user data");
@@ -124,15 +127,18 @@ const logoutUser = async () => {
       return;
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-        "ngrok-skip-browser-warning": "69420",
-      },
-      body: JSON.stringify({}),
-    });
+    const response = await fetch(
+      `${config.public.apiBaseUrl}/api/auth/logout`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "69420",
+        },
+        body: JSON.stringify({}),
+      }
+    );
 
     if (!response.ok) {
       console.error(`Logout failed: ${response.status}`);

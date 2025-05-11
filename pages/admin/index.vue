@@ -301,6 +301,7 @@ import {
 } from "@heroicons/vue/24/outline";
 import { ref, onMounted } from "vue";
 import Cookies from "js-cookie";
+import socket from "~/plugins/socket";
 
 definePageMeta({
   layout: false,
@@ -308,6 +309,7 @@ definePageMeta({
 
 const sidebarOpen = ref(false);
 const loading = ref(true);
+const config = useRuntimeConfig();
 const error = ref(null);
 const dashboardData = ref({
   title: "",
@@ -339,7 +341,7 @@ const fetchDashboardData = async () => {
     }
 
     const response = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/api/admin/dashboard`,
+      `${config.public.apiBaseUrl}/api/admin/dashboard`,
       {
         method: "GET",
         headers: {
@@ -368,5 +370,8 @@ const fetchDashboardData = async () => {
 
 onMounted(() => {
   fetchDashboardData();
+  socket.on("update-dashboard", (newData) => {
+    this.dashboardData = newData;
+  });
 });
 </script>

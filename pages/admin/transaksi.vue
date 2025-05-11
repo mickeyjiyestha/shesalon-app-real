@@ -293,6 +293,7 @@ import {
 // State variables
 const transactions = ref([]);
 const sidebarOpen = ref(false);
+const config = useRuntimeConfig();
 const loading = ref(true);
 const error = ref(null);
 const currentPage = ref(1);
@@ -327,9 +328,7 @@ const fetchTransactions = async () => {
     }
 
     const response = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/api/admin/transaksi?page=${
-        currentPage.value
-      }`,
+      `${config.public.apiBaseUrl}/api/admin/transaksi?page=${currentPage.value}`,
       {
         method: "GET",
         headers: {

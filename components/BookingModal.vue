@@ -460,7 +460,7 @@ import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const config = useRuntimeConfig();
 
 const props = defineProps({
   isOpen: {
@@ -628,7 +628,7 @@ const checkServiceCategory = async (index) => {
     try {
       const token = Cookies.get("token");
       const response = await fetch(
-        `${API_BASE_URL}/api/products/hair/products`,
+        `${config.public.apiBaseUrl}/api/products/hair/products`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -770,7 +770,7 @@ const availableTimes = [
 const createMidtransTransaction = async (bookingId) => {
   try {
     const token = Cookies.get("token");
-    const response = await fetch(`${API_BASE_URL}/api/transaksi`, {
+    const response = await fetch(`${config.public.apiBaseUrl}/api/transaksi`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -916,7 +916,7 @@ const submitBooking = async () => {
     }
 
     // Create booking
-    const response = await fetch(`${API_BASE_URL}/api/booking`, {
+    const response = await fetch(`${config.public.apiBaseUrl}/api/booking`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -964,19 +964,22 @@ onMounted(async () => {
   try {
     const token = Cookies.get("token");
 
-    const servicesResponse = await fetch(`${API_BASE_URL}/api/layanan`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-        "ngrok-skip-browser-warning": "true",
-      },
-    });
+    const servicesResponse = await fetch(
+      `${config.public.apiBaseUrl}/api/layanan`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "true",
+        },
+      }
+    );
     const servicesResult = await servicesResponse.json();
     services.value = servicesResult;
     isServicesLoaded.value = true;
 
     const paymentMethodsResponse = await fetch(
-      `${API_BASE_URL}/api/transaksikategori`,
+      `${config.public.apiBaseUrl}/api/transaksikategori`,
       {
         headers: {
           "ngrok-skip-browser-warning": "true",
