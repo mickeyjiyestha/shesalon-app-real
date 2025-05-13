@@ -50,37 +50,92 @@ const login = async () => {
     <template #form>
       <div class="w-full max-w-md px-4 md:px-8">
         <p
-          class="text-3xl md:text-5xl font-semibold text-[#f6339a] mb-8 md:mb-16 text-center md:text-left"
+          class="text-3xl md:text-5xl font-bold bg-gradient-to-r from-[#f6339a] to-[#ff5757] bg-clip-text text-transparent mb-8 md:mb-12 text-center md:text-left"
         >
           Login
         </p>
-        <InputBox
-          label="Username"
-          v-model="username"
-          :type="'text'"
-          :placeholder="'Enter your username'"
-          class="mb-4"
-        ></InputBox>
-        <InputBox
-          label="Password"
-          v-model="password"
-          :type="'password'"
-          :placeholder="'Enter your password'"
-          class="mb-6"
-        ></InputBox>
-        <Button class="cursor-pointer w-full" buttonText="Login" @click="login">
-        </Button>
-        <p class="mt-5 text-center">
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Username</label
+            >
+            <input
+              v-model="username"
+              type="text"
+              placeholder="Enter your username"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#f6339a] focus:border-transparent focus:outline-none transition-all duration-200"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Password</label
+            >
+            <input
+              v-model="password"
+              type="password"
+              placeholder="Enter your password"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#f6339a] focus:border-transparent focus:outline-none transition-all duration-200"
+            />
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="remember"
+                class="h-4 w-4 text-[#f6339a] focus:ring-[#f6339a] border-gray-300 rounded"
+              />
+              <label for="remember" class="ml-2 block text-sm text-gray-700"
+                >Remember me</label
+              >
+            </div>
+            <a
+              href="#"
+              class="text-sm font-medium text-[#f6339a] hover:text-[#e02d8a]"
+              >Forgot password?</a
+            >
+          </div>
+        </div>
+
+        <button
+          @click="login"
+          class="group relative inline-flex items-center justify-center w-full px-6 py-3 mt-8 overflow-hidden rounded-xl bg-[#f6339a] text-white shadow-md hover:shadow-lg transition-all duration-300"
+        >
+          <span
+            class="absolute w-0 h-full bg-[#e02d8a] top-0 left-0 transition-all duration-300 group-hover:w-full"
+          ></span>
+          <span class="relative flex items-center justify-center gap-2">
+            Login
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </span>
+        </button>
+
+        <p class="mt-6 text-center">
           Don't have an account?
           <NuxtLink to="/register">
-            <span class="text-[#f6339a] font-medium">Sign Up</span>
+            <span
+              class="text-[#f6339a] font-medium hover:text-[#e02d8a] transition-colors duration-200"
+              >Sign Up</span
+            >
           </NuxtLink>
         </p>
       </div>
     </template>
     <template #background-content>
       <div
-        class="w-full h-full flex flex-col justify-start items-center relative"
+        class="w-full h-full flex flex-col justify-start items-center relative z-10"
       >
         <!-- Logo di pojok kiri atas -->
         <div class="absolute top-4 left-4 z-10">
@@ -94,8 +149,10 @@ const login = async () => {
         <div
           class="text-center px-4 mt-20 md:mt-0 md:flex md:flex-col md:justify-center md:h-full"
         >
-          <p class="text-3xl md:text-6xl font-bold text-white">Welcome Back!</p>
-          <p class="text-base md:text-xl text-white mt-2 md:mt-5">
+          <p class="text-3xl md:text-6xl font-bold text-white mb-4">
+            Welcome Back!
+          </p>
+          <p class="text-base md:text-xl text-white/90">
             Enter your credentials to access your account
           </p>
         </div>

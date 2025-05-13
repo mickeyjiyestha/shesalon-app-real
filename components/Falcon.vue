@@ -3,7 +3,7 @@
     <!-- Chat Toggle Button -->
     <button
       @click="toggleChat"
-      class="bg-[#f6339a] hover:bg-pink-600 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-300"
+      class="bg-[#f6339a] hover:bg-[#e02d8a] w-14 h-14 rounded-full flex items-center justify-center text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
       v-if="!isChatOpen"
     >
       <svg
@@ -25,15 +25,25 @@
     <!-- Chat Window -->
     <div
       v-show="isChatOpen"
-      class="absolute bottom-0 right-0 w-80 md:w-96 bg-white rounded-t-lg shadow-2xl overflow-hidden flex flex-col"
+      class="absolute bottom-0 right-0 w-80 md:w-96 bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-slideUp"
       style="height: 600px; max-height: 80vh"
     >
       <!-- Chat Header -->
-      <div class="bg-[#f6339a] p-3 flex items-center justify-between">
+      <div
+        class="bg-gradient-to-r from-[#f6339a] to-[#ff5757] p-4 flex items-center justify-between"
+      >
         <div class="flex items-center">
+          <div
+            class="w-8 h-8 bg-white rounded-full flex items-center justify-center mr-3"
+          >
+            <span class="text-[#f6339a] font-bold">S</span>
+          </div>
           <h3 class="text-white text-base font-medium">She Salon</h3>
         </div>
-        <button @click="toggleChat" class="text-white">
+        <button
+          @click="toggleChat"
+          class="text-white hover:bg-white/10 p-2 rounded-full transition-colors duration-200"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-5 w-5"
@@ -51,14 +61,14 @@
 
       <!-- Top Info -->
       <div
-        class="p-2 bg-gray-100 border-b border-gray-200 text-xs text-center text-gray-500"
+        class="p-2 bg-gray-50 border-b border-gray-200 text-xs text-center text-gray-500"
       >
         April 16 at 7:14 PM
       </div>
 
       <!-- Chat Messages -->
       <div
-        class="flex-1 overflow-y-auto p-3 space-y-4 bg-white"
+        class="flex-1 overflow-y-auto p-4 space-y-4 bg-white"
         ref="messageContainer"
       >
         <div v-for="(message, index) in messages" :key="index">
@@ -71,7 +81,7 @@
             <div class="text-xs text-gray-500 mb-1">SheSalon's Bot</div>
             <div class="flex items-start">
               <div
-                class="bg-gray-100 rounded-2xl p-3 text-sm whitespace-pre-line"
+                class="bg-gray-100 rounded-2xl p-4 text-sm whitespace-pre-line shadow-sm"
                 style="max-width: 80%; border-radius: 18px"
               >
                 {{ message.text }}
@@ -86,7 +96,7 @@
             :class="message.isNew ? 'animate-message-in' : ''"
           >
             <div
-              class="bg-[#f6339a] text-white rounded-2xl p-3 text-sm"
+              class="bg-gradient-to-r from-[#f6339a] to-[#ff5757] text-white rounded-2xl p-4 text-sm shadow-sm"
               style="max-width: 80%; border-radius: 18px"
             >
               {{ message.text }}
@@ -103,7 +113,7 @@
             v-for="(reply, index) in quickReplies"
             :key="index"
             @click="handleQuickReply(reply)"
-            class="bg-[#f6339a] text-white rounded-full px-4 py-2 text-sm hover:bg-pink-600 transition-colors duration-200"
+            class="bg-[#f6339a] text-white rounded-full px-4 py-2 text-sm hover:bg-[#e02d8a] transition-colors duration-200 shadow-sm"
           >
             {{ reply }}
           </button>
@@ -111,10 +121,10 @@
 
         <!-- Bot Typing Indicator -->
         <div v-if="isBotTyping" class="mb-4 animate-message-in">
-          <div class="text-xs text-gray-500 mb-1">Maksima's Bot</div>
+          <div class="text-xs text-gray-500 mb-1">SheSalon's Bot</div>
           <div class="flex items-start">
             <div
-              class="bg-gray-100 rounded-2xl p-3"
+              class="bg-gray-100 rounded-2xl p-4"
               style="border-radius: 18px"
             >
               <div class="flex space-x-1">
@@ -128,9 +138,9 @@
       </div>
 
       <!-- Chat Input -->
-      <div class="p-3 bg-white border-t border-gray-200">
+      <div class="p-4 bg-white border-t border-gray-200">
         <div
-          class="flex items-center rounded-full border border-gray-300 overflow-hidden bg-white"
+          class="flex items-center rounded-full border border-gray-300 overflow-hidden bg-white focus-within:ring-2 focus-within:ring-[#f6339a] focus-within:border-transparent transition-all duration-200"
         >
           <input
             v-model="newMessage"
@@ -139,13 +149,13 @@
             :disabled="isBotTyping"
             ref="messageInput"
             @keypress.enter="sendMessage"
-            class="flex-1 px-4 py-2 text-sm focus:outline-none"
+            class="flex-1 px-4 py-3 text-sm focus:outline-none"
             :class="{ 'bg-gray-100': isBotTyping }"
           />
           <button
             type="button"
             @click="sendMessage"
-            class="p-2 text-gray-400 hover:text-gray-600"
+            class="p-3 text-[#f6339a] hover:bg-[#f6339a]/10 transition-colors duration-200"
           >
             <svg
               width="16"
@@ -339,6 +349,21 @@ onMounted(() => {
   }
 }
 
+.animate-slideUp {
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .typing-dot {
   width: 6px;
   height: 6px;
@@ -376,11 +401,11 @@ onMounted(() => {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ddd;
+  background: #f6339a;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #ccc;
+  background: #e02d8a;
 }
 </style>

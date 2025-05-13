@@ -1,10 +1,15 @@
 <template>
-  <footer class="bg-gray-100 py-10">
-    <div class="container mx-auto px-4 md:px-8">
-      <div class="w-full mb-10 fade-in">
-        <h3 class="text-[#f6339a] font-semibold text-center mb-6">Visit Us</h3>
+  <footer class="bg-gray-50 py-16 relative overflow-hidden">
+    <div
+      class="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100 opacity-50"
+    ></div>
+    <div class="container mx-auto px-4 md:px-8 relative z-10">
+      <div class="w-full mb-12 fade-in">
+        <h3 class="text-[#f6339a] font-semibold text-center mb-6 text-xl">
+          Visit Us
+        </h3>
         <div
-          class="block w-full h-[300px] rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+          class="block w-full h-[300px] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300"
         >
           <GoogleMap />
         </div>
@@ -12,7 +17,11 @@
 
       <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
         <div class="fade-in">
-          <h2 class="text-lg font-bold">She Salon</h2>
+          <h2
+            class="text-xl font-bold mb-2 bg-gradient-to-r from-[#f6339a] to-[#ff5757] bg-clip-text text-transparent"
+          >
+            She Salon
+          </h2>
           <p class="text-gray-600 mt-2">
             Beauty, expertise, quality service, relaxation, confidence, style,
             care, elegance, perfection, trust.
@@ -59,65 +68,74 @@
         </div>
 
         <div class="fade-in delay-200">
-          <h3 class="text-[#f6339a] font-semibold">Services</h3>
-          <ul class="mt-2 space-y-2 text-gray-700">
+          <h3 class="text-[#f6339a] font-semibold mb-4">Services</h3>
+          <ul class="mt-2 space-y-3 text-gray-700">
             <li
-              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer"
+              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer flex items-center"
             >
+              <span class="w-1.5 h-1.5 rounded-full bg-pink-300 mr-2"></span>
               Smoothing
             </li>
             <li
-              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer"
+              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer flex items-center"
             >
+              <span class="w-1.5 h-1.5 rounded-full bg-pink-300 mr-2"></span>
               Massage
             </li>
             <li
-              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer"
+              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer flex items-center"
             >
+              <span class="w-1.5 h-1.5 rounded-full bg-pink-300 mr-2"></span>
               Pedicure
             </li>
             <li
-              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer"
+              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer flex items-center"
             >
+              <span class="w-1.5 h-1.5 rounded-full bg-pink-300 mr-2"></span>
               Haircut
             </li>
             <li
-              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer"
+              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer flex items-center"
             >
+              <span class="w-1.5 h-1.5 rounded-full bg-pink-300 mr-2"></span>
               Hair Coloring
             </li>
           </ul>
         </div>
 
         <div class="fade-in delay-400">
-          <h3 class="text-[#f6339a] font-semibold">Quick Links</h3>
-          <ul class="mt-2 space-y-2 text-gray-700">
+          <h3 class="text-[#f6339a] font-semibold mb-4">Quick Links</h3>
+          <ul class="mt-2 space-y-3 text-gray-700">
             <li
-              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer"
+              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer flex items-center"
             >
+              <span class="w-1.5 h-1.5 rounded-full bg-pink-300 mr-2"></span>
               Home
             </li>
             <li
-              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer"
+              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer flex items-center"
             >
+              <span class="w-1.5 h-1.5 rounded-full bg-pink-300 mr-2"></span>
               About Us
             </li>
             <li
-              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer"
+              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer flex items-center"
             >
+              <span class="w-1.5 h-1.5 rounded-full bg-pink-300 mr-2"></span>
               Services
             </li>
             <li
-              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer"
+              class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer flex items-center"
             >
+              <span class="w-1.5 h-1.5 rounded-full bg-pink-300 mr-2"></span>
               Booking
             </li>
           </ul>
         </div>
 
         <div class="fade-in delay-600">
-          <h3 class="text-[#f6339a] font-semibold">Follow Us</h3>
-          <ul class="mt-2 space-y-2 text-gray-700">
+          <h3 class="text-[#f6339a] font-semibold mb-4">Follow Us</h3>
+          <ul class="mt-2 space-y-3 text-gray-700">
             <li
               class="flex items-center space-x-2 hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-x-2 cursor-pointer"
             >
@@ -141,7 +159,7 @@
       </div>
     </div>
 
-    <div class="mt-8 text-center text-gray-500 text-sm">
+    <div class="mt-12 text-center text-gray-500 text-sm">
       <span
         class="hover:text-[#f6339a] transition-all duration-300 ease-out hover:translate-y-[-2px] cursor-pointer"
       >

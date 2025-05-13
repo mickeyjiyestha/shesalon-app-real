@@ -5,7 +5,7 @@
     <p class="text-3xl md:text-4xl font-semibold">
       Why is
       <span
-        class="text-[#f6339a] hover:text-[#f6339a] transition-colors duration-300"
+        class="text-[#f6339a] hover:text-[#f6339a] transition-colors duration-300 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[6px] after:bg-pink-200 after:opacity-50 after:-z-10"
       >
         Choosing Us
       </span>
@@ -22,7 +22,7 @@
   </div>
 
   <div
-    class="flex flex-col md:flex-row items-center justify-center mb-40 md:mb-60 relative px-4 md:px-0 space-y-8 md:space-y-0 md:space-x-4"
+    class="flex flex-col md:flex-row items-center justify-center mb-40 md:mb-60 relative px-4 md:px-0 space-y-8 md:space-y-0 md:space-x-6"
   >
     <ServiceCard
       v-for="(card, index) in cards"

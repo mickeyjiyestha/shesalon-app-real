@@ -5,6 +5,16 @@ import { useRouter } from "vue-router";
 import ProfileDropdown from "@/components/ProfileDropdown.vue";
 import FaceScanner from "@/components/FaceScanner.vue";
 import LoginModal from "@/components/LoginModal.vue";
+import BookingModal from "@/components/BookingModal.vue";
+import Brands from "@/components/Brands.vue";
+import Founder from "@/components/Founder.vue";
+import Services from "@/components/Services.vue";
+import HairstyleCard from "@/components/HairstyleCard.vue";
+import WhyChoosingUs from "@/components/WhyChoosingUs.vue";
+import Testimonial from "@/components/Testimonial.vue";
+import Footer from "@/components/Footer.vue";
+import Falcon from "@/components/Falcon.vue";
+
 const config = useRuntimeConfig();
 
 const router = useRouter();
@@ -154,6 +164,11 @@ const logoutUser = async () => {
   }
 };
 
+const handleBookingSubmit = (bookingData) => {
+  console.log("Booking data submitted:", bookingData);
+  closeBookingModal();
+};
+
 onMounted(() => {
   fetchUser();
 
@@ -194,20 +209,56 @@ onMounted(() => {
 
 <template>
   <div class="scroll-smooth">
-    <header
-      class="w-full h-screen mb-20 md:mb-40 relative bg-cover bg-center bg-no-repeat bg-[url('https://storage.googleapis.com/shesalon-assets/base-bg.webp')] transition-all duration-700 ease-out"
-    >
+    <header class="w-full h-screen mb-20 md:mb-40 relative overflow-hidden">
+      <!-- Background image with parallax effect -->
+      <div class="absolute inset-0 w-full h-full">
+        <div
+          class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent z-10"
+        ></div>
+        <div
+          class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent z-10"
+        ></div>
+        <div
+          class="w-full h-full bg-cover bg-center bg-no-repeat transform scale-105 transition-all duration-700 ease-out"
+          style="
+            background-image: url('https://storage.googleapis.com/shesalon-assets/base-bg.webp');
+          "
+        ></div>
+      </div>
+
+      <!-- Decorative elements -->
+      <div
+        class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-pink-500/10 to-transparent z-10 transform skew-x-12 translate-x-20"
+      ></div>
+      <div
+        class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-white to-transparent z-10"
+      ></div>
+
+      <!-- Animated circles -->
+      <div
+        class="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-pink-500/10 filter blur-3xl animate-pulse-slow z-5"
+      ></div>
+      <div
+        class="absolute bottom-1/4 left-1/3 w-96 h-96 rounded-full bg-purple-500/10 filter blur-3xl animate-pulse-slower z-5"
+      ></div>
+
+      <!-- Navigation -->
       <nav
-        class="absolute top-0 left-0 w-full px-4 md:px-20 py-4 md:py-6 transition-all duration-300"
+        class="absolute top-0 left-0 w-full px-4 md:px-20 py-4 md:py-6 transition-all duration-300 z-20"
       >
         <div class="max-w-7xl mx-auto flex justify-between items-center">
           <!-- Logo on the left -->
-          <div class="logo scale-in z-30">
+          <div class="logo scale-in z-30 flex items-center">
             <img
               class="w-10 md:w-16 transform hover:scale-110 transition-transform duration-300 ease-out"
               src="~/assets/images/shesalon-logo.png"
               alt="She Salon"
             />
+            <span
+              class="ml-3 text-white text-xl md:text-2xl font-bold opacity-0 animate-fadeIn"
+              style="animation-delay: 300ms; animation-fill-mode: forwards"
+              >She Salon</span
+            >
           </div>
 
           <!-- Menu items (Home, Order, Blog, About, Contact Us) -->
@@ -217,14 +268,20 @@ onMounted(() => {
             <p
               v-for="(item, index) in menuItems"
               :key="index"
-              class="hover:text-[#F97474] cursor-pointer transition-all duration-300 ease-out hover:translate-y-[-2px]"
+              class="hover:text-[#F97474] cursor-pointer transition-all duration-300 ease-out hover:translate-y-[-2px] relative after:content-[''] after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-[2px] after:bg-[#F97474] after:transition-all after:duration-300 hover:after:w-full opacity-0 animate-fadeIn"
+              :style="`animation-delay: ${
+                300 + index * 100
+              }ms; animation-fill-mode: forwards;`"
             >
               {{ item }}
             </p>
           </div>
 
           <!-- Profile Dropdown moved here after the menu items -->
-          <div class="ml-8">
+          <div
+            class="ml-8 opacity-0 animate-fadeIn"
+            style="animation-delay: 800ms; animation-fill-mode: forwards"
+          >
             <!-- Add some margin if needed to separate from menu -->
             <ProfileDropdown :user="user" @logout="logoutUser" />
           </div>
@@ -277,53 +334,178 @@ onMounted(() => {
         </div>
       </nav>
 
+      <!-- Hero Content -->
+      <div class="absolute inset-0 flex items-center z-20">
+        <div class="container mx-auto px-4 md:px-20">
+          <div class="max-w-3xl">
+            <div class="space-y-6">
+              <!-- Welcome text with animated underline -->
+              <div class="relative inline-block slide-in from-left">
+                <p class="text-xl md:text-3xl text-white">
+                  Hello
+                  <span class="font-medium">{{
+                    user?.username || "Guest"
+                  }}</span
+                  >, Welcome To She Salon
+                </p>
+                <div
+                  class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-pink-400 to-pink-600 animate-line-grow"
+                ></div>
+              </div>
+
+              <!-- Main heading with gradient text -->
+              <h1
+                class="text-4xl md:text-7xl font-extrabold text-white leading-tight slide-in from-left delay-200"
+              >
+                Discover Your Perfect <br class="hidden md:block" />
+                <span
+                  class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-pink-600"
+                  >Look</span
+                >
+                with She Salon
+              </h1>
+
+              <!-- Description with subtle animation -->
+              <p
+                class="text-lg md:text-2xl text-white/90 font-light max-w-2xl slide-in from-left delay-400"
+              >
+                Professional hair, skin, and beauty treatments tailored just for
+                you.
+                <br class="hidden md:block" />
+                Feel confident and radiant every day!
+              </p>
+
+              <!-- CTA Buttons with enhanced styling -->
+              <div
+                class="flex flex-wrap gap-4 mt-8 slide-in from-left delay-600"
+              >
+                <template v-if="!user">
+                  <button
+                    @click="router.push('/login')"
+                    class="group relative inline-flex items-center px-6 py-3 overflow-hidden rounded-full bg-white text-gray-900 transition-all duration-300 hover:scale-105"
+                  >
+                    <span
+                      class="absolute w-0 h-full bg-gradient-to-r from-pink-500 to-pink-600 top-0 left-0 transition-all duration-300 group-hover:w-full"
+                    ></span>
+                    <span
+                      class="relative flex items-center gap-2 group-hover:text-white transition-colors duration-300"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      Login
+                    </span>
+                  </button>
+                  <button
+                    class="group relative inline-flex items-center px-6 py-3 overflow-hidden rounded-full bg-transparent border-2 border-white text-white transition-all duration-300 hover:scale-105"
+                  >
+                    <span
+                      class="absolute w-0 h-full bg-white top-0 left-0 transition-all duration-300 group-hover:w-full"
+                    ></span>
+                    <span
+                      class="relative flex items-center gap-2 group-hover:text-gray-900 transition-colors duration-300"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z"
+                        />
+                      </svg>
+                      Register
+                    </span>
+                  </button>
+                </template>
+
+                <template v-else>
+                  <button
+                    @click="openBookingModal"
+                    class="group relative inline-flex items-center px-6 py-3 overflow-hidden rounded-full bg-white text-gray-900 transition-all duration-300 hover:scale-105"
+                  >
+                    <span
+                      class="absolute w-0 h-full bg-gradient-to-r from-pink-500 to-pink-600 top-0 left-0 transition-all duration-300 group-hover:w-full"
+                    ></span>
+                    <span
+                      class="relative flex items-center gap-2 group-hover:text-white transition-colors duration-300"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      Book Now
+                    </span>
+                  </button>
+                  <button
+                    class="group relative inline-flex items-center px-6 py-3 overflow-hidden rounded-full bg-transparent border-2 border-white text-white transition-all duration-300 hover:scale-105"
+                  >
+                    <span
+                      class="absolute w-0 h-full bg-white top-0 left-0 transition-all duration-300 group-hover:w-full"
+                    ></span>
+                    <span
+                      class="relative flex items-center gap-2 group-hover:text-gray-900 transition-colors duration-300"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V4a2 2 0 00-2-2H7zm3 14a1 1 0 100-2 1 1 0 000 2z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      Our Services
+                    </span>
+                  </button>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll indicator -->
       <div
-        class="absolute top-[45%] md:top-1/3 left-4 md:left-20 text-white -mt-10 px-4 md:px-0"
+        class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 animate-bounce-slow"
       >
-        <p class="text-xl md:text-3xl slide-in from-left">
-          Hello {{ user?.username }}, Welcome To She Salon
-        </p>
-        <h1
-          class="text-4xl md:text-7xl font-extrabold mt-4 leading-tight slide-in from-left delay-200"
-        >
-          Discover Your Perfect <br class="hidden md:block" />
-          Look with She Salon
-        </h1>
-        <p
-          class="text-lg md:text-2xl mt-4 max-w-full md:max-w-4xl font-light mb-6 md:mb-10 slide-in from-left delay-400"
-        >
-          Professional hair, skin, and beauty treatments tailored just for you.
-          <br class="hidden md:block" />
-          Feel confident and radiant every day!
-        </p>
-
-        <div class="mt-6 flex space-x-4 slide-in from-left delay-600">
-          <button
-            v-if="!user"
-            class="px-4 md:px-6 py-2 md:py-3 border border-white rounded-full text-white hover:bg-white hover:text-black transition-all duration-300 ease-out hover:shadow-lg hover:scale-105 text-sm md:text-base"
-            @click="router.push('/login')"
+        <div class="flex flex-col items-center">
+          <span class="text-white text-sm mb-2">Scroll Down</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-            Login
-          </button>
-          <button
-            v-if="!user"
-            class="px-4 md:px-6 py-2 md:py-3 border border-white rounded-full text-white hover:bg-white hover:text-black transition-all duration-300 ease-out hover:shadow-lg hover:scale-105 text-sm md:text-base"
-          >
-            Register
-          </button>
-
-          <button
-            v-if="user"
-            class="px-4 md:px-6 py-2 md:py-3 border border-white rounded-full text-white hover:bg-white hover:text-black transition-all duration-300 ease-out hover:shadow-lg hover:scale-105 text-sm md:text-base"
-          >
-            Booking
-          </button>
-          <button
-            v-if="user"
-            class="px-4 md:px-6 py-2 md:py-3 border border-white rounded-full text-white hover:bg-white hover:text-black transition-all duration-300 ease-out hover:shadow-lg hover:scale-105 text-sm md:text-base"
-          >
-            Our Services
-          </button>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
         </div>
       </div>
     </header>
@@ -331,11 +513,14 @@ onMounted(() => {
     <Brands />
 
     <div class="flex justify-center slide-in from-bottom px-4 md:px-0">
-      <p class="text-3xl md:text-4xl font-semibold mb-10">
+      <p class="text-3xl md:text-4xl font-semibold mb-10 relative">
         What is
-        <span class="text-pink-600 transition-colors duration-300"
-          >She Salon?</span
-        >
+        <span class="text-pink-600 transition-colors duration-300 relative">
+          She Salon?
+          <span
+            class="absolute -bottom-2 left-0 w-full h-1 bg-pink-200 rounded-full"
+          ></span>
+        </span>
       </p>
     </div>
     <div
@@ -352,9 +537,14 @@ onMounted(() => {
     <Founder />
 
     <div class="flex justify-center slide-in from-bottom px-4 md:px-0">
-      <p class="text-3xl md:text-4xl font-semibold mb-20 md:mb-30">
+      <p class="text-3xl md:text-4xl font-semibold mb-20 md:mb-30 relative">
         Our
-        <span class="text-pink-600">Services</span>
+        <span class="text-pink-600 relative">
+          Services
+          <span
+            class="absolute -bottom-2 left-0 w-full h-1 bg-pink-200 rounded-full"
+          ></span>
+        </span>
       </p>
     </div>
 
@@ -364,20 +554,45 @@ onMounted(() => {
       class="flex items-center justify-center -mt-10 md:-mt-20 mb-40 md:mb-60 px-4 md:px-0"
     >
       <button
-        class="flex justify-center items-center rounded-xl bg-pink-500 hover:bg-pink-600 px-20 md:px-50 py-3 mt-7 text-white transition-all duration-300 ease-out hover:shadow-lg hover:scale-105 transform"
+        class="group relative inline-flex items-center px-8 py-4 overflow-hidden rounded-xl bg-[#f6339a] text-white shadow-lg hover:shadow-xl transition-all duration-300"
         @click="openBookingModal"
       >
-        Book Now
+        <span
+          class="absolute w-0 h-full bg-[#e02d8a] top-0 left-0 transition-all duration-300 group-hover:w-full"
+        ></span>
+        <span class="relative flex items-center gap-2">
+          Book Now
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </span>
       </button>
     </div>
 
-    <section class="py-32 bg-gray-50 mb-10">
-      <div class="max-w-7xl mx-auto px-4 md:px-20">
+    <section class="py-32 bg-gray-50 mb-10 relative overflow-hidden">
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100 opacity-30"
+      ></div>
+      <div class="max-w-7xl mx-auto px-4 md:px-20 relative z-10">
         <div class="text-center mb-16 slide-in from-bottom">
-          <h2 class="text-3xl md:text-4xl font-semibold mb-6">
+          <h2
+            class="text-3xl md:text-4xl font-semibold mb-6 relative inline-block"
+          >
             Not Sure About Your Style?
+            <span
+              class="absolute -bottom-2 left-0 w-full h-1 bg-pink-200 rounded-full"
+            ></span>
           </h2>
-          <p class="text-lg text-gray-600 mb-12">
+          <p class="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
             Let our AI analyze your face shape and recommend the perfect
             hairstyle for you!
           </p>
@@ -508,5 +723,93 @@ html {
   .parallax-header {
     background-attachment: scroll;
   }
+}
+
+/* Modern button hover effect */
+.btn-hover-slide {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.btn-hover-slide::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: all 0.6s;
+  z-index: -1;
+}
+
+.btn-hover-slide:hover::before {
+  left: 100%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes line-grow {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.animate-line-grow {
+  animation: line-grow 1.5s ease-out forwards;
+}
+
+@keyframes bounce-slow {
+  0%,
+  100% {
+    transform: translateY(0) translateX(-50%);
+  }
+  50% {
+    transform: translateY(-10px) translateX(-50%);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s infinite;
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s infinite;
+}
+
+.animate-pulse-slower {
+  animation: pulse-slow 6s infinite;
 }
 </style>

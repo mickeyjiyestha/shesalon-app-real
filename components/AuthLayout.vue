@@ -68,6 +68,9 @@ const getContentClass = () => {
     "
   >
     <div :class="getBackgroundClass()">
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent"
+      ></div>
       <slot name="background-content"></slot>
     </div>
 
@@ -81,11 +84,11 @@ const getContentClass = () => {
 /* Animasi hanya untuk desktop */
 @media (min-width: 768px) {
   .order-1 {
-    animation: slideFromLeft 0.7s forwards;
+    animation: slideFromLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
   .order-2 {
-    animation: slideFromRight 0.7s forwards;
+    animation: slideFromRight 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 }
 

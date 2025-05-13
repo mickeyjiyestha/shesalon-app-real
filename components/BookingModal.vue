@@ -2,25 +2,69 @@
   <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen p-6">
       <div
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
         @click="close"
       ></div>
 
       <div
-        class="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl p-10 z-10"
+        class="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl p-8 z-10 transition-all duration-300 transform"
       >
-        <h2 class="text-3xl font-bold mb-8 text-gray-800">
-          Book Your Appointment
-        </h2>
+        <!-- Header with steps -->
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold mb-6 text-gray-800 text-center">
+            Book Your Appointment
+          </h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <!-- Booking Form - Left Side -->
-          <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Step indicator -->
+          <div class="flex items-center justify-center mb-8">
+            <div class="flex items-center w-full max-w-3xl">
+              <div
+                class="relative flex flex-col items-center flex-1"
+                v-for="(step, index) in steps"
+                :key="index"
+              >
+                <div
+                  class="w-10 h-10 rounded-full flex items-center justify-center z-10 relative transition-all duration-300"
+                  :class="[
+                    currentStep > index
+                      ? 'bg-[#F97474] text-white'
+                      : currentStep === index
+                      ? 'bg-[#F97474] text-white ring-4 ring-pink-100'
+                      : 'bg-gray-200 text-gray-500',
+                  ]"
+                >
+                  <span v-if="currentStep > index" class="text-lg">✓</span>
+                  <span v-else>{{ index + 1 }}</span>
+                </div>
+                <div
+                  class="text-xs font-medium mt-2 text-center"
+                  :class="
+                    currentStep >= index ? 'text-gray-800' : 'text-gray-400'
+                  "
+                >
+                  {{ step }}
+                </div>
+                <!-- Connector line -->
+                <div
+                  v-if="index < steps.length - 1"
+                  class="absolute top-5 w-full h-[2px] left-1/2"
+                  :class="currentStep > index ? 'bg-[#F97474]' : 'bg-gray-200'"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 1: Date & Time Selection -->
+        <div v-if="currentStep === 0" class="transition-all duration-300">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="mb-6">
               <label class="block text-gray-700 text-sm font-medium mb-2"
                 >Pick a Date</label
               >
-              <div class="calendar-wrapper bg-white rounded-xl">
+              <div
+                class="calendar-wrapper bg-white rounded-xl shadow-sm border border-gray-100"
+              >
                 <ClientOnly>
                   <Calendar
                     v-model="selectedDate"
@@ -40,54 +84,55 @@
                 <label class="block text-gray-700 text-sm font-medium mb-2"
                   >Choose Time</label
                 >
-                <div class="relative">
-                  <select
-                    v-model="bookingTime"
-                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
+                <div class="grid grid-cols-3 gap-2">
+                  <button
+                    v-for="time in availableTimes"
+                    :key="time"
+                    @click="bookingTime = time"
+                    class="px-3 py-2 rounded-lg text-center transition-all duration-200"
+                    :class="
+                      bookingTime === time
+                        ? 'bg-[#F97474] text-white font-medium shadow-md'
+                        : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
+                    "
                   >
-                    <option value="">Select available time</option>
-                    <option
-                      v-for="time in availableTimes"
-                      :key="time"
-                      :value="time"
-                    >
-                      {{ time }}
-                    </option>
-                  </select>
-                  <div
-                    class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none"
-                  >
-                    <svg
-                      class="w-4 h-4 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
+                    {{ time }}
+                  </button>
                 </div>
               </div>
 
-              <!-- Service Selection -->
+              <div class="mt-6">
+                <label class="block text-gray-700 text-sm font-medium mb-2"
+                  >Special Request</label
+                >
+                <textarea
+                  v-model="specialRequest"
+                  rows="3"
+                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
+                  placeholder="Leave a message for the salon"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Service Selection -->
+        <div v-if="currentStep === 1" class="transition-all duration-300">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-6">
               <div v-if="isServicesLoaded">
                 <div
                   v-for="(service, index) in selectedServices"
                   :key="index"
-                  class="mb-4"
+                  class="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100"
                 >
-                  <label class="block text-gray-700 text-sm font-medium mb-2">
+                  <label class="block text-gray-700 font-medium mb-3">
                     Service {{ index + 1 }}
                   </label>
                   <div class="relative">
                     <select
                       v-model="selectedServices[index]"
-                      class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
+                      class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
                       @change="checkServiceCategory(index)"
                     >
                       <option value="">Pilih Service</option>
@@ -126,7 +171,7 @@
                     <div class="relative">
                       <select
                         v-model="selectedBrands[index]"
-                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
+                        class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
                         @change="onBrandSelect(index)"
                       >
                         <option value="">Pilih Brand</option>
@@ -166,7 +211,7 @@
                     <div class="relative">
                       <select
                         v-model="selectedProducts[index]"
-                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
+                        class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
                         @change="onProductSelect(index)"
                       >
                         <option value="">Pilih Produk</option>
@@ -213,7 +258,7 @@
                     <div class="relative">
                       <select
                         v-model="selectedColors[index]"
-                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
+                        class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
                       >
                         <option value="">Pilih Warna</option>
                         <option
@@ -250,183 +295,388 @@
                 <button
                   type="button"
                   @click="addService"
-                  class="mt-2 px-4 py-2 bg-[#F97474] text-white rounded-xl hover:bg-[#e65c5c] transition"
+                  class="mt-2 px-4 py-2 bg-[#F97474] text-white rounded-xl hover:bg-[#e65c5c] transition flex items-center gap-2"
                   v-if="selectedServices.length < services.length"
                 >
-                  + Tambah Service
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  Tambah Service
                 </button>
               </div>
+            </div>
 
-              <div class="mt-6">
-                <label class="block text-gray-700 text-sm font-medium mb-2"
-                  >Special Request</label
+            <div>
+              <div
+                class="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100"
+              >
+                <h3
+                  class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
                 >
-                <textarea
-                  v-model="specialRequest"
-                  rows="3"
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
-                  placeholder="Leave a message for the salon"
-                ></textarea>
-              </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 mr-2 text-[#F97474]"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5 2a1 1 0 011 1v1h8V3a1 1 0 112 0v1h1a2 2 0 012 2v10a2 2 0 01-2 2H3a2 2 0 01-2-2V6a2 2 0 012-2h1V3a1 1 0 011-1zm2 3v1a1 1 0 102 0V5h6v1a1 1 0 102 0V5h1a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V6a1 1 0 011-1h1z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  Appointment Details
+                </h3>
 
+                <div class="mb-4 flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 mr-2 text-gray-500"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <div>
+                    <p class="text-gray-600 text-sm">Selected Date:</p>
+                    <p class="font-medium">{{ formattedSelectedDate }}</p>
+                  </div>
+                </div>
+
+                <div class="mb-4 flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 mr-2 text-gray-500"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <div>
+                    <p class="text-gray-600 text-sm">Selected Time:</p>
+                    <p class="font-medium">{{ bookingTime || "---" }}</p>
+                  </div>
+                </div>
+
+                <div v-if="selectedServices.length > 0" class="space-y-4">
+                  <div
+                    v-for="(serviceId, index) in selectedServices"
+                    :key="serviceId"
+                    class="flex flex-col gap-2"
+                    v-if="serviceId && getServiceById(serviceId)"
+                  >
+                    <!-- Base Service -->
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <p class="font-medium text-gray-800">
+                          {{ getServiceById(serviceId)?.nama }}
+                          <span class="block text-sm text-gray-500"
+                            >Base Price</span
+                          >
+                        </p>
+                      </div>
+                      <p class="font-medium text-gray-800">
+                        Rp{{
+                          Number(
+                            getServiceById(serviceId)?.harga
+                          ).toLocaleString()
+                        }}
+                      </p>
+                    </div>
+
+                    <!-- Selected Product and Color (if applicable) -->
+                    <div
+                      v-if="getSelectedColor(index)"
+                      class="flex justify-between items-start pl-4 border-l-2 border-gray-200"
+                    >
+                      <div>
+                        <p class="text-sm text-gray-600">
+                          {{ getSelectedProduct(index)?.product?.nama }} -
+                          {{ getSelectedColor(index)?.nama }}
+                        </p>
+                      </div>
+                      <p class="text-sm font-medium text-gray-800">
+                        + Rp{{
+                          getAdditionalPrice(serviceId, index).toLocaleString()
+                        }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-else class="text-center py-8">
+                  <p class="text-gray-500">
+                    Select a service to see the summary
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Payment Method -->
+        <div v-if="currentStep === 2" class="transition-all duration-300">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-6">
               <div>
-                <label class="block text-gray-700 text-sm font-medium mb-2"
+                <label class="block text-gray-700 text-lg font-medium mb-4"
                   >Payment Method</label
                 >
-                <div class="relative">
-                  <select
-                    v-model="paymentMethod"
-                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
-                  >
-                    <option value="">Select payment option</option>
-                    <option
-                      v-for="method in paymentMethods"
-                      :key="method.id"
-                      :value="method.id"
-                    >
-                      {{ method.nama }}
-                    </option>
-                  </select>
+                <div class="grid grid-cols-1 gap-4">
                   <div
-                    class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none"
+                    v-for="method in paymentMethods"
+                    :key="method.id"
+                    @click="paymentMethod = method.id"
+                    class="p-4 border rounded-xl cursor-pointer transition-all duration-200 flex items-center"
+                    :class="
+                      paymentMethod === method.id
+                        ? 'border-[#F97474] bg-pink-50 shadow-sm'
+                        : 'border-gray-200 bg-white hover:bg-gray-50'
+                    "
                   >
-                    <svg
-                      class="w-4 h-4 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
+                    <div class="flex-shrink-0 mr-4">
+                      <div
+                        class="w-5 h-5 rounded-full border-2 flex items-center justify-center"
+                        :class="
+                          paymentMethod === method.id
+                            ? 'border-[#F97474]'
+                            : 'border-gray-300'
+                        "
+                      >
+                        <div
+                          v-if="paymentMethod === method.id"
+                          class="w-3 h-3 rounded-full bg-[#F97474]"
+                        ></div>
+                      </div>
+                    </div>
+                    <div>
+                      <p class="font-medium">{{ method.nama }}</p>
+                      <p class="text-sm text-gray-500">
+                        {{
+                          method.nama === "Cashless"
+                            ? "Pay online via bank transfer or e-wallet"
+                            : "Pay at the salon"
+                        }}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
                 <!-- Payment Type Radio Buttons - Only show for Cashless -->
-                <div v-if="isCashlessSelected" class="mt-4">
-                  <label class="block text-gray-700 text-sm font-medium mb-2"
+                <div
+                  v-if="isCashlessSelected"
+                  class="mt-6 p-4 border border-gray-200 rounded-xl bg-gray-50"
+                >
+                  <label class="block text-gray-700 font-medium mb-3"
                     >Payment Type</label
                   >
-                  <div class="flex space-x-4">
-                    <label class="inline-flex items-center">
+                  <div class="flex space-x-6">
+                    <label class="inline-flex items-center cursor-pointer">
                       <input
                         type="radio"
                         v-model="paymentType"
                         value="dp"
-                        class="form-radio text-[#F97474] focus:ring-[#F97474]"
+                        class="form-radio text-[#F97474] focus:ring-[#F97474] h-5 w-5"
                       />
-                      <span class="ml-2">DP</span>
+                      <span class="ml-2">Down Payment</span>
                     </label>
-                    <label class="inline-flex items-center">
+                    <label class="inline-flex items-center cursor-pointer">
                       <input
                         type="radio"
                         v-model="paymentType"
                         value="lunas"
-                        class="form-radio text-[#F97474] focus:ring-[#F97474]"
+                        class="form-radio text-[#F97474] focus:ring-[#F97474] h-5 w-5"
                       />
-                      <span class="ml-2">Lunas</span>
+                      <span class="ml-2">Full Payment</span>
                     </label>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="md:col-span-1">
-            <div class="bg-gray-50 rounded-xl p-6">
-              <h3 class="text-lg font-semibold text-gray-800 mb-4">
-                Payment Summary
-              </h3>
-
-              <div class="mb-4">
-                <p class="text-gray-600">Selected Date:</p>
-                <p class="font-medium">{{ formattedSelectedDate }}</p>
-              </div>
-
-              <div class="mb-4">
-                <p class="text-gray-600">Selected Time:</p>
-                <p class="font-medium">{{ bookingTime || "---" }}</p>
-              </div>
-
-              <div v-if="selectedServices.length > 0" class="space-y-4">
-                <div
-                  v-for="(serviceId, index) in selectedServices"
-                  :key="serviceId"
-                  class="flex flex-col gap-2"
-                  v-if="serviceId && getServiceById(serviceId)"
+            <div>
+              <div
+                class="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100"
+              >
+                <h3
+                  class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
                 >
-                  <!-- Base Service -->
-                  <div class="flex justify-between items-start">
-                    <div>
-                      <p class="font-medium text-gray-800">
-                        {{ getServiceById(serviceId)?.nama }}
-                        <span class="block text-sm text-gray-500"
-                          >Base Price</span
-                        >
-                      </p>
-                    </div>
-                    <p class="font-medium text-gray-800">
-                      Rp{{
-                        Number(
-                          getServiceById(serviceId)?.harga
-                        ).toLocaleString()
-                      }}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 mr-2 text-[#F97474]"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  Payment Summary
+                </h3>
+
+                <div class="space-y-4 mb-6">
+                  <div
+                    class="flex justify-between items-center pb-2 border-b border-gray-200"
+                  >
+                    <p class="text-gray-600">Date & Time</p>
+                    <p class="font-medium">
+                      {{ formattedSelectedDate }}, {{ bookingTime }}
                     </p>
                   </div>
 
-                  <!-- Selected Product and Color (if applicable) -->
-                  <div
-                    v-if="getSelectedColor(index)"
-                    class="flex justify-between items-start pl-4 border-l-2 border-gray-200"
-                  >
-                    <div>
-                      <p class="text-sm text-gray-600">
-                        {{ getSelectedProduct(index)?.product?.nama }} -
-                        {{ getSelectedColor(index)?.nama }}
-                      </p>
+                  <div v-if="selectedServices.length > 0" class="space-y-3">
+                    <div
+                      v-for="(serviceId, index) in selectedServices"
+                      :key="serviceId"
+                      class="flex flex-col gap-2"
+                      v-if="serviceId && getServiceById(serviceId)"
+                    >
+                      <!-- Base Service -->
+                      <div class="flex justify-between items-start">
+                        <div>
+                          <p class="font-medium text-gray-800">
+                            {{ getServiceById(serviceId)?.nama }}
+                            <span class="block text-sm text-gray-500"
+                              >Base Price</span
+                            >
+                          </p>
+                        </div>
+                        <p class="font-medium text-gray-800">
+                          Rp{{
+                            Number(
+                              getServiceById(serviceId)?.harga
+                            ).toLocaleString()
+                          }}
+                        </p>
+                      </div>
+
+                      <!-- Selected Product and Color (if applicable) -->
+                      <div
+                        v-if="getSelectedColor(index)"
+                        class="flex justify-between items-start pl-4 border-l-2 border-gray-200"
+                      >
+                        <div>
+                          <p class="text-sm text-gray-600">
+                            {{ getSelectedProduct(index)?.product?.nama }} -
+                            {{ getSelectedColor(index)?.nama }}
+                          </p>
+                        </div>
+                        <p class="text-sm font-medium text-gray-800">
+                          + Rp{{
+                            getAdditionalPrice(
+                              serviceId,
+                              index
+                            ).toLocaleString()
+                          }}
+                        </p>
+                      </div>
                     </div>
-                    <p class="text-sm font-medium text-gray-800">
-                      + Rp{{
-                        getAdditionalPrice(serviceId, index).toLocaleString()
-                      }}
-                    </p>
                   </div>
                 </div>
 
                 <div class="border-t border-gray-200 pt-4">
                   <div class="flex justify-between items-center">
                     <p class="font-semibold text-gray-800">Total</p>
-                    <p class="font-semibold text-gray-800">
+                    <p class="font-semibold text-xl text-gray-800">
                       Rp{{ totalPrice.toLocaleString() }}
                     </p>
                   </div>
+                  <div
+                    v-if="isCashlessSelected && paymentType === 'dp'"
+                    class="flex justify-between items-center mt-2 text-sm"
+                  >
+                    <p class="text-gray-600">Down Payment (50%)</p>
+                    <p class="font-medium text-gray-800">
+                      Rp{{ Math.round(totalPrice * 0.5).toLocaleString() }}
+                    </p>
+                  </div>
                 </div>
-              </div>
-
-              <div v-else class="text-center py-8">
-                <p class="text-gray-500">Select a service to see the summary</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="flex justify-end space-x-4 mt-8">
+        <!-- Navigation buttons -->
+        <div class="flex justify-between mt-8">
           <button
-            @click="close"
-            class="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200"
+            v-if="currentStep > 0"
+            @click="currentStep--"
+            class="px-6 py-3 border border-gray-300 rounded-xl text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200 flex items-center"
           >
-            Cancel
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 mr-2"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            Back
+          </button>
+          <div v-else class="w-24"></div>
+
+          <button
+            v-if="currentStep < steps.length - 1"
+            @click="nextStep"
+            class="px-6 py-3 bg-[#F97474] text-white rounded-xl font-medium hover:bg-[#ff5757] transition-all duration-200 flex items-center"
+            :disabled="!canProceedToNextStep"
+          >
+            Next
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 ml-2"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              />
+            </svg>
           </button>
           <button
+            v-else
             @click="submitBooking"
-            class="px-6 py-3 bg-[#F97474] text-white rounded-xl font-medium hover:bg-[#ff5757] transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:hover:scale-100"
+            class="px-6 py-3 bg-[#F97474] text-white rounded-xl font-medium hover:bg-[#ff5757] transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:hover:scale-100 flex items-center"
             :disabled="!isFormValid"
           >
-            Book Now
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 mr-2"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            Complete Booking
           </button>
         </div>
       </div>
@@ -470,6 +720,24 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["close", "submit"]);
+
+const steps = ["Date & Time", "Services", "Payment"];
+const currentStep = ref(0);
+
+const canProceedToNextStep = computed(() => {
+  if (currentStep.value === 0) {
+    return selectedDate.value && bookingTime.value;
+  } else if (currentStep.value === 1) {
+    return selectedServices.value.every((service) => service !== "");
+  }
+  return true;
+});
+
+const nextStep = () => {
+  if (currentStep.value < steps.length - 1 && canProceedToNextStep.value) {
+    currentStep.value++;
+  }
+};
 
 const selectedDate = ref(new Date());
 const bookingTime = ref("");
@@ -820,6 +1088,7 @@ const resetForm = () => {
   selectedColors.value = [];
   paymentMethod.value = "";
   paymentType.value = "";
+  currentStep.value = 0;
 };
 
 const onDateSelect = (date) => {
@@ -1053,8 +1322,7 @@ function ensureIndexExists(array, index) {
   position: relative;
   min-height: 400px;
   padding: 1rem;
-  margin-left: -30px;
-  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
   overflow: visible !important;
 }
 

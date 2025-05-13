@@ -1,46 +1,82 @@
 <template>
   <div class="relative flex items-center">
-    <img
+    <div
       @click="toggleDropdown"
-      src="~/assets/images/Danny.jpeg"
-      alt="Profile"
-      class="w-10 h-10 rounded-full cursor-pointer border-2 border-white hover:border-[#F97474] transition duration-300 z-10"
-    />
-
-    <!-- Arrow with rotation animation -->
-    <svg
-      @click="toggleDropdown"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      class="w-5 h-5 ml-2 mb-2 cursor-pointer text-white z-10 transition-transform duration-300"
-      :style="{
-        transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-        transformOrigin: 'center',
-      }"
+      class="flex items-center gap-2 cursor-pointer group"
     >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M19 15l-7 7-7-7"
+      <img
+        src="~/assets/images/Danny.jpeg"
+        alt="Profile"
+        class="w-10 h-10 rounded-full cursor-pointer border-2 border-white group-hover:border-[#F97474] transition duration-300 z-10 object-cover"
       />
-    </svg>
+
+      <!-- Arrow with rotation animation -->
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        class="w-5 h-5 text-white z-10 transition-transform duration-300"
+        :style="{
+          transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+          transformOrigin: 'center',
+        }"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M19 9l-7 7-7-7"
+        />
+      </svg>
+    </div>
 
     <!-- Dropdown menu -->
     <div
       v-if="isDropdownOpen"
-      class="absolute right-0 mt-35 w-40 bg-white rounded-lg shadow-lg z-50 text-gray-800"
+      class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl z-50 text-gray-800 overflow-hidden animate-fadeIn"
     >
-      <a href="/profile" class="block px-4 py-2 hover:bg-gray-100 transition">
+      <div class="py-2 px-4 border-b border-gray-100">
+        <p class="text-sm font-medium">{{ user?.username || "Guest" }}</p>
+        <p class="text-xs text-gray-500">
+          {{ user?.email || "Not logged in" }}
+        </p>
+      </div>
+      <a
+        href="/profile"
+        class="flex items-center gap-2 px-4 py-3 hover:bg-gray-50 transition"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 text-gray-400"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+            clip-rule="evenodd"
+          />
+        </svg>
         My Profile
       </a>
       <a
         href="#"
         @click.prevent="handleLogout"
-        class="block px-4 py-2 hover:bg-gray-100 transition"
+        class="flex items-center gap-2 px-4 py-3 hover:bg-gray-50 transition text-red-500"
       >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V7.414l-5-5H3zm7 5a1 1 0 10-2 0v4.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 12.586V8z"
+            clip-rule="evenodd"
+          />
+        </svg>
         Logout
       </a>
     </div>
@@ -87,5 +123,18 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-/* Optional: Add any other necessary styles */
+.animate-fadeIn {
+  animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-4 md:px-50 mb-30">
+  <div class="container mx-auto px-4 md:px-50 mb-30 py-10">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center relative">
       <!-- Left Section -->
       <div
@@ -9,7 +9,7 @@
         :enter="{ opacity: 1, y: 0, transition: { duration: 800 } }"
       >
         <p
-          class="text-[#696984] tracking-widest uppercase text-sm mb-2"
+          class="text-[#696984] tracking-widest uppercase text-sm mb-2 font-medium"
           v-motion-visible
           :initial="{ opacity: 0, x: -100 }"
           :enter="{
@@ -21,7 +21,7 @@
           Testimonial
         </p>
         <h2
-          class="text-[28px] md:text-[40px] font-medium text-[#f6339a] mb-4"
+          class="text-[28px] md:text-[40px] font-bold text-[#f6339a] mb-4 relative inline-block"
           v-motion-visible
           :initial="{ opacity: 0, x: -100 }"
           :enter="{
@@ -31,6 +31,9 @@
           }"
         >
           What They Say?
+          <span
+            class="absolute -bottom-2 left-0 w-1/2 h-1 bg-pink-200 rounded-full"
+          ></span>
         </h2>
         <p
           class="text-[#696984] font-normal mb-3 max-w-110 text-lg md:text-xl"
@@ -72,7 +75,7 @@
         </p>
         <button
           @click="openModal"
-          class="border border-pink-400 text-[#f6339a] px-6 py-2 rounded-full flex items-center gap-2 hover:bg-pink-50 transition-all duration-300"
+          class="group relative inline-flex items-center px-6 py-3 overflow-hidden rounded-full bg-white border border-pink-400 text-[#f6339a] shadow-md hover:shadow-lg transition-all duration-300"
           v-motion-visible
           :initial="{ opacity: 0, scale: 0.8 }"
           :enter="{
@@ -81,11 +84,18 @@
             transition: { duration: 800, delay: 700 },
           }"
         >
-          Write your experience
           <span
-            class="bg-[#f6339a] text-white w-7 h-7 flex items-center justify-center rounded-full"
-            >→</span
+            class="absolute w-0 h-full bg-[#f6339a] top-0 left-0 transition-all duration-300 group-hover:w-full"
+          ></span>
+          <span
+            class="relative flex items-center gap-2 group-hover:text-white transition-colors duration-300"
           >
+            Write your experience
+            <span
+              class="bg-[#f6339a] text-white w-7 h-7 flex items-center justify-center rounded-full group-hover:bg-white group-hover:text-[#f6339a] transition-colors duration-300"
+              >→</span
+            >
+          </span>
         </button>
       </div>
 
@@ -103,7 +113,7 @@
               :key="currentIndex"
               :src="testimonials[currentIndex].image"
               :alt="testimonials[currentIndex].name"
-              class="w-full md:w-[400px] h-[300px] md:h-[500px] object-cover rounded-2xl shadow-lg bg-blue-300"
+              class="w-full md:w-[400px] h-[300px] md:h-[500px] object-cover rounded-2xl shadow-xl bg-blue-300"
             />
           </Transition>
 
@@ -111,16 +121,25 @@
           <Transition name="slide-fade">
             <div
               :key="currentIndex"
-              class="absolute left-1/2 transform -translate-x-1/2 bg-white shadow-md rounded-xl p-4 md:p-5 w-[90%] md:w-[350px] z-10"
+              class="absolute left-1/2 transform -translate-x-1/2 bg-white shadow-xl rounded-xl p-6 w-[90%] md:w-[350px] z-10"
               :class="{ 'md:-bottom-15 -bottom-10': true }"
             >
-              <p class="text-gray-700 text-sm italic">
+              <div class="flex items-center mb-3">
+                <div
+                  class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center mr-3"
+                >
+                  <span class="text-[#f6339a] font-bold">{{
+                    testimonials[currentIndex].name.charAt(0)
+                  }}</span>
+                </div>
+                <p class="text-gray-900 font-bold">
+                  {{ testimonials[currentIndex].name }}
+                </p>
+              </div>
+              <p class="text-gray-700 text-sm italic mb-3">
                 "{{ testimonials[currentIndex].text }}"
               </p>
-              <p class="text-gray-900 font-bold mt-2">
-                {{ testimonials[currentIndex].name }}
-              </p>
-              <div class="flex text-[#f6339a] mt-1">
+              <div class="flex text-[#f6339a]">
                 <TransitionGroup name="star">
                   <span
                     v-for="star in testimonials[currentIndex].rating"
@@ -135,7 +154,7 @@
           <!-- Navigation Arrow -->
           <button
             @click="nextTestimonial"
-            class="absolute right-0 md:right-[-40px] top-1/2 transform -translate-y-1/2 bg-[#f6339a] text-white w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full shadow-md hover:bg-[#e56363] transition-colors duration-300 z-20"
+            class="absolute right-0 md:right-[-40px] top-1/2 transform -translate-y-1/2 bg-[#f6339a] text-white w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:bg-[#e56363] transition-colors duration-300 z-20"
           >
             →
           </button>

@@ -1,20 +1,24 @@
 <template>
-  <div class="transform transition-all duration-300 hover:scale-105">
+  <div class="transform transition-all duration-500 hover:scale-105 group">
     <div
-      class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] overflow-hidden backdrop-blur-sm"
+      class="bg-white rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] overflow-hidden backdrop-blur-sm hover:shadow-[0_15px_35px_rgba(0,0,0,0.12)]"
     >
-      <div class="relative">
+      <div class="relative overflow-hidden">
         <img
           :src="imageUrl"
           :alt="title"
-          class="w-full h-72 object-cover object-top"
+          class="w-full h-72 object-cover object-top transition-transform duration-700 group-hover:scale-110"
         />
         <div
-          class="absolute inset-0 bg-gradient-to-b from-transparent to-black/20"
+          class="absolute inset-0 bg-gradient-to-b from-transparent to-black/30 group-hover:opacity-80 transition-opacity duration-300"
         ></div>
       </div>
       <div class="p-6">
-        <h3 class="text-lg font-semibold mb-2 break-normal">{{ title }}</h3>
+        <h3
+          class="text-lg font-semibold mb-2 break-normal group-hover:text-[#f6339a] transition-colors duration-300"
+        >
+          {{ title }}
+        </h3>
         <p class="text-sm text-gray-600 break-words">{{ description }}</p>
       </div>
     </div>
