@@ -100,18 +100,6 @@
                   </button>
                 </div>
               </div>
-
-              <div class="mt-6">
-                <label class="block text-gray-700 text-sm font-medium mb-2"
-                  >Special Request</label
-                >
-                <textarea
-                  v-model="specialRequest"
-                  rows="3"
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
-                  placeholder="Leave a message for the salon"
-                ></textarea>
-              </div>
             </div>
           </div>
         </div>
@@ -312,6 +300,21 @@
                   </svg>
                   Tambah Service
                 </button>
+
+                <!-- Special Request Box -->
+                <div
+                  class="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100"
+                >
+                  <label class="block text-gray-700 font-medium mb-3">
+                    Special Request
+                  </label>
+                  <textarea
+                    v-model="specialRequest"
+                    rows="3"
+                    class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
+                    placeholder="Leave a message for the salon (optional)"
+                  ></textarea>
+                </div>
               </div>
             </div>
 
@@ -707,10 +710,10 @@ import { Calendar } from "v-calendar";
 import "v-calendar/style.css";
 import Cookies from "js-cookie";
 import { useRouter, useRoute } from "vue-router";
+const config = useRuntimeConfig();
 
 const router = useRouter();
 const route = useRoute();
-const config = useRuntimeConfig();
 
 const props = defineProps({
   isOpen: {

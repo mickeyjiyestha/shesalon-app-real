@@ -321,14 +321,14 @@
     <Teleport to="body">
       <div
         v-if="isRecommendationModalOpen && currentRecommendation"
-        class="fixed inset-0 z-[10000] flex items-center justify-center p-4"
+        class="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       >
         <div
-          class="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 w-full max-w-7xl shadow-2xl relative h-[90vh] sm:h-5/6"
+          class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 w-full max-w-5xl shadow-2xl relative max-h-[90vh] overflow-hidden"
         >
           <button
             @click="closeRecommendationModal"
-            class="absolute top-2 right-2 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 transition-colors duration-300 p-1.5 sm:p-2 hover:bg-gray-100 rounded-full z-20"
+            class="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 transition-colors duration-300 p-1.5 sm:p-2 hover:bg-gray-100 rounded-full z-20"
           >
             <svg
               class="w-5 h-5 sm:w-6 sm:h-6"
@@ -358,175 +358,99 @@
             </p>
           </div>
 
-          <div class="h-[calc(100%-8rem)] relative">
-            <!-- Single Card View (Mobile) -->
-            <div class="block sm:hidden h-full">
-              <div class="h-full flex flex-col">
-                <div class="flex-1 relative">
-                  <div class="h-full">
-                    <div
-                      class="bg-white rounded-xl shadow-xl overflow-hidden h-full flex flex-col"
-                    >
-                      <div class="relative flex-1" style="min-height: 60%">
-                        <img
-                          :src="currentRecommendation.image"
-                          :alt="currentRecommendation.name"
-                          class="w-full h-full object-cover"
-                        />
-                        <div
-                          class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"
-                        ></div>
-                      </div>
-                      <div class="p-4 bg-gradient-to-b from-white to-pink-50">
-                        <h5 class="text-xl font-bold text-[#db2777] mb-2">
-                          {{ currentRecommendation.name }}
-                        </h5>
-                        <p class="text-gray-700 text-sm leading-relaxed">
-                          {{ currentRecommendation.description }}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Mobile Navigation Buttons -->
-                  <button
-                    @click="showPreviousRecommendation"
-                    class="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white/80 text-[#f6339a] rounded-full shadow-lg transition-all duration-300 disabled:opacity-30 z-10"
-                    :disabled="currentRecommendationIndex === 0"
-                  >
-                    <svg
-                      class="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M15 19l-7-7 7-7"
-                      ></path>
-                    </svg>
-                  </button>
-                  <button
-                    @click="showNextRecommendation"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/80 text-[#f6339a] rounded-full shadow-lg transition-all duration-300 disabled:opacity-30 z-10"
-                    :disabled="
-                      currentRecommendationIndex === recommendations.length - 1
-                    "
-                  >
-                    <svg
-                      class="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 5l7 7-7 7"
-                      ></path>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Desktop Carousel -->
-            <div class="hidden sm:block h-full px-12">
-              <div class="relative h-full flex items-center">
+          <!-- Recommendation Carousel -->
+          <div class="relative px-8 sm:px-12 overflow-hidden">
+            <!-- Mobile & Desktop Carousel -->
+            <div class="relative">
+              <div
+                class="flex transition-transform duration-500 ease-in-out"
+                :style="{
+                  transform: `translateX(-${
+                    currentRecommendationIndex * 100
+                  }%)`,
+                }"
+              >
                 <div
-                  class="flex transition-transform duration-500 ease-in-out"
-                  :style="{
-                    transform: `translateX(calc(50% - ${
-                      (currentRecommendationIndex + 0.5) * (100 / 3)
-                    }%))`,
-                  }"
+                  v-for="(recommendation, index) in recommendations"
+                  :key="recommendation.id"
+                  class="w-full flex-shrink-0 px-2 sm:px-4"
                 >
-                  <div
-                    v-for="(recommendation, index) in recommendations"
-                    :key="recommendation.id"
-                    class="w-1/3 flex-shrink-0 px-4 transition-all duration-500"
-                    :class="{
-                      'scale-100 opacity-100 z-10':
-                        index === currentRecommendationIndex,
-                      'scale-90 opacity-50':
-                        index !== currentRecommendationIndex,
-                    }"
-                  >
+                  <div class="flex flex-col items-center">
                     <div
-                      class="bg-white rounded-2xl shadow-xl overflow-hidden h-full"
+                      class="bg-white rounded-xl shadow-lg overflow-hidden w-full max-w-md mx-auto"
                     >
-                      <div class="relative" style="aspect-ratio: 3/4">
+                      <div class="relative aspect-[3/4] w-full">
                         <img
                           :src="recommendation.image"
                           :alt="recommendation.name"
-                          class="w-full h-full object-cover"
+                          class="w-full h-full object-cover object-center"
                         />
-                        <div
-                          class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"
-                        ></div>
                       </div>
-                      <div class="p-6 bg-gradient-to-b from-white to-pink-50">
-                        <h5 class="text-2xl font-bold text-[#db2777] mb-3">
+                      <div
+                        class="p-4 sm:p-6 bg-gradient-to-b from-white to-pink-50"
+                      >
+                        <h5
+                          class="text-xl sm:text-2xl font-bold text-[#db2777] mb-2 sm:mb-3 text-center"
+                        >
                           {{ recommendation.name }}
                         </h5>
-                        <p class="text-gray-700 text-base leading-relaxed">
+                        <p
+                          class="text-gray-700 text-sm sm:text-base leading-relaxed"
+                        >
                           {{ recommendation.description }}
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
-
-                <!-- Desktop Navigation Arrows -->
-                <button
-                  @click="showPreviousRecommendation"
-                  class="absolute -left-2 top-1/2 -translate-y-1/2 p-2 text-[#f6339a] hover:bg-pink-500 rounded-full transition-all duration-300 disabled:opacity-30"
-                  :disabled="currentRecommendationIndex === 0"
-                >
-                  <svg
-                    class="w-10 h-10"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M15 19l-7-7 7-7"
-                    ></path>
-                  </svg>
-                </button>
-                <button
-                  @click="showNextRecommendation"
-                  class="absolute -right-2 top-1/2 -translate-y-1/2 p-2 text-[#f6339a] hover:bg-pink-500 rounded-full transition-all duration-300 disabled:opacity-30"
-                  :disabled="
-                    currentRecommendationIndex === recommendations.length - 1
-                  "
-                >
-                  <svg
-                    class="w-10 h-10"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M9 5l7 7-7 7"
-                    ></path>
-                  </svg>
-                </button>
               </div>
+
+              <!-- Navigation Arrows -->
+              <button
+                @click="showPreviousRecommendation"
+                class="absolute left-0 top-1/2 -translate-y-1/2 p-2 bg-white/90 text-[#f6339a] rounded-full shadow-lg transition-all duration-300 disabled:opacity-30 z-10 hover:bg-pink-50"
+                :disabled="currentRecommendationIndex === 0"
+              >
+                <svg
+                  class="w-6 h-6 sm:w-8 sm:h-8"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 19l-7-7 7-7"
+                  ></path>
+                </svg>
+              </button>
+              <button
+                @click="showNextRecommendation"
+                class="absolute right-0 top-1/2 -translate-y-1/2 p-2 bg-white/90 text-[#f6339a] rounded-full shadow-lg transition-all duration-300 disabled:opacity-30 z-10 hover:bg-pink-50"
+                :disabled="
+                  currentRecommendationIndex === recommendations.length - 1
+                "
+              >
+                <svg
+                  class="w-6 h-6 sm:w-8 sm:h-8"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  ></path>
+                </svg>
+              </button>
             </div>
           </div>
 
           <!-- Navigation Dots -->
-          <div class="flex justify-center mt-4 gap-2">
+          <div class="flex justify-center mt-6 gap-2">
             <button
               v-for="(_, index) in recommendations"
               :key="index"
@@ -537,16 +461,17 @@
                   ? 'bg-[#f6339a] scale-125'
                   : 'bg-gray-300 hover:bg-gray-400',
               ]"
+              :aria-label="`View hairstyle ${index + 1}`"
             ></button>
           </div>
         </div>
-      </div> 
+      </div>
     </Teleport>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { useNuxtApp } from "#app";
 
@@ -568,6 +493,7 @@ const activeTab = ref("camera");
 const uploadedImage = ref(null);
 const isDragging = ref(false);
 let animationFrameId = null;
+let cameraInitialized = false; // Flag to track camera initialization
 
 const currentRecommendation = computed(() => {
   if (recommendations.value.length === 0) return null;
@@ -674,8 +600,10 @@ const openModal = async () => {
   activeTab.value = "camera";
   uploadedImage.value = null;
 
-  if (activeTab.value === "camera") {
-    initializeCamera();
+  // Initialize camera only if it hasn't been initialized before
+  if (activeTab.value === "camera" && !cameraInitialized) {
+    await initializeCamera();
+    cameraInitialized = true; // Set the flag to true after initialization
   }
 };
 
@@ -709,11 +637,13 @@ const closeModal = () => {
   isModalOpen.value = false;
   if (stream.value) {
     stream.value.getTracks().forEach((track) => track.stop());
+    stream.value = null; // Also set stream.value to null
   }
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
   }
   uploadedImage.value = null;
+  cameraInitialized = false; // Reset the flag when closing the modal
 };
 
 const drawFaceShape = (ctx, detection) => {
@@ -943,13 +873,15 @@ const clearUploadedImage = () => {
 
 // Watch for tab changes to initialize camera or clean up
 watch(activeTab, (newTab) => {
-  if (newTab === "camera" && !stream.value) {
+  if (newTab === "camera" && !stream.value && !cameraInitialized) {
     initializeCamera();
+    cameraInitialized = true;
   } else if (newTab === "upload") {
     // Stop camera stream when switching to upload tab
     if (stream.value) {
       stream.value.getTracks().forEach((track) => track.stop());
       stream.value = null;
+      cameraInitialized = false;
     }
     scanningStatus.value = "";
   }
@@ -966,10 +898,10 @@ onBeforeUnmount(() => {
 });
 
 // Make sure to import watch
-import { watch } from "vue";
 </script>
 
 <style scoped>
+/* Enhanced styling for face scanner */
 .face-scanner {
   width: 100%;
   display: flex;
@@ -979,8 +911,13 @@ import { watch } from "vue";
 
 .scan-button {
   min-width: 160px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  box-shadow: 0 4px 12px rgba(246, 51, 154, 0.25);
   @media (min-width: 640px) {
     min-width: 200px;
+    padding: 0.875rem 1.75rem;
   }
 }
 
@@ -993,6 +930,133 @@ import { watch } from "vue";
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+/* Improved camera guide */
+.absolute.inset-0.flex.items-center.justify-center.bg-white\/70.backdrop-blur-sm {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+/* Enhanced loading animation */
+.animate-spin.rounded-full.h-10.w-10.sm\:h-12.sm\:w-12.border-4.border-t-\[#f6339a\].border-gray-200.mb-3.sm\:mb-4 {
+  box-shadow: 0 0 15px rgba(246, 51, 154, 0.3);
+}
+
+/* Improved recommendation cards */
+.bg-white.rounded-2xl.shadow-xl.overflow-hidden.h-full {
+  border: 1px solid rgba(246, 51, 154, 0.1);
+  transition: all 0.3s ease;
+}
+
+.bg-white.rounded-2xl.shadow-xl.overflow-hidden.h-full:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(246, 51, 154, 0.2);
+}
+
+/* Enhanced navigation buttons */
+.absolute.-left-2.top-1\/2.-translate-y-1\/2.p-2.text-\[#f6339a\].hover\:bg-pink-500.rounded-full.transition-all.duration-300.disabled\:opacity-30,
+.absolute.-right-2.top-1\/2.-translate-y-1\/2.p-2.text-\[#f6339a\].hover\:bg-pink-500.rounded-full.transition-all.duration-300.disabled\:opacity-30 {
+  background: white;
+  box-shadow: 0 4px 12px rgba(246, 51, 154, 0.2);
+}
+
+.absolute.-left-2.top-1\/2.-translate-y-1\/2.p-2.text-\[#f6339a\].hover\:bg-pink-500.rounded-full.transition-all.duration-300.disabled\:opacity-30:hover,
+.absolute.-right-2.top-1\/2.-translate-y-1\/2.p-2.text-\[#f6339a\].hover\:bg-pink-500.rounded-full.transition-all.duration-300.disabled\:opacity-30:hover {
+  background: rgba(246, 51, 154, 0.1);
+}
+
+.fixed.inset-0.z-\[9999\].flex.items-center.justify-center.p-4 {
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.bg-white\/95.backdrop-blur-sm.rounded-2xl.sm\:rounded-3xl.p-4.sm\:p-6.md\:p-8.w-full.max-w-2xl.shadow-2xl.transform.transition-all.duration-300.max-h-\[90vh\].overflow-y-auto {
+  border: 1px solid rgba(246, 51, 154, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(246, 51, 154, 0.25);
+}
+
+.relative.mb-4.sm\:mb-6.rounded-xl.sm\:rounded-2xl.overflow-hidden.shadow-xl.bg-gray-100 {
+  border: 2px solid rgba(246, 51, 154, 0.1);
+  box-shadow: 0 10px 25px -5px rgba(246, 51, 154, 0.2);
+}
+
+.rounded-xl.sm\:rounded-2xl.overflow-hidden.shadow-xl.bg-gray-100.transition-all.duration-300 {
+  border: 2px solid rgba(246, 51, 154, 0.1);
+  box-shadow: 0 10px 25px -5px rgba(246, 51, 154, 0.2);
+}
+
+.inline-flex.rounded-full.p-1.bg-gray-100 {
+  padding: 0.25rem;
+  background: rgba(246, 51, 154, 0.1);
+  box-shadow: 0 2px 8px -2px rgba(246, 51, 154, 0.15);
+}
+
+.px-4.sm\:px-6.py-2.rounded-full.transition-all.duration-300.text-sm.sm\:text-base {
+  font-weight: 500;
+}
+
+.fixed.inset-0.z-\[10000\].flex.items-center.justify-center.p-4 {
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+}
+
+.bg-white\/95.backdrop-blur-sm.rounded-2xl.sm\:rounded-3xl.p-4.sm\:p-6.md\:p-8.w-full.max-w-7xl.shadow-2xl.relative.h-\[90vh\].sm\:h-5\/6 {
+  border: 1px solid rgba(246, 51, 154, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(246, 51, 154, 0.3);
+}
+
+.text-xl.sm\:text-2xl.md\:text-3xl.font-bold.bg-gradient-to-r.from-\[#f6339a\].to-\[#db2777\].bg-clip-text.text-transparent {
+  background-size: 200% auto;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+  100% {
+    background-position: 0% center;
+  }
+}
+
+/* Enhanced recommendation modal */
+.fixed.inset-0.z-\[10000\].flex.items-center.justify-center.p-4.bg-black\/60.backdrop-blur-sm {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.bg-white.rounded-xl.shadow-lg.overflow-hidden.w-full.max-w-md.mx-auto {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.bg-white.rounded-xl.shadow-lg.overflow-hidden.w-full.max-w-md.mx-auto:hover {
+  transform: translateY(-5px);
+}
+
+.relative.aspect-\[3\/4\].w-full {
+  overflow: hidden;
+}
+
+.relative.aspect-\[3\/4\].w-full img {
+  transition: transform 0.5s ease;
+}
+
+.relative.aspect-\[3\/4\].w-full:hover img {
+  transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 </style>
