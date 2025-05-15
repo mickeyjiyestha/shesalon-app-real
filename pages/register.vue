@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
+// Initialize router outside of any conditional blocks
 const router = useRouter();
 
 // State untuk input

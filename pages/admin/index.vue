@@ -301,7 +301,6 @@ import {
 } from "@heroicons/vue/24/outline";
 import { ref, onMounted } from "vue";
 import Cookies from "js-cookie";
-import socket from "~/plugins/socket";
 
 definePageMeta({
   layout: false,
@@ -370,8 +369,5 @@ const fetchDashboardData = async () => {
 
 onMounted(() => {
   fetchDashboardData();
-  socket.on("update-dashboard", (newData) => {
-    this.dashboardData = newData;
-  });
 });
 </script>
