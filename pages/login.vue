@@ -5,6 +5,7 @@ import Cookies from "js-cookie"; // Import js-cookie
 const username = ref("");
 const password = ref("");
 const config = useRuntimeConfig();
+console.log(config.public.apiBaseUrl);
 const router = useRouter();
 const login = async () => {
   try {

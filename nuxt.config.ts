@@ -2,7 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
-
+  ssr: false,
   vite: {
     plugins: [tailwindcss()],
   },
@@ -15,6 +15,11 @@ export default defineNuxtConfig({
           defer: true,
         },
       ],
+    },
+  },
+  nitro: {
+    firebase: {
+      gen: 2,
     },
   },
   compatibilityDate: "2025-04-21",
