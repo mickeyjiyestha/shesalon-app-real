@@ -156,11 +156,13 @@ const logoutUser = async () => {
     }
 
     Cookies.remove("token");
+    Cookies.remove("user");
     user.value = null;
     router.push("/login");
   } catch (error) {
     console.error("Logout error:", error);
     Cookies.remove("token");
+    Cookies.remove("user");
     router.push("/login");
   }
 };
@@ -180,6 +182,10 @@ const scrollToBooking = () => {
     openBookingModal();
   }
 };
+
+definePageMeta({
+  middleware: ["auth"], // Apply auth middleware to this page
+});
 
 onMounted(() => {
   fetchUser();

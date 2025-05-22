@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useRuntimeConfig } from "#app";
 
 // Initialize router outside of any conditional blocks
 const router = useRouter();
+const config = useRuntimeConfig();
 
 // State untuk input
 const fullname = ref("");
@@ -40,7 +42,7 @@ const registerUser = async () => {
 
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/api/auth/register`,
+      `${config.public.apiBaseUrl}/api/auth/register`,
       {
         method: "POST",
         headers: {
@@ -76,6 +78,10 @@ const registerUser = async () => {
     errorMessage.value = error.message;
   }
 };
+
+definePageMeta({
+  middleware: "guest", // Apply guest middleware to register page
+});
 </script>
 
 <template>

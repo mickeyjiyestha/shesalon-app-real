@@ -487,28 +487,23 @@
                   v-if="isCashlessSelected"
                   class="mt-6 p-4 border border-gray-200 rounded-xl bg-gray-50"
                 >
-                  <label class="block text-gray-700 font-medium mb-3"
-                    >Payment Type</label
-                  >
-                  <div class="flex space-x-6">
-                    <label class="inline-flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        v-model="paymentType"
-                        value="dp"
-                        class="form-radio text-[#F97474] focus:ring-[#F97474] h-5 w-5"
+                  <div class="flex items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5 text-[#F97474] mr-2"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clip-rule="evenodd"
                       />
-                      <span class="ml-2">Down Payment</span>
-                    </label>
-                    <label class="inline-flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        v-model="paymentType"
-                        value="lunas"
-                        class="form-radio text-[#F97474] focus:ring-[#F97474] h-5 w-5"
-                      />
-                      <span class="ml-2">Full Payment</span>
-                    </label>
+                    </svg>
+                    <p class="text-sm font-medium text-gray-700">
+                      Pembayaran cashless hanya untuk Down Payment (30% dari
+                      total)
+                    </p>
                   </div>
                 </div>
               </div>
@@ -604,12 +599,12 @@
                     </p>
                   </div>
                   <div
-                    v-if="isCashlessSelected && paymentType === 'dp'"
+                    v-if="isCashlessSelected"
                     class="flex justify-between items-center mt-2 text-sm"
                   >
-                    <p class="text-gray-600">Down Payment (50%)</p>
+                    <p class="text-gray-600">Down Payment (30%)</p>
                     <p class="font-medium text-gray-800">
-                      Rp{{ Math.round(totalPrice * 0.5).toLocaleString() }}
+                      Rp{{ Math.round(totalPrice * 0.3).toLocaleString() }}
                     </p>
                   </div>
                 </div>
@@ -710,8 +705,9 @@ import { Calendar } from "v-calendar";
 import "v-calendar/style.css";
 import Cookies from "js-cookie";
 import { useRouter, useRoute } from "vue-router";
-const config = useRuntimeConfig();
+import { useRuntimeConfig } from "#app";
 
+const config = useRuntimeConfig();
 const router = useRouter();
 const route = useRoute();
 
@@ -747,7 +743,6 @@ const bookingTime = ref("");
 const selectedServices = ref([""]);
 const isServicesLoaded = ref(false);
 const paymentMethod = ref("");
-const paymentType = ref("");
 const services = ref([]);
 const paymentMethods = ref([]);
 const selectedBrands = ref([]);
@@ -956,7 +951,6 @@ const handleMidtransCallback = async (event) => {
     showMidtransModal.value = false;
     selectedServices.value = [""];
     paymentMethod.value = "";
-    paymentType.value = "";
     bookingTime.value = "";
     selectedDate.value = new Date();
 
@@ -1010,8 +1004,7 @@ const isFormValid = computed(() => {
     selectedDate.value &&
     bookingTime.value &&
     selectedServices.value.every((service) => service !== "") &&
-    paymentMethod.value &&
-    (!isCashlessSelected.value || paymentType.value)
+    paymentMethod.value
   );
 });
 
@@ -1051,7 +1044,7 @@ const createMidtransTransaction = async (bookingId) => {
       body: JSON.stringify({
         booking_id: bookingId,
         kategori_transaksi_id: isCashlessSelected.value ? 2 : 1,
-        ...(isCashlessSelected.value && { is_dp: paymentType.value === "dp" }),
+        ...(isCashlessSelected.value && { is_dp: true }),
       }),
     });
 
@@ -1090,7 +1083,6 @@ const resetForm = () => {
   selectedProducts.value = [];
   selectedColors.value = [];
   paymentMethod.value = "";
-  paymentType.value = "";
   currentStep.value = 0;
 };
 
@@ -1269,10 +1261,6 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener("message", handleMidtransCallback);
-});
-
-watch(paymentMethod, () => {
-  paymentType.value = "";
 });
 
 watch(

@@ -2,10 +2,10 @@
 
 /* Custom styles */
 :root {
-  --primary: #FF69B4;
-  --primary-dark: #FF1493;
-  --secondary: #FFC0CB;
-  --accent: #FFB6C1;
+  --primary: #ff69b4;
+  --primary-dark: #ff1493;
+  --secondary: #ffc0cb;
+  --accent: #ffb6c1;
 }
 
 body {
@@ -13,7 +13,12 @@ body {
   line-height: 1.6;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   line-height: 1.2;
 }
 

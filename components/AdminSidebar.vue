@@ -1,21 +1,9 @@
 <template>
-  <div
-    class="bg-white border-r border-gray-200 w-64 md:w-64 h-screen fixed md:static z-30 overflow-y-auto"
-  >
-    <div class="flex items-center justify-between px-4 py-4 md:mb-8">
-      <div class="flex items-center gap-2">
-        <div
-          class="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center"
-        >
-          <span class="text-pink-500">👩</span>
-        </div>
-        <span class="text-lg font-semibold">Admin</span>
-      </div>
-      <!-- Close button for mobile -->
-      <button @click="$emit('close')" class="md:hidden text-gray-500">
-        <XMarkIcon class="w-6 h-6" />
-      </button>
+  <div class="flex flex-col h-full bg-white shadow-md w-64">
+    <div class="px-6 py-4">
+      <h1 class="text-xl font-semibold">Admin Panel</h1>
     </div>
+
     <nav class="space-y-1 px-2">
       <NuxtLink
         v-for="item in menuItems"
@@ -27,7 +15,27 @@
         <component :is="item.icon" class="w-5 h-5 mr-3" />
         {{ item.name }}
       </NuxtLink>
+
+      <!-- Logout Button -->
+      <button
+        @click="logout"
+        class="flex items-center px-4 py-2 mt-4 text-red-600 rounded-lg hover:bg-gray-100 transition-colors w-full text-left"
+      >
+        <ArrowRightOnRectangleIcon class="w-5 h-5 mr-3" />
+        Logout
+      </button>
     </nav>
+
+    <!-- Logout Button at bottom of sidebar -->
+    <!-- <div class="mt-auto pt-4 border-t border-gray-200">
+      <button 
+        @click="logout" 
+        class="flex items-center gap-3 px-4 py-3 w-full text-left text-red-600 hover:bg-gray-100 transition-colors"
+      >
+        <ArrowRightOnRectangleIcon class="w-5 h-5" />
+        <span>Logout</span>
+      </button>
+    </div> -->
   </div>
 </template>
 
@@ -41,8 +49,12 @@ import {
   BanknotesIcon,
   ClipboardDocumentCheckIcon,
   XMarkIcon,
+  ArrowRightOnRectangleIcon,
 } from "@heroicons/vue/24/outline";
+import { useRouter, useRoute } from "vue-router";
+import { useCookie } from "#app";
 
+const router = useRouter();
 const props = defineProps({
   isOpen: Boolean,
 });
@@ -68,6 +80,13 @@ const route = useRoute();
 
 const isCurrentPath = (path) => {
   return route.path === path;
+};
+
+// Logout function
+const logout = () => {
+  const token = useCookie("token");
+  token.value = null;
+  router.push("/login");
 };
 
 // Import the calendar icon that was missing in your original code

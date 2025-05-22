@@ -1,3 +1,87 @@
+<script setup>
+import {
+  LinkIcon,
+  EyeIcon,
+  FunnelIcon,
+  CalendarIcon,
+  Squares2X2Icon,
+  Bars3Icon,
+} from "@heroicons/vue/24/outline";
+import { ref, onMounted } from "vue";
+import Cookies from "js-cookie";
+
+const config = useRuntimeConfig();
+
+definePageMeta({
+  layout: false,
+  middleware: ["auth"], // Apply auth middleware specifically to this page
+});
+
+const sidebarOpen = ref(false);
+const loading = ref(true);
+const error = ref(null);
+const dashboardData = ref({
+  title: "",
+  stats: {
+    revenue: { total: "0", percentage: 0, period: "" },
+    completedOrders: { total: 0, percentage: 0, period: "" },
+    activeCustomers: { total: 0, percentage: 0, period: "" },
+  },
+  recentTransactions: [],
+});
+
+const toggleSidebar = () => {
+  sidebarOpen.value = !sidebarOpen.value;
+};
+
+const formatCurrency = (value) => {
+  return parseFloat(value).toLocaleString("id-ID");
+};
+
+const fetchDashboardData = async () => {
+  loading.value = true;
+  error.value = null;
+
+  try {
+    const token = Cookies.get("token");
+
+    if (!token) {
+      throw new Error("Authentication token not found");
+    }
+
+    const response = await fetch(
+      `${config.public.apiBaseUrl}/api/admin/dashboard`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "69420",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to fetch dashboard data");
+    }
+
+    const data = await response.json();
+    dashboardData.value = data;
+  } catch (err) {
+    console.error("Error fetching dashboard data:", err);
+    error.value =
+      err.message || "An error occurred while fetching dashboard data";
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchDashboardData();
+});
+</script>
+
 <template>
   <div
     class="flex flex-col md:flex-row h-screen bg-gray-50"
@@ -289,85 +373,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import {
-  LinkIcon,
-  EyeIcon,
-  FunnelIcon,
-  CalendarIcon,
-  Squares2X2Icon,
-  Bars3Icon,
-} from "@heroicons/vue/24/outline";
-import { ref, onMounted } from "vue";
-import Cookies from "js-cookie";
-
-definePageMeta({
-  layout: false,
-});
-
-const sidebarOpen = ref(false);
-const loading = ref(true);
-const config = useRuntimeConfig();
-const error = ref(null);
-const dashboardData = ref({
-  title: "",
-  stats: {
-    revenue: { total: "0", percentage: 0, period: "" },
-    completedOrders: { total: 0, percentage: 0, period: "" },
-    activeCustomers: { total: 0, percentage: 0, period: "" },
-  },
-  recentTransactions: [],
-});
-
-const toggleSidebar = () => {
-  sidebarOpen.value = !sidebarOpen.value;
-};
-
-const formatCurrency = (value) => {
-  return parseFloat(value).toLocaleString("id-ID");
-};
-
-const fetchDashboardData = async () => {
-  loading.value = true;
-  error.value = null;
-
-  try {
-    const token = Cookies.get("token");
-
-    if (!token) {
-      throw new Error("Authentication token not found");
-    }
-
-    const response = await fetch(
-      `${config.public.apiBaseUrl}/api/admin/dashboard`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "69420",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to fetch dashboard data");
-    }
-
-    const data = await response.json();
-    dashboardData.value = data;
-  } catch (err) {
-    console.error("Error fetching dashboard data:", err);
-    error.value =
-      err.message || "An error occurred while fetching dashboard data";
-  } finally {
-    loading.value = false;
-  }
-};
-
-onMounted(() => {
-  fetchDashboardData();
-});
-</script>

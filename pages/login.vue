@@ -2,6 +2,9 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import Cookies from "js-cookie"; // Import js-cookie
+import { useRuntimeConfig } from "#app";
+import { definePageMeta } from "#imports";
+
 const username = ref("");
 const password = ref("");
 const config = useRuntimeConfig();
@@ -45,6 +48,10 @@ const login = async () => {
     alert(error.message || "An error occurred while login");
   }
 };
+
+definePageMeta({
+  middleware: "guest", // We'll create this middleware to allow only non-authenticated users
+});
 </script>
 <template>
   <AuthLayout>
