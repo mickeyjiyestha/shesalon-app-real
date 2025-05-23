@@ -1,193 +1,195 @@
 <template>
-  <div
-    class="min-h-screen bg-gradient-to-br from-white to-pink-50 flex items-center justify-center p-4"
-  >
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden">
-      <!-- Status Header -->
-      <div
-        class="p-6 text-center"
-        :class="{
-          'bg-gradient-to-r from-green-500 to-green-600':
-            paymentStatus === 'settlement' || paymentStatus === 'capture',
-          'bg-gradient-to-r from-yellow-500 to-yellow-600':
-            paymentStatus === 'pending',
-          'bg-gradient-to-r from-red-500 to-red-600':
-            paymentStatus === 'deny' ||
-            paymentStatus === 'cancel' ||
-            paymentStatus === 'expire',
-          'bg-gradient-to-r from-pink-500 to-pink-600': !paymentStatus,
-        }"
-      >
-        <div
-          class="w-20 h-20 mx-auto mb-4 bg-white rounded-full flex items-center justify-center"
-        >
-          <svg
-            v-if="paymentStatus === 'settlement' || paymentStatus === 'capture'"
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-12 w-12 text-green-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-          <svg
-            v-else-if="paymentStatus === 'pending'"
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-12 w-12 text-yellow-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <svg
-            v-else-if="
-              paymentStatus === 'deny' ||
-              paymentStatus === 'cancel' ||
-              paymentStatus === 'expire'
-            "
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-12 w-12 text-red-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-          <svg
-            v-else
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-12 w-12 text-pink-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
+  <div class="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div
+      class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl"
+    >
+      <div class="p-8">
+        <div class="flex justify-center mb-6">
+          <img src="/favicon.ico" alt="Logo" class="h-16 w-16" />
         </div>
-        <h2 class="text-2xl font-bold text-white mb-2">
-          {{ statusTitle }}
-        </h2>
-        <p class="text-white/90">
-          {{ statusMessage }}
-        </p>
-      </div>
 
-      <!-- Payment Details -->
-      <div class="p-6">
-        <div v-if="loading" class="flex justify-center py-8">
+        <div v-if="loading" class="text-center py-8">
           <div
-            class="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"
+            class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"
           ></div>
+          <p class="mt-4 text-gray-600">Memuat detail pembayaran...</p>
+        </div>
+
+        <div v-else-if="error" class="text-center py-8">
+          <div class="text-red-500 text-xl mb-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-12 w-12 mx-auto"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+          </div>
+          <h2 class="text-xl font-bold text-gray-800 mb-2">
+            Terjadi Kesalahan
+          </h2>
+          <p class="text-gray-600">{{ error }}</p>
+          <button
+            @click="getPaymentData"
+            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Coba Lagi
+          </button>
         </div>
 
         <div v-else>
-          <div class="mb-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">
-              Payment Details
-            </h3>
-            <div class="space-y-3">
-              <div
-                class="flex justify-between items-center pb-2 border-b border-gray-100"
+          <div class="text-center mb-6">
+            <div
+              v-if="paymentData.transaction_status === 'settlement'"
+              class="text-green-500 text-xl mb-4"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-12 w-12 mx-auto"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <span class="text-gray-600">Order ID</span>
-                <span class="font-medium">{{ orderId || "-" }}</span>
-              </div>
-
-              <!-- Total Price Section -->
-              <div
-                class="flex justify-between items-center pb-2 border-b border-gray-100"
-              >
-                <span class="text-gray-600">Total Price</span>
-                <span class="font-medium text-gray-800"
-                  >Rp {{ formatCurrency(totalPrice) }}</span
-                >
-              </div>
-
-              <!-- Down Payment Amount -->
-              <div
-                v-if="isDownPayment"
-                class="flex justify-between items-center pb-2 border-b border-gray-100"
-              >
-                <span class="text-gray-600">Down Payment (30%)</span>
-                <span class="font-medium text-pink-600"
-                  >Rp {{ formatCurrency(amount) }}</span
-                >
-              </div>
-
-              <!-- Amount Paid -->
-              <div
-                class="flex justify-between items-center pb-2 border-b border-gray-100"
-              >
-                <span class="text-gray-600 font-medium">Amount Paid</span>
-                <span class="font-bold text-lg"
-                  >Rp {{ formatCurrency(amount) }}</span
-                >
-              </div>
-
-              <!-- Remaining Payment (if applicable) -->
-              <div
-                v-if="isDownPayment"
-                class="flex justify-between items-center pb-2 border-b border-gray-100 bg-gray-50 p-2 rounded-lg"
-              >
-                <span class="text-gray-600">Remaining Payment</span>
-                <span class="font-medium text-gray-800"
-                  >Rp {{ formatCurrency(remainingAmount) }}</span
-                >
-              </div>
-
-              <div
-                class="flex justify-between items-center pb-2 border-b border-gray-100"
-              >
-                <span class="text-gray-600">Payment Method</span>
-                <span class="font-medium">{{
-                  paymentMethod || "Online Payment"
-                }}</span>
-              </div>
-              <div
-                class="flex justify-between items-center pb-2 border-b border-gray-100"
-              >
-                <span class="text-gray-600">Transaction Time</span>
-                <span class="font-medium">{{
-                  formatDateTime(transactionTime)
-                }}</span>
-              </div>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
             </div>
+            <div
+              v-else-if="paymentData.transaction_status === 'pending'"
+              class="text-yellow-500 text-xl mb-4"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-12 w-12 mx-auto"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <div v-else class="text-red-500 text-xl mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-12 w-12 mx-auto"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </div>
+
+            <h2 class="text-2xl font-bold text-gray-800">
+              {{ getStatusTitle(paymentData.transaction_status) }}
+            </h2>
           </div>
 
-          <div class="space-y-4">
+          <div class="border-t border-gray-200 pt-4">
+            <dl>
+              <div
+                class="bg-gray-50 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-t-lg"
+              >
+                <dt class="text-sm font-medium text-gray-500">Order ID</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                  {{ paymentData.order_id }}
+                </dd>
+              </div>
+              <div
+                class="bg-white px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+              >
+                <dt class="text-sm font-medium text-gray-500">Jumlah</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                  Rp {{ formatCurrency(paymentData.gross_amount) }}
+                </dd>
+              </div>
+              <div
+                class="bg-gray-50 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+              >
+                <dt class="text-sm font-medium text-gray-500">
+                  Metode Pembayaran
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                  {{
+                    formatPaymentMethod(paymentData.payment_type, paymentData)
+                  }}
+                </dd>
+              </div>
+              <div
+                class="bg-white px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+              >
+                <dt class="text-sm font-medium text-gray-500">
+                  Waktu Transaksi
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                  {{ formatDate(paymentData.transaction_time) }}
+                </dd>
+              </div>
+              <div
+                v-if="paymentData.settlement_time"
+                class="bg-gray-50 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+              >
+                <dt class="text-sm font-medium text-gray-500">
+                  Waktu Pembayaran
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                  {{ formatDate(paymentData.settlement_time) }}
+                </dd>
+              </div>
+              <div
+                v-if="
+                  paymentData.va_numbers && paymentData.va_numbers.length > 0
+                "
+                class="bg-white px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+              >
+                <dt class="text-sm font-medium text-gray-500">
+                  Virtual Account
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                  {{ paymentData.va_numbers[0].bank.toUpperCase() }}:
+                  {{ paymentData.va_numbers[0].va_number }}
+                </dd>
+              </div>
+              <div
+                class="bg-gray-50 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-lg"
+              >
+                <dt class="text-sm font-medium text-gray-500">Status</dt>
+                <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
+                  <span :class="getStatusClass(paymentData.transaction_status)">
+                    {{ getStatusText(paymentData.transaction_status) }}
+                  </span>
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="mt-6 flex justify-center">
             <NuxtLink
               to="/profile/my-bookings"
-              class="block w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl font-medium hover:from-pink-600 hover:to-pink-700 transition-all duration-300 shadow-md text-center"
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              View My Bookings
-            </NuxtLink>
-            <NuxtLink
-              to="/"
-              class="block w-full px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all duration-300 text-center"
-            >
-              Back to Home
+              Lihat Booking Saya
             </NuxtLink>
           </div>
         </div>
@@ -196,173 +198,237 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed, onMounted } from "vue";
-import { definePageMeta } from "#imports";
+<script>
+import { ref, onMounted } from "vue";
 
-definePageMeta({
-  middleware: ["auth"],
-});
+export default {
+  middleware: "auth",
+  setup() {
+    const loading = ref(true);
+    const error = ref(null);
+    const paymentData = ref(null);
+    const orderId = ref("");
+    const paymentStatus = ref("");
+    const amount = ref(0);
+    const transactionTime = ref("");
+    const paymentMethod = ref("");
+    const isDownPayment = ref(false);
+    const totalPrice = ref(0);
 
-const loading = ref(true);
+    onMounted(() => {
+      getPaymentData();
+    });
 
-// Payment data
-const paymentStatus = ref(null);
-const orderId = ref(null);
-const amount = ref(0);
-const totalPrice = ref(0);
-const paymentMethod = ref(null);
-const transactionTime = ref(null);
-const isDownPayment = ref(false);
+    // Get payment data from URL and then fetch from Midtrans API
+    const getPaymentData = async () => {
+      loading.value = true;
 
-// Computed properties for status display
-const statusTitle = computed(() => {
-  switch (paymentStatus.value) {
-    case "settlement":
-    case "capture":
-      return "Payment Successful!";
-    case "pending":
-      return "Payment Pending";
-    case "deny":
-    case "cancel":
-    case "expire":
-      return "Payment Failed";
-    default:
-      return "Thank You";
-  }
-});
+      try {
+        // Get order_id from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderIdFromUrl = urlParams.get("order_id");
 
-const statusMessage = computed(() => {
-  switch (paymentStatus.value) {
-    case "settlement":
-    case "capture":
-      return isDownPayment.value
-        ? "Your down payment has been confirmed. Please pay the remaining amount at the salon."
-        : "Your booking has been confirmed. Thank you for choosing She Salon!";
-    case "pending":
-      return "Your payment is being processed. We'll update you once it's confirmed.";
-    case "deny":
-      return "Your payment was declined. Please try a different payment method.";
-    case "cancel":
-      return "Your payment was cancelled. Please try again when you're ready.";
-    case "expire":
-      return "Your payment session has expired. Please make a new booking.";
-    default:
-      return "Thank you for your transaction at She Salon.";
-  }
-});
+        if (!orderIdFromUrl) {
+          console.error("No order_id found in URL");
+          loading.value = false;
+          return;
+        }
 
-const remainingAmount = computed(() => {
-  if (!isDownPayment.value) return 0;
-  return totalPrice.value - amount.value;
-});
+        orderId.value = orderIdFromUrl;
 
-// Format currency
-const formatCurrency = (value) => {
-  if (!value) return "0";
-  return parseFloat(value).toLocaleString("id-ID");
+        // Midtrans server key (encoded for Basic Auth)
+        const serverKey = "SB-Mid-server-sGgwR0-jQD0jlZaMT0jy6jGL";
+        const encodedKey = btoa(`${serverKey}:`);
+
+        // Fetch transaction data directly from Midtrans API
+        const response = await fetch(
+          `https://api.sandbox.midtrans.com/v2/${orderIdFromUrl}/status`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Basic ${encodedKey}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Update payment data from API response
+        paymentStatus.value = data.transaction_status;
+        amount.value = parseFloat(data.gross_amount || 0);
+        transactionTime.value = data.transaction_time;
+
+        // Check if this is a down payment (30%)
+        // You might need to adjust this logic based on your business rules
+        isDownPayment.value =
+          orderIdFromUrl.includes("DP") ||
+          data.custom_field1 === "down_payment";
+
+        // Calculate total price (if down payment, it's amount / 0.3)
+        if (isDownPayment.value) {
+          totalPrice.value = Math.round(amount.value / 0.3);
+        } else {
+          totalPrice.value = amount.value;
+        }
+
+        // Get payment type and map to readable format
+        const paymentType = data.payment_type;
+        switch (paymentType) {
+          case "credit_card":
+            paymentMethod.value = "Credit Card";
+            break;
+          case "bank_transfer":
+            const bank =
+              data.va_numbers && data.va_numbers.length > 0
+                ? data.va_numbers[0].bank
+                : null;
+            paymentMethod.value = bank
+              ? `Bank Transfer (${bank.toUpperCase()})`
+              : "Bank Transfer";
+            break;
+          case "echannel":
+            paymentMethod.value = "Mandiri Bill";
+            break;
+          case "gopay":
+            paymentMethod.value = "GoPay";
+            break;
+          case "shopeepay":
+            paymentMethod.value = "ShopeePay";
+            break;
+          case "qris":
+            paymentMethod.value = "QRIS";
+            break;
+          default:
+            paymentMethod.value = paymentType
+              ? paymentType
+                  .replace("_", " ")
+                  .replace(/\b\w/g, (l) => l.toUpperCase())
+              : "Online Payment";
+        }
+      } catch (err) {
+        console.error("Error getting payment data:", err);
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    const formatCurrency = (amount) => {
+      return parseFloat(amount).toLocaleString("id-ID");
+    };
+
+    const formatDate = (dateString) => {
+      if (!dateString) return "-";
+      const date = new Date(dateString);
+      return date.toLocaleString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+    };
+
+    const formatPaymentMethod = (type, data) => {
+      const methods = {
+        bank_transfer: () => {
+          if (data.va_numbers && data.va_numbers.length > 0) {
+            return `Transfer Bank ${data.va_numbers[0].bank.toUpperCase()}`;
+          }
+          return "Transfer Bank";
+        },
+        credit_card: () => "Kartu Kredit",
+        gopay: () => "GoPay",
+        shopeepay: () => "ShopeePay",
+        qris: () => "QRIS",
+        cstore: () => {
+          if (data.store === "indomaret") return "Indomaret";
+          if (data.store === "alfamart") return "Alfamart";
+          return "Convenience Store";
+        },
+      };
+
+      return methods[type]
+        ? methods[type]()
+        : type.replace("_", " ").toUpperCase();
+    };
+
+    const getStatusText = (status) => {
+      const statuses = {
+        settlement: "Pembayaran Berhasil",
+        capture: "Pembayaran Berhasil",
+        pending: "Menunggu Pembayaran",
+        deny: "Pembayaran Ditolak",
+        cancel: "Pembayaran Dibatalkan",
+        expire: "Pembayaran Kadaluarsa",
+        refund: "Pembayaran Dikembalikan",
+      };
+
+      return statuses[status] || status;
+    };
+
+    const getStatusClass = (status) => {
+      const classes = {
+        settlement:
+          "px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800",
+        capture:
+          "px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800",
+        pending:
+          "px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800",
+        deny: "px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800",
+        cancel:
+          "px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800",
+        expire:
+          "px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800",
+        refund:
+          "px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800",
+      };
+
+      return (
+        classes[status] ||
+        "px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800"
+      );
+    };
+
+    const getStatusTitle = (status) => {
+      const titles = {
+        settlement: "Pembayaran Berhasil",
+        capture: "Pembayaran Berhasil",
+        pending: "Menunggu Pembayaran",
+        deny: "Pembayaran Ditolak",
+        cancel: "Pembayaran Dibatalkan",
+        expire: "Pembayaran Kadaluarsa",
+        refund: "Pembayaran Dikembalikan",
+      };
+
+      return titles[status] || "Detail Pembayaran";
+    };
+
+    return {
+      loading,
+      error,
+      paymentData,
+      getPaymentData,
+      formatCurrency,
+      formatDate,
+      formatPaymentMethod,
+      getStatusText,
+      getStatusClass,
+      getStatusTitle,
+      orderId,
+      paymentStatus,
+      amount,
+      transactionTime,
+      paymentMethod,
+      isDownPayment,
+      totalPrice,
+    };
+  },
 };
-
-// Format date and time
-const formatDateTime = (dateTimeStr) => {
-  if (!dateTimeStr) return "-";
-
-  const date = new Date(dateTimeStr);
-  return date.toLocaleString("id-ID", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
-// Get payment data from URL
-const getPaymentData = () => {
-  loading.value = true;
-
-  try {
-    // Get data from URL parameters (Midtrans finish URL parameters)
-    const urlParams = new URLSearchParams(window.location.search);
-
-    // Extract parameters from URL
-    paymentStatus.value = urlParams.get("transaction_status");
-    orderId.value = urlParams.get("order_id");
-    amount.value = parseFloat(urlParams.get("gross_amount") || 0);
-    transactionTime.value =
-      urlParams.get("transaction_time") || new Date().toISOString();
-
-    // Check if this is a down payment (30%)
-    // If the order_id contains "DP" or we can determine from other parameters
-    isDownPayment.value =
-      urlParams.get("is_dp") === "true" ||
-      urlParams.get("payment_type") === "cashless";
-
-    // Calculate total price (if down payment, it's amount / 0.3)
-    if (isDownPayment.value) {
-      totalPrice.value = Math.round(amount.value / 0.3);
-    } else {
-      totalPrice.value = amount.value;
-    }
-
-    // Get payment type and map to readable format
-    const paymentType = urlParams.get("payment_type");
-    switch (paymentType) {
-      case "credit_card":
-        paymentMethod.value = "Credit Card";
-        break;
-      case "bank_transfer":
-        const bank =
-          urlParams.get("va_numbers[0].bank") || urlParams.get("bank");
-        paymentMethod.value = bank
-          ? `Bank Transfer (${bank.toUpperCase()})`
-          : "Bank Transfer";
-        break;
-      case "echannel":
-        paymentMethod.value = "Mandiri Bill";
-        break;
-      case "gopay":
-        paymentMethod.value = "GoPay";
-        break;
-      case "shopeepay":
-        paymentMethod.value = "ShopeePay";
-        break;
-      case "qris":
-        paymentMethod.value = "QRIS";
-        break;
-      default:
-        paymentMethod.value = paymentType
-          ? paymentType
-              .replace("_", " ")
-              .replace(/\b\w/g, (l) => l.toUpperCase())
-          : "Online Payment";
-    }
-  } catch (err) {
-    console.error("Error getting payment data:", err);
-  } finally {
-    loading.value = false;
-  }
-};
-
-// Initialize on component mount
-onMounted(() => {
-  getPaymentData();
-});
 </script>
-
-<style scoped>
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-</style>
