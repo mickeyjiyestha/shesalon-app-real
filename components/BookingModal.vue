@@ -1,5 +1,200 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto">
+  <!-- Disclaimer Modal - Shows first -->
+  <div
+    v-if="isOpen && showDisclaimer"
+    class="fixed inset-0 z-[60] overflow-y-auto"
+  >
+    <div class="flex items-center justify-center min-h-screen p-6">
+      <div
+        class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
+      ></div>
+
+      <div
+        class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 z-10 transition-all duration-300 transform"
+      >
+        <!-- Header -->
+        <div class="text-center mb-6">
+          <div
+            class="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-8 w-8 text-amber-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">
+            Syarat & Ketentuan Booking
+          </h2>
+          <p class="text-gray-600">
+            Mohon baca dan pahami ketentuan berikut sebelum melanjutkan booking
+          </p>
+        </div>
+
+        <!-- Terms List -->
+        <div class="space-y-4 mb-8">
+          <div
+            class="flex items-start space-x-4 p-4 bg-blue-50 rounded-xl border border-blue-100"
+          >
+            <div
+              class="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center"
+            >
+              <span class="text-white font-semibold text-sm">1</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-800 mb-1">
+                Batasan Booking Harian
+              </h3>
+              <p class="text-gray-600 text-sm">
+                Setiap customer hanya dapat melakukan
+                <strong>1 booking per hari</strong>. Pastikan Anda memilih waktu
+                dan layanan dengan tepat.
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="flex items-start space-x-4 p-4 bg-orange-50 rounded-xl border border-orange-100"
+          >
+            <div
+              class="flex-shrink-0 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center"
+            >
+              <span class="text-white font-semibold text-sm">2</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-800 mb-1">
+                Kebijakan Pembatalan
+              </h3>
+              <p class="text-gray-600 text-sm">
+                Pembatalan booking hanya dapat dilakukan
+                <strong>maksimal 30 menit sebelum</strong>
+                jam booking dimulai. Lewat dari waktu tersebut, pembatalan tidak
+                dapat diproses.
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="flex items-start space-x-4 p-4 bg-green-50 rounded-xl border border-green-100"
+          >
+            <div
+              class="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center"
+            >
+              <span class="text-white font-semibold text-sm">3</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-800 mb-1">Kebijakan Refund</h3>
+              <p class="text-gray-600 text-sm">
+                Refund akan diproses <strong>100%</strong> jika pembatalan
+                dilakukan sesuai dengan ketentuan waktu yang berlaku (maksimal
+                30 menit sebelum booking).
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="flex items-start space-x-4 p-4 bg-red-50 rounded-xl border border-red-100"
+          >
+            <div
+              class="flex-shrink-0 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center"
+            >
+              <span class="text-white font-semibold text-sm">4</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-800 mb-1">
+                Konsekuensi Keterlambatan
+              </h3>
+              <p class="text-gray-600 text-sm">
+                Jika Anda sudah melakukan down payment tetapi
+                <strong>gagal membatalkan booking</strong>
+                karena sudah lewat dari 30 menit sebelum jam dimulai, maka
+                <strong class="text-red-600">uang akan hangus!</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Important Notice -->
+        <div
+          class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 mb-6"
+        >
+          <div class="flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-amber-600 mr-2 flex-shrink-0"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <p class="text-amber-800 text-sm font-medium">
+              <strong>Penting:</strong> Dengan melanjutkan booking, Anda
+              menyetujui semua syarat dan ketentuan di atas.
+            </p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button
+            @click="closeDisclaimer"
+            class="flex-1 px-6 py-3 border border-gray-300 rounded-xl text-gray-600 hover:text-gray-800 hover:bg-gray-50 font-medium transition-all duration-200 flex items-center justify-center"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 mr-2"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            Batal
+          </button>
+          <button
+            @click="acceptTerms"
+            class="flex-1 px-6 py-3 bg-[#F97474] text-white rounded-xl font-medium hover:bg-[#e65c5c] transform hover:scale-105 transition-all duration-200 flex items-center justify-center shadow-lg"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 mr-2"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            Saya Setuju & Lanjutkan
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Booking Modal - Shows after disclaimer is accepted -->
+  <div
+    v-if="isOpen && !showDisclaimer"
+    class="fixed inset-0 z-50 overflow-y-auto"
+  >
     <div class="flex items-center justify-center min-h-screen p-6">
       <div
         class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
@@ -55,11 +250,12 @@
           </div>
         </div>
 
-        <!-- Step 1: Date & Time Selection -->
+        <!-- Step 1: Date Selection -->
         <div v-if="currentStep === 0" class="transition-all duration-300">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="mb-6">
-              <label class="block text-gray-700 text-sm font-medium mb-2"
+          <div class="flex justify-center">
+            <div class="w-full max-w-md">
+              <label
+                class="block text-gray-700 text-lg font-medium mb-4 text-center"
                 >Pick a Date</label
               >
               <div
@@ -77,28 +273,12 @@
                   />
                 </ClientOnly>
               </div>
-            </div>
 
-            <div class="space-y-6">
-              <div>
-                <label class="block text-gray-700 text-sm font-medium mb-2"
-                  >Choose Time</label
-                >
-                <div class="grid grid-cols-3 gap-2">
-                  <button
-                    v-for="time in availableTimes"
-                    :key="time"
-                    @click="bookingTime = time"
-                    class="px-3 py-2 rounded-lg text-center transition-all duration-200"
-                    :class="
-                      bookingTime === time
-                        ? 'bg-[#F97474] text-white font-medium shadow-md'
-                        : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
-                    "
-                  >
-                    {{ time }}
-                  </button>
-                </div>
+              <div class="mt-6 text-center">
+                <p class="text-gray-600 text-sm mb-2">Selected Date:</p>
+                <p class="font-medium text-lg text-gray-800">
+                  {{ formattedSelectedDate }}
+                </p>
               </div>
             </div>
           </div>
@@ -434,8 +614,108 @@
           </div>
         </div>
 
-        <!-- Step 3: Payment Method -->
+        <!-- Step 3: Time Selection -->
         <div v-if="currentStep === 2" class="transition-all duration-300">
+          <div class="flex justify-center">
+            <div class="w-full max-w-2xl">
+              <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">
+                  Choose Your Time
+                </h3>
+                <p class="text-gray-600">
+                  Select your preferred appointment time for
+                  {{ formattedSelectedDate }}
+                </p>
+              </div>
+
+              <div v-if="isLoadingSlots" class="text-center py-8">
+                <div class="inline-flex items-center">
+                  <svg
+                    class="animate-spin -ml-1 mr-3 h-5 w-5 text-[#F97474]"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  <span class="text-gray-600"
+                    >Loading available time slots...</span
+                  >
+                </div>
+              </div>
+
+              <div v-else class="grid grid-cols-3 md:grid-cols-4 gap-3">
+                <button
+                  v-for="time in allTimeSlots"
+                  :key="time"
+                  @click="
+                    availableSlots.includes(time) ? (bookingTime = time) : null
+                  "
+                  :disabled="bookedSlots.includes(time)"
+                  class="px-4 py-3 rounded-xl text-center transition-all duration-200 font-medium"
+                  :class="[
+                    bookedSlots.includes(time)
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
+                      : bookingTime === time
+                      ? 'bg-[#F97474] text-white shadow-lg transform scale-105'
+                      : 'bg-gray-50 hover:bg-gray-100 text-gray-700 hover:shadow-md',
+                  ]"
+                >
+                  {{ time }}
+                  <span v-if="bookedSlots.includes(time)" class="block text-xs"
+                    >Booked</span
+                  >
+                </button>
+              </div>
+
+              <div
+                v-if="!isLoadingSlots && allTimeSlots.length === 0"
+                class="text-center py-8"
+              >
+                <p class="text-gray-500">
+                  No time slots available for the selected date and services.
+                </p>
+              </div>
+
+              <div v-if="bookingTime" class="mt-8 text-center">
+                <div
+                  class="inline-flex items-center px-6 py-3 bg-green-50 border border-green-200 rounded-xl"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 text-green-600 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span class="text-green-800 font-medium">
+                    Selected: {{ formattedSelectedDate }} at {{ bookingTime }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Payment Method -->
+        <div v-if="currentStep === 3" class="transition-all duration-300">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="space-y-6">
               <div>
@@ -524,7 +804,7 @@
                   >
                     <path
                       fill-rule="evenodd"
-                      d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
+                      d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2-2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
                       clip-rule="evenodd"
                     />
                   </svg>
@@ -720,20 +1000,27 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "submit"]);
 
-const steps = ["Date & Time", "Services", "Payment"];
+const steps = ["Date", "Services", "Time", "Payment"];
 const currentStep = ref(0);
+const showDisclaimer = ref(true);
 
 const canProceedToNextStep = computed(() => {
   if (currentStep.value === 0) {
-    return selectedDate.value && bookingTime.value;
+    return selectedDate.value;
   } else if (currentStep.value === 1) {
     return selectedServices.value.every((service) => service !== "");
+  } else if (currentStep.value === 2) {
+    return bookingTime.value;
   }
   return true;
 });
 
-const nextStep = () => {
+const nextStep = async () => {
   if (currentStep.value < steps.length - 1 && canProceedToNextStep.value) {
+    // If moving from services step to time step, fetch available slots
+    if (currentStep.value === 1) {
+      await fetchAvailableSlots();
+    }
     currentStep.value++;
   }
 };
@@ -757,6 +1044,21 @@ const midtransUrl = ref("");
 const currentTransactionId = ref(null);
 const midtransFrame = ref(null);
 
+const availableSlots = ref([]);
+const bookedSlots = ref([]);
+const isLoadingSlots = ref(false);
+
+// Add disclaimer functions
+const closeDisclaimer = () => {
+  showDisclaimer.value = false;
+  close();
+};
+
+const acceptTerms = () => {
+  showDisclaimer.value = false;
+};
+
+// Rest of your existing functions remain the same...
 const shouldShowProducts = (index) => {
   const serviceId = selectedServices.value[index];
   if (!serviceId) return false;
@@ -999,6 +1301,14 @@ const totalPrice = computed(() => {
   }, 0);
 });
 
+const totalEstimatedTime = computed(() => {
+  return selectedServices.value.reduce((total, serviceId) => {
+    if (!serviceId) return total;
+    const service = getServiceById(serviceId);
+    return total + (service?.estimasi_waktu || 0);
+  }, 0);
+});
+
 const isFormValid = computed(() => {
   return (
     selectedDate.value &&
@@ -1017,19 +1327,14 @@ const attributes = [
   },
 ];
 
-const availableTimes = [
-  "09:00",
-  "10:00",
-  "11:00",
-  "12:00",
-  "13:00",
-  "14:00",
-  "15:00",
-  "16:00",
-  "17:00",
-  "18:00",
-  "19:00",
-];
+const allTimeSlots = computed(() => {
+  const all = [...availableSlots.value, ...bookedSlots.value];
+  return all.sort((a, b) => {
+    const timeA = a.split(":").map(Number);
+    const timeB = b.split(":").map(Number);
+    return timeA[0] - timeB[0] || timeA[1] - timeB[1];
+  });
+});
 
 const createMidtransTransaction = async (bookingId) => {
   try {
@@ -1084,6 +1389,7 @@ const resetForm = () => {
   selectedColors.value = [];
   paymentMethod.value = "";
   currentStep.value = 0;
+  showDisclaimer.value = true; // Reset disclaimer to show again
 };
 
 const onDateSelect = (date) => {
@@ -1125,6 +1431,44 @@ const getAvailableServices = (currentIndex) => {
 
 const formatTimeForAPI = (time) => {
   return `${time}:00`;
+};
+
+const fetchAvailableSlots = async () => {
+  if (!selectedDate.value || totalEstimatedTime.value === 0) return;
+
+  isLoadingSlots.value = true;
+  try {
+    const token = Cookies.get("token");
+    const response = await fetch(
+      `${config.public.apiBaseUrl}/api/booking/available-slots`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "true",
+        },
+        body: JSON.stringify({
+          tanggal: formatDateForAPI(selectedDate.value),
+          estimasi_waktu: totalEstimatedTime.value,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    availableSlots.value = result.available_slots || [];
+    bookedSlots.value = result.booked_slots || [];
+  } catch (error) {
+    console.error("Error fetching available slots:", error);
+    availableSlots.value = [];
+    bookedSlots.value = [];
+  } finally {
+    isLoadingSlots.value = false;
+  }
 };
 
 const submitBooking = async () => {
@@ -1263,13 +1607,17 @@ onUnmounted(() => {
   window.removeEventListener("message", handleMidtransCallback);
 });
 
+const isDisclaimerOpen = ref(false);
+
 watch(
   () => props.isOpen,
   (newVal) => {
     if (newVal) {
       setupMidtransCallback();
+      isDisclaimerOpen.value = true;
     } else {
       window.removeEventListener("message", handleMidtransCallback);
+      isDisclaimerOpen.value = false;
     }
   }
 );
