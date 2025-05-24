@@ -445,6 +445,7 @@ onMounted(() => {
                       </span>
                     </button>
                     <button
+                      @click="router.push('/register')"
                       class="group relative inline-flex items-center px-6 py-3 overflow-hidden rounded-full bg-transparent border-2 border-white text-white transition-all duration-300 hover:scale-105 shadow-lg shadow-pink-500/10"
                     >
                       <span
