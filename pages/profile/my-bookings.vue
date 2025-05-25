@@ -465,7 +465,7 @@ const rescheduleBooking = async (id) => {
   );
 };
 
-// Cancel booking
+// Cancel booking - Improved version with better error handling
 const cancelBooking = async (id) => {
   if (!confirm("Are you sure you want to cancel this booking?")) {
     return;
@@ -478,6 +478,11 @@ const cancelBooking = async (id) => {
       throw new Error("Authentication token not found. Please login again.");
     }
 
+    console.log(`Attempting to cancel booking ID: ${id}`);
+    console.log(
+      `API URL: ${config.public.apiBaseUrl}/api/booking/${id}/cancel`
+    );
+
     const response = await fetch(
       `${config.public.apiBaseUrl}/api/booking/${id}/cancel`,
       {
@@ -485,13 +490,43 @@ const cancelBooking = async (id) => {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
         },
+        body: JSON.stringify({
+          status: "cancelled",
+        }),
       }
     );
 
+    console.log(`Response status: ${response.status}`);
+
+    // Get response text for better error debugging
+    const responseText = await response.text();
+    console.log(`Response body: ${responseText}`);
+
     if (!response.ok) {
-      throw new Error("Failed to cancel booking");
+      let errorMessage = "Failed to cancel booking";
+
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || errorData.error || errorMessage;
+      } catch (e) {
+        // If response is not JSON, use the text as error message
+        errorMessage = responseText || errorMessage;
+      }
+
+      throw new Error(`${errorMessage} (Status: ${response.status})`);
     }
+
+    // Parse successful response
+    let result;
+    try {
+      result = JSON.parse(responseText);
+    } catch (e) {
+      result = { message: "Booking cancelled successfully" };
+    }
+
+    console.log("Cancel response:", result);
 
     // Refresh booking data
     await fetchBookings();

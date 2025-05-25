@@ -4,22 +4,22 @@
     v-if="isOpen && showDisclaimer"
     class="fixed inset-0 z-[60] overflow-y-auto"
   >
-    <div class="flex items-center justify-center min-h-screen p-3 sm:p-6">
+    <div class="flex items-center justify-center min-h-screen p-6">
       <div
         class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
       ></div>
 
       <div
-        class="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-2xl p-4 sm:p-8 z-10 transition-all duration-300 transform border border-gray-100"
+        class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 z-10 transition-all duration-300 transform"
       >
         <!-- Header -->
-        <div class="text-center mb-6 sm:mb-8">
+        <div class="text-center mb-6">
           <div
-            class="mx-auto w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-lg"
+            class="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-8 sm:h-10 w-8 sm:w-10 text-amber-600"
+              class="h-8 w-8 text-amber-600"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -32,59 +32,51 @@
               />
             </svg>
           </div>
-          <h2
-            class="text-xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-3 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent"
-          >
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">
             Syarat & Ketentuan Booking
           </h2>
-          <p class="text-gray-600 text-sm sm:text-lg">
+          <p class="text-gray-600">
             Mohon baca dan pahami ketentuan berikut sebelum melanjutkan booking
           </p>
         </div>
 
         <!-- Terms List -->
-        <div class="space-y-3 sm:space-y-5 mb-6 sm:mb-8">
+        <div class="space-y-4 mb-8">
           <div
-            class="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-5 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl sm:rounded-2xl border border-blue-200 shadow-sm hover:shadow-md transition-shadow duration-200"
+            class="flex items-start space-x-4 p-4 bg-blue-50 rounded-xl border border-blue-100"
           >
             <div
-              class="flex-shrink-0 w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg"
+              class="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center"
             >
-              <span class="text-white font-bold text-xs sm:text-sm">1</span>
+              <span class="text-white font-semibold text-sm">1</span>
             </div>
             <div>
-              <h3
-                class="font-bold text-gray-800 mb-1 sm:mb-2 text-sm sm:text-lg"
-              >
+              <h3 class="font-semibold text-gray-800 mb-1">
                 Batasan Booking Harian
               </h3>
-              <p class="text-gray-700 text-xs sm:text-sm leading-relaxed">
+              <p class="text-gray-600 text-sm">
                 Setiap customer hanya dapat melakukan
-                <strong class="text-blue-600">1 booking per hari</strong>.
-                Pastikan Anda memilih waktu dan layanan dengan tepat.
+                <strong>1 booking per hari</strong>. Pastikan Anda memilih waktu
+                dan layanan dengan tepat.
               </p>
             </div>
           </div>
 
           <div
-            class="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-5 bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl sm:rounded-2xl border border-orange-200 shadow-sm hover:shadow-md transition-shadow duration-200"
+            class="flex items-start space-x-4 p-4 bg-orange-50 rounded-xl border border-orange-100"
           >
             <div
-              class="flex-shrink-0 w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-lg"
+              class="flex-shrink-0 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center"
             >
-              <span class="text-white font-bold text-xs sm:text-sm">2</span>
+              <span class="text-white font-semibold text-sm">2</span>
             </div>
             <div>
-              <h3
-                class="font-bold text-gray-800 mb-1 sm:mb-2 text-sm sm:text-lg"
-              >
+              <h3 class="font-semibold text-gray-800 mb-1">
                 Kebijakan Pembatalan
               </h3>
-              <p class="text-gray-700 text-xs sm:text-sm leading-relaxed">
+              <p class="text-gray-600 text-sm">
                 Pembatalan booking hanya dapat dilakukan
-                <strong class="text-orange-600"
-                  >maksimal 30 menit sebelum</strong
-                >
+                <strong>maksimal 30 menit sebelum</strong>
                 jam booking dimulai. Lewat dari waktu tersebut, pembatalan tidak
                 dapat diproses.
               </p>
@@ -92,22 +84,17 @@
           </div>
 
           <div
-            class="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-5 bg-gradient-to-r from-green-50 to-green-100 rounded-xl sm:rounded-2xl border border-green-200 shadow-sm hover:shadow-md transition-shadow duration-200"
+            class="flex items-start space-x-4 p-4 bg-green-50 rounded-xl border border-green-100"
           >
             <div
-              class="flex-shrink-0 w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-lg"
+              class="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center"
             >
-              <span class="text-white font-bold text-xs sm:text-sm">3</span>
+              <span class="text-white font-semibold text-sm">3</span>
             </div>
             <div>
-              <h3
-                class="font-bold text-gray-800 mb-1 sm:mb-2 text-sm sm:text-lg"
-              >
-                Kebijakan Refund
-              </h3>
-              <p class="text-gray-700 text-xs sm:text-sm leading-relaxed">
-                Refund akan diproses
-                <strong class="text-green-600">100%</strong> jika pembatalan
+              <h3 class="font-semibold text-gray-800 mb-1">Kebijakan Refund</h3>
+              <p class="text-gray-600 text-sm">
+                Refund akan diproses <strong>100%</strong> jika pembatalan
                 dilakukan sesuai dengan ketentuan waktu yang berlaku (maksimal
                 30 menit sebelum booking).
               </p>
@@ -115,22 +102,20 @@
           </div>
 
           <div
-            class="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-5 bg-gradient-to-r from-red-50 to-red-100 rounded-xl sm:rounded-2xl border border-red-200 shadow-sm hover:shadow-md transition-shadow duration-200"
+            class="flex items-start space-x-4 p-4 bg-red-50 rounded-xl border border-red-100"
           >
             <div
-              class="flex-shrink-0 w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg"
+              class="flex-shrink-0 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center"
             >
-              <span class="text-white font-bold text-xs sm:text-sm">4</span>
+              <span class="text-white font-semibold text-sm">4</span>
             </div>
             <div>
-              <h3
-                class="font-bold text-gray-800 mb-1 sm:mb-2 text-sm sm:text-lg"
-              >
+              <h3 class="font-semibold text-gray-800 mb-1">
                 Konsekuensi Keterlambatan
               </h3>
-              <p class="text-gray-700 text-xs sm:text-sm leading-relaxed">
+              <p class="text-gray-600 text-sm">
                 Jika Anda sudah melakukan down payment tetapi
-                <strong class="text-red-600">gagal membatalkan booking</strong>
+                <strong>gagal membatalkan booking</strong>
                 karena sudah lewat dari 30 menit sebelum jam dimulai, maka
                 <strong class="text-red-600">uang akan hangus!</strong>
               </p>
@@ -140,26 +125,22 @@
 
         <!-- Important Notice -->
         <div
-          class="bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 border-2 border-amber-200 rounded-xl sm:rounded-2xl p-3 sm:p-5 mb-6 sm:mb-8 shadow-sm"
+          class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 mb-6"
         >
           <div class="flex items-center">
-            <div
-              class="flex-shrink-0 w-6 sm:w-8 h-6 sm:h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center mr-2 sm:mr-3"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-amber-600 mr-2 flex-shrink-0"
+              viewBox="0 0 20 20"
+              fill="currentColor"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-3 sm:h-4 w-3 sm:w-4 text-white"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </div>
-            <p class="text-amber-800 font-semibold text-xs sm:text-base">
+              <path
+                fill-rule="evenodd"
+                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <p class="text-amber-800 text-sm font-medium">
               <strong>Penting:</strong> Dengan melanjutkan booking, Anda
               menyetujui semua syarat dan ketentuan di atas.
             </p>
@@ -167,14 +148,14 @@
         </div>
 
         <!-- Action Buttons -->
-        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+        <div class="flex flex-col sm:flex-row gap-3">
           <button
             @click="closeDisclaimer"
-            class="flex-1 px-4 sm:px-8 py-3 sm:py-4 border-2 border-gray-300 rounded-xl sm:rounded-2xl text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-400 font-semibold transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow-md text-sm sm:text-base"
+            class="flex-1 px-6 py-3 border border-gray-300 rounded-xl text-gray-600 hover:text-gray-800 hover:bg-gray-50 font-medium transition-all duration-200 flex items-center justify-center"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-4 sm:h-5 w-4 sm:w-5 mr-2"
+              class="h-5 w-5 mr-2"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -188,11 +169,11 @@
           </button>
           <button
             @click="acceptTerms"
-            class="flex-1 px-4 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-[#F97474] to-[#ff5757] text-white rounded-xl sm:rounded-2xl font-semibold hover:from-[#e65c5c] hover:to-[#e04545] transform hover:scale-105 transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl text-sm sm:text-base"
+            class="flex-1 px-6 py-3 bg-[#F97474] text-white rounded-xl font-medium hover:bg-[#e65c5c] transform hover:scale-105 transition-all duration-200 flex items-center justify-center shadow-lg"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-4 sm:h-5 w-4 sm:w-5 mr-2"
+              class="h-5 w-5 mr-2"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -214,55 +195,44 @@
     v-if="isOpen && !showDisclaimer"
     class="fixed inset-0 z-50 overflow-y-auto"
   >
-    <div class="flex items-center justify-center min-h-screen p-3 sm:p-6">
+    <div class="flex items-center justify-center min-h-screen p-6">
       <div
         class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
         @click="close"
       ></div>
 
       <div
-        class="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-5xl p-4 sm:p-8 z-10 transition-all duration-300 transform border border-gray-100"
+        class="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl p-8 z-10 transition-all duration-300 transform"
       >
         <!-- Header with steps -->
-        <div class="mb-6 sm:mb-10">
-          <div class="text-center mb-6 sm:mb-8">
-            <h2
-              class="text-2xl sm:text-4xl font-bold mb-1 sm:mb-2 bg-gradient-to-r from-[#f6339a] to-[#ff5757] bg-clip-text text-transparent"
-            >
-              Book Your Appointment
-            </h2>
-            <p class="text-gray-600 text-sm sm:text-lg">
-              Follow the steps below to complete your booking
-            </p>
-          </div>
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold mb-6 text-gray-800 text-center">
+            Book Your Appointment
+          </h2>
 
           <!-- Step indicator -->
-          <div class="flex items-center justify-center mb-6 sm:mb-10">
-            <div class="flex items-center w-full max-w-4xl">
+          <div class="flex items-center justify-center mb-8">
+            <div class="flex items-center w-full max-w-3xl">
               <div
                 class="relative flex flex-col items-center flex-1"
                 v-for="(step, index) in steps"
                 :key="index"
               >
                 <div
-                  class="w-8 sm:w-12 h-8 sm:h-12 rounded-full flex items-center justify-center z-10 relative transition-all duration-300 shadow-lg"
+                  class="w-10 h-10 rounded-full flex items-center justify-center z-10 relative transition-all duration-300"
                   :class="[
                     currentStep > index
-                      ? 'bg-gradient-to-br from-[#F97474] to-[#ff5757] text-white'
+                      ? 'bg-[#F97474] text-white'
                       : currentStep === index
-                      ? 'bg-gradient-to-br from-[#F97474] to-[#ff5757] text-white ring-4 ring-pink-100'
+                      ? 'bg-[#F97474] text-white ring-4 ring-pink-100'
                       : 'bg-gray-200 text-gray-500',
                   ]"
                 >
-                  <span v-if="currentStep > index" class="text-sm sm:text-lg"
-                    >✓</span
-                  >
-                  <span v-else class="font-bold text-sm sm:text-base">{{
-                    index + 1
-                  }}</span>
+                  <span v-if="currentStep > index" class="text-lg">✓</span>
+                  <span v-else>{{ index + 1 }}</span>
                 </div>
                 <div
-                  class="text-xs sm:text-sm font-semibold mt-2 sm:mt-3 text-center"
+                  class="text-xs font-medium mt-2 text-center"
                   :class="
                     currentStep >= index ? 'text-gray-800' : 'text-gray-400'
                   "
@@ -272,12 +242,8 @@
                 <!-- Connector line -->
                 <div
                   v-if="index < steps.length - 1"
-                  class="absolute top-4 sm:top-6 w-full h-[2px] sm:h-[3px] left-1/2 rounded-full"
-                  :class="
-                    currentStep > index
-                      ? 'bg-gradient-to-r from-[#F97474] to-[#ff5757]'
-                      : 'bg-gray-200'
-                  "
+                  class="absolute top-5 w-full h-[2px] left-1/2"
+                  :class="currentStep > index ? 'bg-[#F97474]' : 'bg-gray-200'"
                 ></div>
               </div>
             </div>
@@ -287,38 +253,13 @@
         <!-- Step 1: Date Selection -->
         <div v-if="currentStep === 0" class="transition-all duration-300">
           <div class="flex justify-center">
-            <div class="w-full max-w-lg">
-              <div class="text-center mb-6 sm:mb-8">
-                <div
-                  class="inline-flex items-center justify-center w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full mb-3 sm:mb-4"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 sm:h-8 w-6 sm:w-8 text-blue-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-                <h3
-                  class="text-xl sm:text-2xl font-bold text-gray-800 mb-1 sm:mb-2"
-                >
-                  Pick a Date
-                </h3>
-                <p class="text-gray-600 text-sm sm:text-base">
-                  Choose your preferred appointment date
-                </p>
-              </div>
-
+            <div class="w-full max-w-md">
+              <label
+                class="block text-gray-700 text-lg font-medium mb-4 text-center"
+                >Pick a Date</label
+              >
               <div
-                class="calendar-wrapper bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
+                class="calendar-wrapper bg-white rounded-xl shadow-sm border border-gray-100"
               >
                 <ClientOnly>
                   <Calendar
@@ -333,31 +274,11 @@
                 </ClientOnly>
               </div>
 
-              <div class="mt-6 sm:mt-8 text-center">
-                <div
-                  class="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl sm:rounded-2xl shadow-sm"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-4 sm:h-5 w-4 sm:w-5 text-green-600 mr-2"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                  <div>
-                    <p class="text-green-700 text-xs sm:text-sm font-medium">
-                      Selected Date
-                    </p>
-                    <p class="font-bold text-green-800 text-sm sm:text-lg">
-                      {{ formattedSelectedDate }}
-                    </p>
-                  </div>
-                </div>
+              <div class="mt-6 text-center">
+                <p class="text-gray-600 text-sm mb-2">Selected Date:</p>
+                <p class="font-medium text-lg text-gray-800">
+                  {{ formattedSelectedDate }}
+                </p>
               </div>
             </div>
           </div>
@@ -365,52 +286,21 @@
 
         <!-- Step 2: Service Selection -->
         <div v-if="currentStep === 1" class="transition-all duration-300">
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
-            <div class="lg:col-span-2 space-y-4 sm:space-y-6">
-              <div class="text-center mb-6 sm:mb-8">
-                <div
-                  class="inline-flex items-center justify-center w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full mb-3 sm:mb-4"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 sm:h-8 w-6 sm:w-8 text-purple-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                    />
-                  </svg>
-                </div>
-                <h3
-                  class="text-xl sm:text-2xl font-bold text-gray-800 mb-1 sm:mb-2"
-                >
-                  Choose Services
-                </h3>
-                <p class="text-gray-600 text-sm sm:text-base">
-                  Select the services you want to book
-                </p>
-              </div>
-
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-6">
               <div v-if="isServicesLoaded">
                 <div
                   v-for="(service, index) in selectedServices"
                   :key="index"
-                  class="mb-4 sm:mb-6 p-4 sm:p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
+                  class="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100"
                 >
-                  <label
-                    class="block text-gray-800 font-bold mb-3 sm:mb-4 text-base sm:text-lg"
-                  >
+                  <label class="block text-gray-700 font-medium mb-3">
                     Service {{ index + 1 }}
                   </label>
                   <div class="relative">
                     <select
                       v-model="selectedServices[index]"
-                      class="w-full px-3 sm:px-5 py-3 sm:py-4 bg-white border-2 border-gray-200 rounded-lg sm:rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200 font-medium text-gray-700 text-sm sm:text-base"
+                      class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
                       @change="checkServiceCategory(index)"
                     >
                       <option value="">Pilih Service</option>
@@ -423,10 +313,10 @@
                       </option>
                     </select>
                     <div
-                      class="absolute inset-y-0 right-0 flex items-center px-3 sm:px-4 pointer-events-none"
+                      class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none"
                     >
                       <svg
-                        class="w-4 sm:w-5 h-4 sm:h-5 text-gray-400"
+                        class="w-4 h-4 text-gray-400"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -442,16 +332,14 @@
                   </div>
 
                   <!-- Brand Selection Box -->
-                  <div v-if="shouldShowProducts(index)" class="mt-3 sm:mt-5">
-                    <label
-                      class="block text-gray-700 font-semibold mb-2 sm:mb-3 text-sm sm:text-base"
-                    >
+                  <div v-if="shouldShowProducts(index)" class="mt-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">
                       Pilih Brand untuk Service {{ index + 1 }}
                     </label>
                     <div class="relative">
                       <select
                         v-model="selectedBrands[index]"
-                        class="w-full px-3 sm:px-5 py-3 sm:py-4 bg-white border-2 border-gray-200 rounded-lg sm:rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200 font-medium text-gray-700 text-sm sm:text-base"
+                        class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
                         @change="onBrandSelect(index)"
                       >
                         <option value="">Pilih Brand</option>
@@ -464,10 +352,10 @@
                         </option>
                       </select>
                       <div
-                        class="absolute inset-y-0 right-0 flex items-center px-3 sm:px-4 pointer-events-none"
+                        class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none"
                       >
                         <svg
-                          class="w-4 sm:w-5 h-4 sm:h-5 text-gray-400"
+                          class="w-4 h-4 text-gray-400"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -484,16 +372,14 @@
                   </div>
 
                   <!-- Product Selection Box -->
-                  <div v-if="selectedBrands[index]" class="mt-3 sm:mt-5">
-                    <label
-                      class="block text-gray-700 font-semibold mb-2 sm:mb-3 text-sm sm:text-base"
-                    >
+                  <div v-if="selectedBrands[index]" class="mt-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">
                       Pilih Produk untuk Service {{ index + 1 }}
                     </label>
                     <div class="relative">
                       <select
                         v-model="selectedProducts[index]"
-                        class="w-full px-3 sm:px-5 py-3 sm:py-4 bg-white border-2 border-gray-200 rounded-lg sm:rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200 font-medium text-gray-700 text-sm sm:text-base"
+                        class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
                         @change="onProductSelect(index)"
                       >
                         <option value="">Pilih Produk</option>
@@ -507,10 +393,10 @@
                         </option>
                       </select>
                       <div
-                        class="absolute inset-y-0 right-0 flex items-center px-3 sm:px-4 pointer-events-none"
+                        class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none"
                       >
                         <svg
-                          class="w-4 sm:w-5 h-4 sm:h-5 text-gray-400"
+                          class="w-4 h-4 text-gray-400"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -532,17 +418,15 @@
                       selectedProducts[index] &&
                       availableColors[index]?.length > 0
                     "
-                    class="mt-3 sm:mt-5"
+                    class="mt-4"
                   >
-                    <label
-                      class="block text-gray-700 font-semibold mb-2 sm:mb-3 text-sm sm:text-base"
-                    >
+                    <label class="block text-gray-700 text-sm font-medium mb-2">
                       Pilih Warna untuk Service {{ index + 1 }}
                     </label>
                     <div class="relative">
                       <select
                         v-model="selectedColors[index]"
-                        class="w-full px-3 sm:px-5 py-3 sm:py-4 bg-white border-2 border-gray-200 rounded-lg sm:rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200 font-medium text-gray-700 text-sm sm:text-base"
+                        class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
                       >
                         <option value="">Pilih Warna</option>
                         <option
@@ -556,10 +440,10 @@
                         </option>
                       </select>
                       <div
-                        class="absolute inset-y-0 right-0 flex items-center px-3 sm:px-4 pointer-events-none"
+                        class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none"
                       >
                         <svg
-                          class="w-4 sm:w-5 h-4 sm:h-5 text-gray-400"
+                          class="w-4 h-4 text-gray-400"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -579,12 +463,12 @@
                 <button
                   type="button"
                   @click="addService"
-                  class="mt-3 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-[#F97474] to-[#ff5757] text-white rounded-lg sm:rounded-xl hover:from-[#e65c5c] hover:to-[#e04545] transition-all duration-200 flex items-center gap-2 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base"
+                  class="mt-2 px-4 py-2 bg-[#F97474] text-white rounded-xl hover:bg-[#e65c5c] transition flex items-center gap-2"
                   v-if="selectedServices.length < services.length"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-4 sm:h-5 w-4 sm:w-5"
+                    class="h-5 w-5"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -599,29 +483,15 @@
 
                 <!-- Special Request Box -->
                 <div
-                  class="mt-6 sm:mt-8 p-4 sm:p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl sm:rounded-2xl border border-blue-200 shadow-sm"
+                  class="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100"
                 >
-                  <label
-                    class="block text-gray-800 font-bold mb-3 sm:mb-4 text-base sm:text-lg flex items-center"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 sm:h-5 w-4 sm:w-5 mr-2 text-blue-600"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3. 3.866-3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
+                  <label class="block text-gray-700 font-medium mb-3">
                     Special Request
                   </label>
                   <textarea
                     v-model="specialRequest"
                     rows="3"
-                    class="w-full px-3 sm:px-5 py-3 sm:py-4 bg-white border-2 border-blue-200 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 font-medium text-gray-700 text-sm sm:text-base"
+                    class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F97474] focus:border-transparent transition-all duration-200"
                     placeholder="Leave a message for the salon (optional)"
                   ></textarea>
                 </div>
@@ -630,103 +500,82 @@
 
             <div>
               <div
-                class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-gray-200 sticky top-6"
+                class="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100"
               >
                 <h3
-                  class="text-lg sm:text-xl font-bold text-gray-800 mb-4 sm:mb-6 flex items-center"
+                  class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
                 >
-                  <div
-                    class="w-6 sm:w-8 h-6 sm:h-8 bg-gradient-to-br from-[#F97474] to-[#ff5757] rounded-full flex items-center justify-center mr-2 sm:mr-3"
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 mr-2 text-[#F97474]"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-3 sm:h-4 w-3 sm:w-4 text-white"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M5 2a1 1 0 011 1v1h8V3a1 1 0 112 0v1h1a2 2 0 012 2v10a2 2 0 01-2 2H3a2 2 0 01-2-2V6a2 2 0 012-2h1V3a1 1 0 011-1zm2 3v1a1 1 0 102 0V5h6v1a1 1 0 102 0V5h1a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V6a1 1 0 011-1h1z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </div>
+                    <path
+                      fill-rule="evenodd"
+                      d="M5 2a1 1 0 011 1v1h8V3a1 1 0 112 0v1h1a2 2 0 012 2v10a2 2 0 01-2 2H3a2 2 0 01-2-2V6a2 2 0 012-2h1V3a1 1 0 011-1zm2 3v1a1 1 0 102 0V5h6v1a1 1 0 102 0V5h1a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V6a1 1 0 011-1h1z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
                   Appointment Details
                 </h3>
 
-                <div class="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
-                  <div
-                    class="flex items-center p-2 sm:p-3 bg-white rounded-lg sm:rounded-xl border border-gray-200"
+                <div class="mb-4 flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 mr-2 text-gray-500"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 sm:h-5 w-4 sm:w-5 mr-2 sm:mr-3 text-blue-500"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                    <div>
-                      <p class="text-gray-600 text-xs sm:text-sm font-medium">
-                        Selected Date
-                      </p>
-                      <p class="font-bold text-gray-800 text-sm sm:text-base">
-                        {{ formattedSelectedDate }}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div
-                    class="flex items-center p-2 sm:p-3 bg-white rounded-lg sm:rounded-xl border border-gray-200"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 sm:h-5 w-4 sm:w-5 mr-2 sm:mr-3 text-green-500"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                    <div>
-                      <p class="text-gray-600 text-xs sm:text-sm font-medium">
-                        Selected Time
-                      </p>
-                      <p class="font-bold text-gray-800 text-sm sm:text-base">
-                        {{ bookingTime || "---" }}
-                      </p>
-                    </div>
+                    <path
+                      fill-rule="evenodd"
+                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <div>
+                    <p class="text-gray-600 text-sm">Selected Date:</p>
+                    <p class="font-medium">{{ formattedSelectedDate }}</p>
                   </div>
                 </div>
 
-                <div
-                  v-if="selectedServices.length > 0"
-                  class="space-y-3 sm:space-y-4"
-                >
+                <div class="mb-4 flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 mr-2 text-gray-500"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <div>
+                    <p class="text-gray-600 text-sm">Selected Time:</p>
+                    <p class="font-medium">{{ bookingTime || "---" }}</p>
+                  </div>
+                </div>
+
+                <div v-if="selectedServices.length > 0" class="space-y-4">
                   <div
                     v-for="(serviceId, index) in selectedServices"
                     :key="serviceId"
-                    class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200 shadow-sm"
+                    class="flex flex-col gap-2"
                     v-if="serviceId && getServiceById(serviceId)"
                   >
                     <!-- Base Service -->
-                    <div class="flex justify-between items-start mb-2">
+                    <div class="flex justify-between items-start">
                       <div>
-                        <p class="font-bold text-gray-800 text-sm sm:text-base">
+                        <p class="font-medium text-gray-800">
                           {{ getServiceById(serviceId)?.nama }}
-                        </p>
-                        <p class="text-xs sm:text-sm text-gray-500">
-                          Base Price
+                          <span class="block text-sm text-gray-500"
+                            >Base Price</span
+                          >
                         </p>
                       </div>
-                      <p class="font-bold text-gray-800 text-sm sm:text-base">
+                      <p class="font-medium text-gray-800">
                         Rp{{
                           Number(
                             getServiceById(serviceId)?.harga
@@ -738,15 +587,15 @@
                     <!-- Selected Product and Color (if applicable) -->
                     <div
                       v-if="getSelectedColor(index)"
-                      class="flex justify-between items-start pl-3 sm:pl-4 border-l-2 border-[#F97474] bg-pink-50 rounded-r-lg p-2"
+                      class="flex justify-between items-start pl-4 border-l-2 border-gray-200"
                     >
                       <div>
-                        <p class="text-xs sm:text-sm font-medium text-gray-700">
+                        <p class="text-sm text-gray-600">
                           {{ getSelectedProduct(index)?.product?.nama }} -
                           {{ getSelectedColor(index)?.nama }}
                         </p>
                       </div>
-                      <p class="text-xs sm:text-sm font-bold text-gray-800">
+                      <p class="text-sm font-medium text-gray-800">
                         + Rp{{
                           getAdditionalPrice(serviceId, index).toLocaleString()
                         }}
@@ -755,26 +604,8 @@
                   </div>
                 </div>
 
-                <div v-else class="text-center py-6 sm:py-8">
-                  <div
-                    class="w-12 sm:w-16 h-12 sm:h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-6 sm:h-8 w-6 sm:w-8 text-gray-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                      />
-                    </svg>
-                  </div>
-                  <p class="text-gray-500 font-medium text-sm sm:text-base">
+                <div v-else class="text-center py-8">
+                  <p class="text-gray-500">
                     Select a service to see the summary
                   </p>
                 </div>
@@ -786,45 +617,21 @@
         <!-- Step 3: Time Selection -->
         <div v-if="currentStep === 2" class="transition-all duration-300">
           <div class="flex justify-center">
-            <div class="w-full max-w-3xl">
-              <div class="text-center mb-6 sm:mb-10">
-                <div
-                  class="inline-flex items-center justify-center w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-br from-orange-100 to-red-100 rounded-full mb-3 sm:mb-4"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 sm:h-8 w-6 sm:w-8 text-orange-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-                <h3
-                  class="text-xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-3"
-                >
+            <div class="w-full max-w-2xl">
+              <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">
                   Choose Your Time
                 </h3>
-                <p class="text-gray-600 text-sm sm:text-lg">
+                <p class="text-gray-600">
                   Select your preferred appointment time for
-                  <span class="font-semibold text-[#F97474]">{{
-                    formattedSelectedDate
-                  }}</span>
+                  {{ formattedSelectedDate }}
                 </p>
               </div>
 
-              <div v-if="isLoadingSlots" class="text-center py-8 sm:py-12">
-                <div
-                  class="inline-flex items-center px-4 sm:px-6 py-3 sm:py-4 bg-blue-50 rounded-xl sm:rounded-2xl border border-blue-200"
-                >
+              <div v-if="isLoadingSlots" class="text-center py-8">
+                <div class="inline-flex items-center">
                   <svg
-                    class="animate-spin -ml-1 mr-3 h-5 sm:h-6 w-5 sm:w-6 text-blue-600"
+                    class="animate-spin -ml-1 mr-3 h-5 w-5 text-[#F97474]"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -843,16 +650,13 @@
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  <span class="text-blue-700 font-semibold text-sm sm:text-base"
+                  <span class="text-gray-600"
                     >Loading available time slots...</span
                   >
                 </div>
               </div>
 
-              <div
-                v-else
-                class="grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4"
-              >
+              <div v-else class="grid grid-cols-3 md:grid-cols-4 gap-3">
                 <button
                   v-for="time in allTimeSlots"
                   :key="time"
@@ -860,75 +664,38 @@
                     availableSlots.includes(time) ? (bookingTime = time) : null
                   "
                   :disabled="bookedSlots.includes(time)"
-                  class="relative px-2 sm:px-4 py-3 sm:py-4 rounded-lg sm:rounded-2xl text-center transition-all duration-200 font-bold text-sm sm:text-lg border-2"
+                  class="px-4 py-3 rounded-xl text-center transition-all duration-200 font-medium"
                   :class="[
                     bookedSlots.includes(time)
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60 border-gray-200'
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
                       : bookingTime === time
-                      ? 'bg-gradient-to-br from-[#F97474] to-[#ff5757] text-white shadow-xl transform scale-110 border-[#F97474]'
-                      : 'bg-white hover:bg-gray-50 text-gray-700 hover:shadow-lg hover:scale-105 border-gray-200 hover:border-[#F97474]',
+                      ? 'bg-[#F97474] text-white shadow-lg transform scale-105'
+                      : 'bg-gray-50 hover:bg-gray-100 text-gray-700 hover:shadow-md',
                   ]"
                 >
                   {{ time }}
-                  <span
-                    v-if="bookedSlots.includes(time)"
-                    class="block text-xs font-medium mt-1"
+                  <span v-if="bookedSlots.includes(time)" class="block text-xs"
                     >Booked</span
                   >
-                  <div
-                    v-if="bookingTime === time"
-                    class="absolute -top-1 sm:-top-2 -right-1 sm:-right-2 w-4 sm:w-6 h-4 sm:h-6 bg-green-500 rounded-full flex items-center justify-center"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-2 sm:h-3 w-2 sm:w-3 text-white"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </div>
                 </button>
               </div>
 
               <div
                 v-if="!isLoadingSlots && allTimeSlots.length === 0"
-                class="text-center py-8 sm:py-12"
+                class="text-center py-8"
               >
-                <div
-                  class="w-16 sm:w-20 h-16 sm:h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-8 sm:h-10 w-8 sm:w-10 text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-                <p class="text-gray-500 font-semibold text-base sm:text-lg">
+                <p class="text-gray-500">
                   No time slots available for the selected date and services.
                 </p>
               </div>
 
-              <div v-if="bookingTime" class="mt-6 sm:mt-10 text-center">
+              <div v-if="bookingTime" class="mt-8 text-center">
                 <div
-                  class="inline-flex items-center px-4 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl sm:rounded-2xl shadow-lg"
+                  class="inline-flex items-center px-6 py-3 bg-green-50 border border-green-200 rounded-xl"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 sm:h-6 w-5 sm:w-6 text-green-600 mr-2 sm:mr-3"
+                    class="h-5 w-5 text-green-600 mr-2"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -938,14 +705,9 @@
                       clip-rule="evenodd"
                     />
                   </svg>
-                  <div>
-                    <p class="text-green-700 text-xs sm:text-sm font-medium">
-                      Selected Appointment
-                    </p>
-                    <p class="text-green-800 font-bold text-base sm:text-xl">
-                      {{ formattedSelectedDate }} at {{ bookingTime }}
-                    </p>
-                  </div>
+                  <span class="text-green-800 font-medium">
+                    Selected: {{ formattedSelectedDate }} at {{ bookingTime }}
+                  </span>
                 </div>
               </div>
             </div>
@@ -954,91 +716,61 @@
 
         <!-- Step 4: Payment Method -->
         <div v-if="currentStep === 3" class="transition-all duration-300">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10">
-            <div class="space-y-6 sm:space-y-8">
-              <div class="text-center mb-6 sm:mb-8">
-                <div
-                  class="inline-flex items-center justify-center w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full mb-3 sm:mb-4"
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-6">
+              <div>
+                <label class="block text-gray-700 text-lg font-medium mb-4"
+                  >Payment Method</label
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 sm:h-8 w-6 sm:w-8 text-green-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                <div class="grid grid-cols-1 gap-4">
+                  <div
+                    v-for="method in paymentMethods"
+                    :key="method.id"
+                    @click="paymentMethod = method.id"
+                    class="p-4 border rounded-xl cursor-pointer transition-all duration-200 flex items-center"
+                    :class="
+                      paymentMethod === method.id
+                        ? 'border-[#F97474] bg-pink-50 shadow-sm'
+                        : 'border-gray-200 bg-white hover:bg-gray-50'
+                    "
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
-                </div>
-                <h3
-                  class="text-xl sm:text-2xl font-bold text-gray-800 mb-1 sm:mb-2"
-                >
-                  Payment Method
-                </h3>
-                <p class="text-gray-600 text-sm sm:text-base">
-                  Choose how you'd like to pay
-                </p>
-              </div>
-
-              <div class="grid grid-cols-1 gap-3 sm:gap-4">
-                <div
-                  v-for="method in paymentMethods"
-                  :key="method.id"
-                  @click="paymentMethod = method.id"
-                  class="p-4 sm:p-6 border-2 rounded-xl sm:rounded-2xl cursor-pointer transition-all duration-200 flex items-center hover:shadow-lg"
-                  :class="
-                    paymentMethod === method.id
-                      ? 'border-[#F97474] bg-gradient-to-r from-pink-50 to-red-50 shadow-lg'
-                      : 'border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300'
-                  "
-                >
-                  <div class="flex-shrink-0 mr-3 sm:mr-4">
-                    <div
-                      class="w-5 sm:w-6 h-5 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200"
-                      :class="
-                        paymentMethod === method.id
-                          ? 'border-[#F97474] bg-[#F97474]'
-                          : 'border-gray-300'
-                      "
-                    >
+                    <div class="flex-shrink-0 mr-4">
                       <div
-                        v-if="paymentMethod === method.id"
-                        class="w-2 sm:w-3 h-2 sm:h-3 rounded-full bg-white"
-                      ></div>
+                        class="w-5 h-5 rounded-full border-2 flex items-center justify-center"
+                        :class="
+                          paymentMethod === method.id
+                            ? 'border-[#F97474]'
+                            : 'border-gray-300'
+                        "
+                      >
+                        <div
+                          v-if="paymentMethod === method.id"
+                          class="w-3 h-3 rounded-full bg-[#F97474]"
+                        ></div>
+                      </div>
+                    </div>
+                    <div>
+                      <p class="font-medium">{{ method.nama }}</p>
+                      <p class="text-sm text-gray-500">
+                        {{
+                          method.nama === "Cashless"
+                            ? "Pay online via bank transfer or e-wallet"
+                            : "Pay at the salon"
+                        }}
+                      </p>
                     </div>
                   </div>
-                  <div>
-                    <p class="font-bold text-base sm:text-lg text-gray-800">
-                      {{ method.nama }}
-                    </p>
-                    <p class="text-gray-600 text-sm sm:text-base">
-                      {{
-                        method.nama === "Cashless"
-                          ? "Pay online via bank transfer or e-wallet"
-                          : "Pay at the salon"
-                      }}
-                    </p>
-                  </div>
                 </div>
-              </div>
 
-              <!-- Payment Type Radio Buttons - Only show for Cashless -->
-              <div
-                v-if="isCashlessSelected"
-                class="p-4 sm:p-6 border-2 border-amber-200 rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 shadow-sm"
-              >
-                <div class="flex items-center">
-                  <div
-                    class="w-6 sm:w-8 h-6 sm:h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center mr-2 sm:mr-3"
-                  >
+                <!-- Payment Type Radio Buttons - Only show for Cashless -->
+                <div
+                  v-if="isCashlessSelected"
+                  class="mt-6 p-4 border border-gray-200 rounded-xl bg-gray-50"
+                >
+                  <div class="flex items-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      class="h-3 sm:h-4 w-3 sm:w-4 text-white"
+                      class="h-5 w-5 text-[#F97474] mr-2"
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
@@ -1048,76 +780,65 @@
                         clip-rule="evenodd"
                       />
                     </svg>
+                    <p class="text-sm font-medium text-gray-700">
+                      Pembayaran cashless hanya untuk Down Payment (30% dari
+                      total)
+                    </p>
                   </div>
-                  <p class="font-bold text-amber-800 text-sm sm:text-base">
-                    Pembayaran cashless hanya untuk Down Payment (30% dari
-                    total)
-                  </p>
                 </div>
               </div>
             </div>
 
             <div>
               <div
-                class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl sm:rounded-2xl p-4 sm:p-8 shadow-lg border border-gray-200 sticky top-6"
+                class="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100"
               >
                 <h3
-                  class="text-lg sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 flex items-center"
+                  class="text-lg font-semibold text-gray-800 mb-4 flex items-center"
                 >
-                  <div
-                    class="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-[#F97474] to-[#ff5757] rounded-full flex items-center justify-center mr-2 sm:mr-3"
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 mr-2 text-[#F97474]"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 sm:h-5 w-4 sm:w-5 text-white"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </div>
+                    <path
+                      fill-rule="evenodd"
+                      d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2-2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
                   Payment Summary
                 </h3>
 
-                <div class="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+                <div class="space-y-4 mb-6">
                   <div
-                    class="flex justify-between items-center pb-3 sm:pb-4 border-b-2 border-gray-200"
+                    class="flex justify-between items-center pb-2 border-b border-gray-200"
                   >
-                    <p class="text-gray-600 font-semibold text-sm sm:text-base">
-                      Date & Time
-                    </p>
-                    <p class="font-bold text-gray-800 text-sm sm:text-lg">
+                    <p class="text-gray-600">Date & Time</p>
+                    <p class="font-medium">
                       {{ formattedSelectedDate }}, {{ bookingTime }}
                     </p>
                   </div>
 
-                  <div
-                    v-if="selectedServices.length > 0"
-                    class="space-y-3 sm:space-y-4"
-                  >
+                  <div v-if="selectedServices.length > 0" class="space-y-3">
                     <div
                       v-for="(serviceId, index) in selectedServices"
                       :key="serviceId"
-                      class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200 shadow-sm"
+                      class="flex flex-col gap-2"
                       v-if="serviceId && getServiceById(serviceId)"
                     >
                       <!-- Base Service -->
-                      <div class="flex justify-between items-start mb-2">
+                      <div class="flex justify-between items-start">
                         <div>
-                          <p class="font-bold text-gray-800 text-sm sm:text-lg">
+                          <p class="font-medium text-gray-800">
                             {{ getServiceById(serviceId)?.nama }}
-                          </p>
-                          <p
-                            class="text-xs sm:text-sm text-gray-500 font-medium"
-                          >
-                            Base Price
+                            <span class="block text-sm text-gray-500"
+                              >Base Price</span
+                            >
                           </p>
                         </div>
-                        <p class="font-bold text-gray-800 text-sm sm:text-lg">
+                        <p class="font-medium text-gray-800">
                           Rp{{
                             Number(
                               getServiceById(serviceId)?.harga
@@ -1129,17 +850,15 @@
                       <!-- Selected Product and Color (if applicable) -->
                       <div
                         v-if="getSelectedColor(index)"
-                        class="flex justify-between items-start pl-3 sm:pl-4 border-l-4 border-[#F97474] bg-pink-50 rounded-r-xl p-2 sm:p-3"
+                        class="flex justify-between items-start pl-4 border-l-2 border-gray-200"
                       >
                         <div>
-                          <p
-                            class="font-semibold text-gray-700 text-xs sm:text-sm"
-                          >
+                          <p class="text-sm text-gray-600">
                             {{ getSelectedProduct(index)?.product?.nama }} -
                             {{ getSelectedColor(index)?.nama }}
                           </p>
                         </div>
-                        <p class="font-bold text-gray-800 text-xs sm:text-sm">
+                        <p class="text-sm font-medium text-gray-800">
                           + Rp{{
                             getAdditionalPrice(
                               serviceId,
@@ -1152,23 +871,19 @@
                   </div>
                 </div>
 
-                <div class="border-t-2 border-gray-200 pt-4 sm:pt-6">
-                  <div class="flex justify-between items-center mb-3 sm:mb-4">
-                    <p class="font-bold text-gray-800 text-lg sm:text-xl">
-                      Total
-                    </p>
-                    <p class="font-bold text-xl sm:text-2xl text-gray-800">
+                <div class="border-t border-gray-200 pt-4">
+                  <div class="flex justify-between items-center">
+                    <p class="font-semibold text-gray-800">Total</p>
+                    <p class="font-semibold text-xl text-gray-800">
                       Rp{{ totalPrice.toLocaleString() }}
                     </p>
                   </div>
                   <div
                     v-if="isCashlessSelected"
-                    class="flex justify-between items-center p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg sm:rounded-xl border border-blue-200"
+                    class="flex justify-between items-center mt-2 text-sm"
                   >
-                    <p class="text-blue-700 font-semibold text-sm sm:text-base">
-                      Down Payment (30%)
-                    </p>
-                    <p class="font-bold text-blue-800 text-base sm:text-xl">
+                    <p class="text-gray-600">Down Payment (30%)</p>
+                    <p class="font-medium text-gray-800">
                       Rp{{ Math.round(totalPrice * 0.3).toLocaleString() }}
                     </p>
                   </div>
@@ -1179,15 +894,15 @@
         </div>
 
         <!-- Navigation buttons -->
-        <div class="flex justify-between mt-8 sm:mt-12">
+        <div class="flex justify-between mt-8">
           <button
             v-if="currentStep > 0"
             @click="currentStep--"
-            class="px-4 sm:px-8 py-3 sm:py-4 border-2 border-gray-300 rounded-xl sm:rounded-2xl text-gray-600 hover:text-gray-800 hover:border-gray-400 font-bold transition-all duration-200 flex items-center shadow-sm hover:shadow-md text-sm sm:text-base"
+            class="px-6 py-3 border border-gray-300 rounded-xl text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200 flex items-center"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-4 sm:h-5 w-4 sm:w-5 mr-2"
+              class="h-5 w-5 mr-2"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -1199,18 +914,18 @@
             </svg>
             Back
           </button>
-          <div v-else class="w-20 sm:w-32"></div>
+          <div v-else class="w-24"></div>
 
           <button
             v-if="currentStep < steps.length - 1"
             @click="nextStep"
-            class="px-4 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-[#f6339a] to-[#ff5757] text-white rounded-xl sm:rounded-2xl font-bold hover:from-[#e65c5c] hover:to-[#e04545] transition-all duration-200 flex items-center shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base"
+            class="px-6 py-3 bg-[#F97474] text-white rounded-xl font-medium hover:bg-[#ff5757] transition-all duration-200 flex items-center"
             :disabled="!canProceedToNextStep"
           >
             Next
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-4 sm:h-5 w-4 sm:w-5 ml-2"
+              class="h-5 w-5 ml-2"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -1224,12 +939,12 @@
           <button
             v-else
             @click="submitBooking"
-            class="px-4 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl sm:rounded-2xl font-bold hover:from-green-600 hover:to-emerald-600 transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:hover:scale-100 flex items-center shadow-lg hover:shadow-xl text-sm sm:text-base"
+            class="px-6 py-3 bg-[#F97474] text-white rounded-xl font-medium hover:bg-[#ff5757] transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:hover:scale-100 flex items-center"
             :disabled="!isFormValid"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-4 sm:h-5 w-4 sm:w-5 mr-2"
+              class="h-5 w-5 mr-2"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
