@@ -1,7 +1,9 @@
 <template>
   <ProfileLayout>
     <div>
-      <h1 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+      <h1
+        class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-6 sm:mb-8 flex items-center gap-3"
+      >
         <span
           class="bg-gradient-to-r from-pink-500 to-pink-600 bg-clip-text text-transparent"
           >Change Password</span
@@ -11,14 +13,16 @@
         ></div>
       </h1>
 
-      <div class="max-w-xl mx-auto">
+      <div class="max-w-full sm:max-w-xl mx-auto px-4 sm:px-0">
         <div
-          class="bg-gradient-to-br from-pink-50 to-white rounded-2xl p-8 shadow-sm border border-pink-100"
+          class="bg-gradient-to-br from-pink-50 to-white rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm border border-pink-100"
         >
-          <div class="mb-6 flex items-center gap-3 text-pink-600">
+          <div
+            class="mb-4 sm:mb-6 flex items-start sm:items-center gap-3 text-pink-600"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
+              class="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0 mt-0.5 sm:mt-0"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -30,13 +34,13 @@
                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <p class="text-sm">
+            <p class="text-xs sm:text-sm">
               For security reasons, please use a strong password that you don't
               use elsewhere.
             </p>
           </div>
 
-          <form @submit.prevent="changePassword" class="space-y-6">
+          <form @submit.prevent="changePassword" class="space-y-4 sm:space-y-6">
             <div class="space-y-2">
               <label class="block text-sm font-medium text-gray-700"
                 >Current Password</label
@@ -63,7 +67,7 @@
                 <input
                   v-model="passwordForm.currentPassword"
                   type="password"
-                  class="w-full pl-10 pr-4 py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+                  class="w-full pl-8 sm:pl-10 pr-4 py-2.5 sm:py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 text-sm sm:text-base"
                   placeholder="Enter your current password"
                 />
               </div>
@@ -95,7 +99,7 @@
                 <input
                   v-model="passwordForm.newPassword"
                   type="password"
-                  class="w-full pl-10 pr-4 py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+                  class="w-full pl-8 sm:pl-10 pr-4 py-2.5 sm:py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 text-sm sm:text-base"
                   placeholder="Enter your new password"
                 />
               </div>
@@ -139,7 +143,7 @@
                 <input
                   v-model="passwordForm.confirmPassword"
                   type="password"
-                  class="w-full pl-10 pr-4 py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+                  class="w-full pl-8 sm:pl-10 pr-4 py-2.5 sm:py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 text-sm sm:text-base"
                   placeholder="Confirm your new password"
                 />
               </div>
@@ -154,7 +158,7 @@
             <div class="flex justify-end pt-4">
               <button
                 type="submit"
-                class="px-8 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:from-pink-600 hover:to-pink-700 transition-all duration-300 shadow-lg hover:shadow-pink-200 flex items-center gap-2 font-medium"
+                class="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:from-pink-600 hover:to-pink-700 transition-all duration-300 shadow-lg hover:shadow-pink-200 flex items-center justify-center gap-2 font-medium text-sm sm:text-base"
                 :disabled="!isFormValid || loading"
               >
                 <svg

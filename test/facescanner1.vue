@@ -147,52 +147,113 @@
                 ref="videoRef"
                 autoplay
                 playsinline
-                muted
                 class="absolute inset-0 w-full h-full object-cover"
               ></video>
-
-              <!-- Face Detection Canvas - This will show the tracking box -->
               <canvas
-                ref="faceDetectionCanvasRef"
-                class="absolute inset-0 w-full h-full pointer-events-none"
-                style="
-                  z-index: 30;
-                  background: transparent;
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                "
+                ref="detectionCanvasRef"
+                class="absolute inset-0 w-full h-full pointer-events-none z-20"
               ></canvas>
-
-              <canvas
-                ref="guideCanvasRef"
-                class="absolute inset-0 w-full h-full pointer-events-none z-10"
-                v-show="!faceDetected"
-              ></canvas>
-
               <canvas
                 ref="canvasRef"
                 class="absolute inset-0 w-full h-full"
-                style="display: none"
               ></canvas>
 
-              <!-- Face Detection Status -->
+              <!-- Model Loading Overlay -->
               <div
-                v-if="faceDetectionStatus && !isLoading"
-                class="absolute top-2 right-2 px-3 py-1 rounded-full text-xs z-40"
-                :class="
-                  faceDetected
-                    ? 'bg-green-500/80 text-white'
-                    : 'bg-red-500/80 text-white'
-                "
+                v-if="isLoadingModel"
+                class="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-30"
               >
-                {{ faceDetectionStatus }}
+                <div class="relative">
+                  <!-- Rotating detection box -->
+                  <div
+                    class="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48"
+                  >
+                    <!-- Outer rotating border -->
+                    <div
+                      class="absolute inset-0 border-2 border-transparent border-t-[#f6339a] border-r-[#f6339a] rounded-lg animate-spin"
+                    ></div>
+
+                    <!-- Inner rotating border -->
+                    <div
+                      class="absolute inset-2 border-2 border-transparent border-b-[#db2777] border-l-[#db2777] rounded-lg animate-spin"
+                      style="
+                        animation-direction: reverse;
+                        animation-duration: 1.5s;
+                      "
+                    ></div>
+
+                    <!-- Center icon -->
+                    <div
+                      class="absolute inset-0 flex items-center justify-center"
+                    >
+                      <div
+                        class="w-12 h-12 sm:w-16 sm:h-16 bg-white/90 rounded-lg flex items-center justify-center shadow-lg"
+                      >
+                        <svg
+                          class="w-6 h-6 sm:w-8 sm:h-8 text-[#f6339a]"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+
+                    <!-- Corner indicators -->
+                    <div
+                      class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#f6339a]"
+                    ></div>
+                    <div
+                      class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#f6339a]"
+                    ></div>
+                    <div
+                      class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#f6339a]"
+                    ></div>
+                    <div
+                      class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#f6339a]"
+                    ></div>
+                  </div>
+
+                  <!-- Status text -->
+                  <div class="text-center mt-4">
+                    <p
+                      class="text-sm sm:text-base font-medium text-white drop-shadow-lg"
+                    >
+                      Loading Face Detection...
+                    </p>
+                    <div class="flex justify-center mt-2 space-x-1">
+                      <div
+                        class="w-1.5 h-1.5 bg-[#f6339a] rounded-full animate-bounce"
+                      ></div>
+                      <div
+                        class="w-1.5 h-1.5 bg-[#f6339a] rounded-full animate-bounce"
+                        style="animation-delay: 0.1s"
+                      ></div>
+                      <div
+                        class="w-1.5 h-1.5 bg-[#f6339a] rounded-full animate-bounce"
+                        style="animation-delay: 0.2s"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <!-- Scanning Animation Overlay -->
+              <!-- Analysis Loading Overlay -->
               <div
                 v-if="isLoading && activeTab === 'camera'"
-                class="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm z-50"
+                class="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm z-30"
               >
                 <div class="relative">
                   <!-- Face scanning animation -->
@@ -434,7 +495,7 @@
                           class="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg"
                         >
                           <svg
-                            class="w-5 h-5 sm:w-6 sm:h-6 md:w-8 h-8 text-[#f6339a]"
+                            class="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-[#f6339a]"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -527,17 +588,9 @@
               </span>
               <span
                 class="absolute flex items-center justify-center w-full h-full text-white transition-all duration-300 transform group-hover:translate-x-full ease"
-                >{{
-                  activeTab === "camera" && !faceDetected
-                    ? "Position Face in Frame"
-                    : "Analyze My Face Shape"
-                }}</span
+                >Analyze My Face Shape</span
               >
-              <span class="relative invisible">{{
-                activeTab === "camera" && !faceDetected
-                  ? "Position Face in Frame"
-                  : "Analyze My Face Shape"
-              }}</span>
+              <span class="relative invisible">Analyze My Face Shape</span>
             </button>
           </div>
         </div>
@@ -698,14 +751,7 @@
 </template>
 
 <script setup>
-import {
-  ref,
-  computed,
-  onBeforeUnmount,
-  watch,
-  nextTick,
-  onMounted,
-} from "vue";
+import { ref, computed, onBeforeUnmount, watch, nextTick } from "vue";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { useNuxtApp } from "#app";
 
@@ -715,11 +761,11 @@ const isRecommendationModalOpen = ref(false);
 const stream = ref(null);
 const videoRef = ref(null);
 const canvasRef = ref(null);
-const guideCanvasRef = ref(null);
-const faceDetectionCanvasRef = ref(null);
+const detectionCanvasRef = ref(null);
 const uploadCanvasRef = ref(null);
 const fileInputRef = ref(null);
 const isLoading = ref(false);
+const isLoadingModel = ref(false);
 const scanningStatus = ref("");
 const recommendations = ref([]);
 const currentRecommendationIndex = ref(0);
@@ -727,290 +773,14 @@ const detectedFaceShape = ref("");
 const activeTab = ref("camera");
 const uploadedImage = ref(null);
 const isDragging = ref(false);
-const faceDetected = ref(false);
-const faceDetectionStatus = ref("");
-
-// Face detection variables
 let animationFrameId = null;
 let cameraInitialized = false;
+let faceDetector = null;
 
 const currentRecommendation = computed(() => {
   if (recommendations.value.length === 0) return null;
   return recommendations.value[currentRecommendationIndex.value];
 });
-
-// Real-time face detection using skin color analysis
-const detectFacesSimple = async () => {
-  if (!videoRef.value || !faceDetectionCanvasRef.value || isLoading.value) {
-    return;
-  }
-
-  const video = videoRef.value;
-  const canvas = faceDetectionCanvasRef.value;
-  const ctx = canvas.getContext("2d");
-
-  // Force canvas to match video element exactly
-  const videoRect = video.getBoundingClientRect();
-  canvas.width = videoRect.width;
-  canvas.height = videoRect.height;
-  canvas.style.width = videoRect.width + "px";
-  canvas.style.height = videoRect.height + "px";
-  canvas.style.position = "absolute";
-  canvas.style.top = "0";
-  canvas.style.left = "0";
-  canvas.style.pointerEvents = "none";
-  canvas.style.zIndex = "30";
-
-  // Clear canvas
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  try {
-    // Create a temporary canvas to analyze the video frame
-    const tempCanvas = document.createElement("canvas");
-    const tempCtx = tempCanvas.getContext("2d");
-    tempCanvas.width = video.videoWidth;
-    tempCanvas.height = video.videoHeight;
-
-    // Draw current video frame
-    tempCtx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-
-    // Get image data for analysis
-    const imageData = tempCtx.getImageData(
-      0,
-      0,
-      tempCanvas.width,
-      tempCanvas.height
-    );
-    const data = imageData.data;
-
-    // Focus on the upper portion of the frame for face detection
-    const faceRegionHeight = Math.floor(tempCanvas.height * 0.7); // Only check upper 70% of frame
-    const faceRegionWidth = tempCanvas.width;
-
-    // Scan for skin-colored regions in face area only
-    const skinPixels = [];
-    const blockSize = 6; // Smaller block size for better precision
-
-    for (let y = 0; y < faceRegionHeight; y += blockSize) {
-      for (let x = 0; x < faceRegionWidth; x += blockSize) {
-        const i = (y * tempCanvas.width + x) * 4;
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-
-        // More strict skin color detection for face
-        if (isFaceSkinColor(r, g, b)) {
-          skinPixels.push({ x, y });
-        }
-      }
-    }
-
-    let faceFound = false;
-    let faceX = 0,
-      faceY = 0,
-      faceWidth = 0,
-      faceHeight = 0;
-
-    if (skinPixels.length > 25) {
-      // Reduced minimum skin pixels for better detection
-      // Find bounding box of skin pixels
-      const minX = Math.min(...skinPixels.map((p) => p.x));
-      const maxX = Math.max(...skinPixels.map((p) => p.x));
-      const minY = Math.min(...skinPixels.map((p) => p.y));
-      const maxY = Math.max(...skinPixels.map((p) => p.y));
-
-      // Calculate initial face region
-      const rawWidth = maxX - minX;
-      const rawHeight = maxY - minY;
-
-      // Apply face-specific constraints
-      const aspectRatio = rawWidth / rawHeight;
-
-      // Face should have aspect ratio between 0.6 and 1.4 (width/height)
-      if (
-        aspectRatio > 0.6 &&
-        aspectRatio < 1.4 &&
-        rawWidth > 40 &&
-        rawHeight > 50
-      ) {
-        // Refine the face boundaries to be more precise
-        const centerX = (minX + maxX) / 2;
-        const centerY = (minY + maxY) / 2;
-
-        // Use larger, more comprehensive face dimensions with extra height
-        faceWidth = Math.min(rawWidth * 1.3, tempCanvas.width * 0.6); // Max 60% of frame width
-        faceHeight = Math.min(rawHeight * 1.5, tempCanvas.height * 0.8); // Max 80% of frame height, increased multiplier
-
-        // Ensure good face size that covers full face including forehead and chin
-        faceWidth = Math.max(faceWidth, 120);
-        faceHeight = Math.max(faceHeight, 180); // Increased minimum height
-
-        // Center the face box with slight upward adjustment to capture more forehead
-        faceX = Math.max(0, centerX - faceWidth / 2);
-        faceY = Math.max(0, centerY - faceHeight / 2 - 10); // Shift up by 10 pixels to capture more forehead
-
-        // Ensure face box doesn't go outside frame
-        if (faceX + faceWidth > tempCanvas.width) {
-          faceX = tempCanvas.width - faceWidth;
-        }
-        if (faceY + faceHeight > tempCanvas.height) {
-          faceY = tempCanvas.height - faceHeight;
-        }
-
-        // Additional validation: face should be in upper portion of frame
-        if (faceY < tempCanvas.height * 0.75) {
-          // Face center should be in upper 75% (increased from 70%)
-          faceFound = true;
-        }
-      }
-    }
-
-    if (faceFound) {
-      // Scale coordinates from video resolution to display size
-      const scaleX = canvas.width / video.videoWidth;
-      const scaleY = canvas.height / video.videoHeight;
-
-      const displayX = faceX * scaleX;
-      const displayY = faceY * scaleY;
-      const displayWidth = faceWidth * scaleX;
-      const displayHeight = faceHeight * scaleY;
-
-      // Draw face tracking box
-      ctx.strokeStyle = "#ff0066";
-      ctx.lineWidth = 3;
-      ctx.shadowColor = "#ff0066";
-      ctx.shadowBlur = 10;
-
-      // Main bounding box
-      ctx.strokeRect(displayX, displayY, displayWidth, displayHeight);
-
-      // Corner markers
-      const cornerSize = 20;
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = "#00ff66";
-
-      // Top-left
-      ctx.beginPath();
-      ctx.moveTo(displayX, displayY + cornerSize);
-      ctx.lineTo(displayX, displayY);
-      ctx.lineTo(displayX + cornerSize, displayY);
-      ctx.stroke();
-
-      // Top-right
-      ctx.beginPath();
-      ctx.moveTo(displayX + displayWidth - cornerSize, displayY);
-      ctx.lineTo(displayX + displayWidth, displayY);
-      ctx.lineTo(displayX + displayWidth, displayY + cornerSize);
-      ctx.stroke();
-
-      // Bottom-left
-      ctx.beginPath();
-      ctx.moveTo(displayX, displayY + displayHeight - cornerSize);
-      ctx.lineTo(displayX, displayY + displayHeight);
-      ctx.lineTo(displayX + cornerSize, displayY + displayHeight);
-      ctx.stroke();
-
-      // Bottom-right
-      ctx.beginPath();
-      ctx.moveTo(
-        displayX + displayWidth - cornerSize,
-        displayY + displayHeight
-      );
-      ctx.lineTo(displayX + displayWidth, displayY + displayHeight);
-      ctx.lineTo(
-        displayX + displayWidth,
-        displayY + displayHeight - cornerSize
-      );
-      ctx.stroke();
-
-      // Add text
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = "#ff0066";
-      ctx.font = "bold 16px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText("FACE TRACKED", displayX + displayWidth / 2, displayY - 8);
-
-      faceDetected.value = true;
-      faceDetectionStatus.value = "Face tracked";
-    } else {
-      faceDetected.value = false;
-      faceDetectionStatus.value = "Searching for face...";
-    }
-  } catch (error) {
-    console.error("Face detection error:", error);
-    faceDetected.value = false;
-    faceDetectionStatus.value = "Detection error";
-  }
-
-  // Continue detection loop
-  if (activeTab.value === "camera" && isModalOpen.value && !isLoading.value) {
-    animationFrameId = requestAnimationFrame(detectFacesSimple);
-  }
-};
-
-// Improved skin color detection specifically for faces
-function isFaceSkinColor(r, g, b) {
-  // Less restrictive skin color detection for better face coverage
-
-  // Primary face skin detection
-  const isFaceSkin1 =
-    r > 95 &&
-    r < 255 &&
-    g > 75 &&
-    g < 225 &&
-    b > 55 &&
-    b < 205 &&
-    r > g &&
-    r > b &&
-    r - g > 8 &&
-    r - b > 12 &&
-    Math.abs(g - b) < 25;
-
-  // Secondary face skin detection for lighter tones
-  const isFaceSkin2 =
-    r > 170 &&
-    r < 255 &&
-    g > 150 &&
-    g < 245 &&
-    b > 130 &&
-    b < 225 &&
-    Math.abs(r - g) < 30 &&
-    Math.abs(r - b) < 40 &&
-    Math.abs(g - b) < 30 &&
-    r >= g &&
-    r >= b;
-
-  return isFaceSkin1 || isFaceSkin2;
-}
-
-// Start face detection loop
-const startFaceDetection = () => {
-  if (videoRef.value && activeTab.value === "camera") {
-    // Use improved face detection that actually tracks faces
-    detectFacesSimple();
-  }
-};
-
-// Stop face detection loop
-const stopFaceDetection = () => {
-  if (animationFrameId) {
-    cancelAnimationFrame(animationFrameId);
-    animationFrameId = null;
-  }
-  faceDetected.value = false;
-  faceDetectionStatus.value = "";
-
-  // Clear detection canvas
-  if (faceDetectionCanvasRef.value) {
-    const ctx = faceDetectionCanvasRef.value.getContext("2d");
-    ctx.clearRect(
-      0,
-      0,
-      faceDetectionCanvasRef.value.width,
-      faceDetectionCanvasRef.value.height
-    );
-  }
-};
 
 const showNextRecommendation = () => {
   if (currentRecommendationIndex.value < recommendations.value.length - 1) {
@@ -1025,9 +795,7 @@ const showPreviousRecommendation = () => {
 };
 
 const openRecommendationModal = () => {
-  // Close the camera modal when opening recommendations
   closeModal();
-
   isRecommendationModalOpen.value = true;
   currentRecommendationIndex.value = 0;
 };
@@ -1036,76 +804,119 @@ const closeRecommendationModal = () => {
   isRecommendationModalOpen.value = false;
 };
 
-const drawFaceGuide = (canvas) => {
-  const ctx = canvas.getContext("2d");
-  const width = canvas.width;
-  const height = canvas.height;
+// Load TensorFlow.js and MediaPipe Face Detection
+const loadFaceDetection = async () => {
+  try {
+    isLoadingModel.value = true;
 
-  ctx.clearRect(0, 0, width, height);
+    // Dynamically import TensorFlow.js
+    const tf = await import("@tensorflow/tfjs");
+    const faceDetection = await import("@tensorflow-models/face-detection");
 
-  // Create gradient for guide
-  const gradient = ctx.createLinearGradient(0, 0, width, height);
-  gradient.addColorStop(0, "rgba(249, 116, 116, 0.3)");
-  gradient.addColorStop(1, "rgba(255, 87, 87, 0.3)");
+    // Initialize TensorFlow backend
+    await tf.ready();
 
-  ctx.strokeStyle = gradient;
-  ctx.lineWidth = 3;
+    // Create MediaPipe Face Detector
+    const model = faceDetection.SupportedModels.MediaPipeFaceDetector;
+    const detectorConfig = {
+      runtime: "tfjs",
+      modelType: "short",
+      maxFaces: 1,
+    };
 
-  const centerX = width / 2;
-  const centerY = height / 2;
-  const faceWidth = width * 0.4;
-  const faceHeight = height * 0.6;
-
-  // Draw outer glow
-  ctx.shadowColor = "rgba(249, 116, 116, 0.5)";
-  ctx.shadowBlur = 15;
-
-  ctx.beginPath();
-  ctx.ellipse(
-    centerX,
-    centerY,
-    faceWidth / 2,
-    faceHeight / 2,
-    0,
-    0,
-    2 * Math.PI
-  );
-  ctx.stroke();
-
-  // Reset shadow for text
-  ctx.shadowBlur = 0;
-
-  // Add guide text with gradient
-  const textGradient = ctx.createLinearGradient(
-    centerX - 100,
-    height - 40,
-    centerX + 100,
-    height - 20
-  );
-  textGradient.addColorStop(0, "#f6339a");
-  textGradient.addColorStop(1, "#db2777");
-
-  ctx.fillStyle = textGradient;
-  ctx.font = "600 16px 'Inter', sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillText("Align your face within the frame", centerX, height - 30);
+    faceDetector = await faceDetection.createDetector(model, detectorConfig);
+    console.log("Face detection model loaded successfully");
+  } catch (error) {
+    console.error("Error loading face detection model:", error);
+  } finally {
+    isLoadingModel.value = false;
+  }
 };
 
-const initializeGuideCanvas = () => {
-  if (!videoRef.value || !guideCanvasRef.value) return;
+// Draw face detection box
+const drawFaceDetection = async () => {
+  if (!faceDetector || !videoRef.value || !detectionCanvasRef.value) return;
 
   const video = videoRef.value;
-  const guideCanvas = guideCanvasRef.value;
+  const canvas = detectionCanvasRef.value;
+  const ctx = canvas.getContext("2d");
 
-  const checkDimensions = setInterval(() => {
-    if (video.videoWidth && video.videoHeight) {
-      clearInterval(checkDimensions);
-      const rect = video.getBoundingClientRect();
-      guideCanvas.width = rect.width;
-      guideCanvas.height = rect.height;
-      drawFaceGuide(guideCanvas);
+  // Set canvas size to match video
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  try {
+    // Detect faces
+    const faces = await faceDetector.estimateFaces(video);
+
+    // Clear previous drawings
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (faces.length > 0) {
+      const face = faces[0];
+      const box = face.box;
+
+      // Draw face detection box
+      ctx.strokeStyle = "#f6339a";
+      ctx.lineWidth = 3;
+      ctx.shadowColor = "rgba(246, 51, 154, 0.5)";
+      ctx.shadowBlur = 10;
+
+      // Draw rounded rectangle
+      const radius = 10;
+      ctx.beginPath();
+      ctx.roundRect(box.xMin, box.yMin, box.width, box.height, radius);
+      ctx.stroke();
+
+      // Reset shadow
+      ctx.shadowBlur = 0;
+
+      // Draw corner indicators
+      const cornerSize = 20;
+      ctx.strokeStyle = "#db2777";
+      ctx.lineWidth = 4;
+
+      // Top-left corner
+      ctx.beginPath();
+      ctx.moveTo(box.xMin, box.yMin + cornerSize);
+      ctx.lineTo(box.xMin, box.yMin);
+      ctx.lineTo(box.xMin + cornerSize, box.yMin);
+      ctx.stroke();
+
+      // Top-right corner
+      ctx.beginPath();
+      ctx.moveTo(box.xMin + box.width - cornerSize, box.yMin);
+      ctx.lineTo(box.xMin + box.width, box.yMin);
+      ctx.lineTo(box.xMin + box.width, box.yMin + cornerSize);
+      ctx.stroke();
+
+      // Bottom-left corner
+      ctx.beginPath();
+      ctx.moveTo(box.xMin, box.yMin + box.height - cornerSize);
+      ctx.lineTo(box.xMin, box.yMin + box.height);
+      ctx.lineTo(box.xMin + cornerSize, box.yMin + box.height);
+      ctx.stroke();
+
+      // Bottom-right corner
+      ctx.beginPath();
+      ctx.moveTo(box.xMin + box.width - cornerSize, box.yMin + box.height);
+      ctx.lineTo(box.xMin + box.width, box.yMin + box.height);
+      ctx.lineTo(box.xMin + box.width, box.yMin + box.height - cornerSize);
+      ctx.stroke();
+
+      // Draw label
+      ctx.fillStyle = "#f6339a";
+      ctx.font = "bold 16px Arial";
+      ctx.fillText("Face Detected", box.xMin, box.yMin - 10);
     }
-  }, 100);
+  } catch (error) {
+    console.error("Error in face detection:", error);
+  }
+
+  // Continue detection loop
+  if (activeTab.value === "camera" && !isLoading.value) {
+    animationFrameId = requestAnimationFrame(drawFaceDetection);
+  }
 };
 
 const openModal = async () => {
@@ -1113,10 +924,8 @@ const openModal = async () => {
   activeTab.value = "camera";
   uploadedImage.value = null;
 
-  // Wait for the next tick to ensure the modal and video element are rendered
   await nextTick();
 
-  // Initialize camera only if it hasn't been initialized before and we're on camera tab
   if (activeTab.value === "camera" && !cameraInitialized) {
     await initializeCamera();
     cameraInitialized = true;
@@ -1129,14 +938,16 @@ const initializeCamera = async () => {
     return;
   }
 
-  isLoading.value = true;
-  scanningStatus.value = "Initializing camera...";
-
   try {
     // Stop any existing stream first
     if (stream.value) {
       stream.value.getTracks().forEach((track) => track.stop());
       stream.value = null;
+    }
+
+    // Load face detection model
+    if (!faceDetector) {
+      await loadFaceDetection();
     }
 
     stream.value = await navigator.mediaDevices.getUserMedia({
@@ -1150,7 +961,6 @@ const initializeCamera = async () => {
     if (videoRef.value) {
       videoRef.value.srcObject = stream.value;
 
-      // Wait for the video to be ready
       await new Promise((resolve, reject) => {
         videoRef.value.onloadedmetadata = () => {
           videoRef.value.play().then(resolve).catch(reject);
@@ -1158,30 +968,30 @@ const initializeCamera = async () => {
         videoRef.value.onerror = reject;
       });
 
-      // Initialize guide canvas and start face detection after video is ready
+      // Start face detection after video is ready
       setTimeout(() => {
-        initializeGuideCanvas();
-        startFaceDetection();
+        if (faceDetector) {
+          drawFaceDetection();
+        }
       }, 500);
     }
   } catch (error) {
     console.error("Error accessing camera:", error);
     scanningStatus.value =
       "Error accessing camera. Please check permissions and try again.";
-  } finally {
-    isLoading.value = false;
   }
 };
 
 const closeModal = () => {
   isModalOpen.value = false;
-  stopFaceDetection();
-
   if (stream.value) {
     stream.value.getTracks().forEach((track) => track.stop());
     stream.value = null;
   }
-
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
   uploadedImage.value = null;
   cameraInitialized = false;
 };
@@ -1189,7 +999,6 @@ const closeModal = () => {
 const drawFaceShape = (ctx, detection) => {
   const { xcenter, ycenter, width, height } = detection;
 
-  // Create gradient for detection box
   const gradient = ctx.createLinearGradient(
     xcenter - width / 2,
     ycenter - height / 2,
@@ -1204,15 +1013,12 @@ const drawFaceShape = (ctx, detection) => {
   ctx.shadowColor = "rgba(249, 116, 116, 0.5)";
   ctx.shadowBlur = 10;
 
-  // Draw detection box
   ctx.beginPath();
   ctx.rect(xcenter - width / 2, ycenter - height / 2, width, height);
   ctx.stroke();
 
-  // Reset shadow for text
   ctx.shadowBlur = 0;
 
-  // Add detection text with gradient
   const textGradient = ctx.createLinearGradient(
     xcenter - width / 2,
     ycenter - height / 2 - 20,
@@ -1252,7 +1058,6 @@ const captureFace = async () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   } else {
-    // Use the uploaded image
     canvas = uploadCanvasRef.value;
     const img = new Image();
     img.onload = async () => {
@@ -1266,7 +1071,7 @@ const captureFace = async () => {
       await processCapturedImage(canvas);
     };
     img.src = uploadedImage.value;
-    return; // Return early as we'll call processCapturedImage in the onload callback
+    return;
   }
 
   await processCapturedImage(canvas);
@@ -1275,8 +1080,13 @@ const captureFace = async () => {
 const processCapturedImage = async (canvas) => {
   try {
     isLoading.value = true;
-    stopFaceDetection(); // Stop face detection during processing
     scanningStatus.value = "Analyzing your face shape...";
+
+    // Stop face detection during analysis
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
 
     const blob = await new Promise((resolve) =>
       canvas.toBlob(resolve, "image/jpeg")
@@ -1305,10 +1115,8 @@ const processCapturedImage = async (canvas) => {
         (a, b) => b.confidence - a.confidence
       )[0];
 
-      // Store the detected face shape
       detectedFaceShape.value = bestDetection.name;
 
-      // Draw face shape on the canvas
       const ctx = canvas.getContext("2d");
       drawFaceShape(ctx, bestDetection);
 
@@ -1354,7 +1162,6 @@ const getRecommendations = async (faceShape) => {
   }
 };
 
-// File upload handling
 const triggerFileInput = () => {
   if (fileInputRef.value) {
     fileInputRef.value.click();
@@ -1390,7 +1197,6 @@ const processUploadedFile = (file) => {
     scanningStatus.value =
       "Image uploaded successfully. Click 'Analyze' to continue.";
 
-    // Prepare the canvas for later use with the image
     if (uploadCanvasRef.value) {
       const canvas = uploadCanvasRef.value;
       const img = new Image();
@@ -1423,22 +1229,25 @@ watch(activeTab, async (newTab) => {
     await initializeCamera();
     cameraInitialized = true;
   } else if (newTab === "upload") {
-    // Stop camera stream and face detection when switching to upload tab
-    stopFaceDetection();
     if (stream.value) {
       stream.value.getTracks().forEach((track) => track.stop());
       stream.value = null;
       cameraInitialized = false;
     }
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
     scanningStatus.value = "";
   }
 });
 
-// Clean up resources when component is unmounted
 onBeforeUnmount(() => {
-  stopFaceDetection();
   if (stream.value) {
     stream.value.getTracks().forEach((track) => track.stop());
+  }
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
   }
 });
 </script>
@@ -1509,22 +1318,6 @@ onBeforeUnmount(() => {
   }
 }
 
-/* Enhanced scanning animation */
-@keyframes faceScan {
-  0% {
-    transform: scale(0.8) rotate(0deg);
-    opacity: 0.5;
-  }
-  50% {
-    transform: scale(1.1) rotate(180deg);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0.8) rotate(360deg);
-    opacity: 0.5;
-  }
-}
-
 /* Enhanced styling for face scanner */
 .face-scanner {
   width: 100%;
@@ -1555,125 +1348,6 @@ onBeforeUnmount(() => {
   100% {
     background-position: 0% 50%;
   }
-}
-
-/* Improved camera guide */
-.absolute.inset-0.flex.items-center.justify-center.bg-white\/70.backdrop-blur-sm {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(4px);
-}
-
-/* Enhanced loading animation */
-.animate-spin.rounded-full.h-10.w-10.sm\:h-12.sm\:w-12.border-4.border-t-\[#f6339a\].border-gray-200.mb-3.sm\:mb-4 {
-  box-shadow: 0 0 15px rgba(246, 51, 154, 0.3);
-}
-
-/* Improved recommendation cards */
-.bg-white.rounded-2xl.shadow-xl.overflow-hidden.h-full {
-  border: 1px solid rgba(246, 51, 154, 0.1);
-  transition: all 0.3s ease;
-}
-
-.bg-white.rounded-2xl.shadow-xl.overflow-hidden.h-full:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 25px -5px rgba(246, 51, 154, 0.2);
-}
-
-/* Enhanced navigation buttons */
-.absolute.-left-2.top-1\/2.-translate-y-1\/2.p-2.text-\[#f6339a\].hover\:bg-pink-500.rounded-full.transition-all.duration-300.disabled\:opacity-30,
-.absolute.-right-2.top-1\/2.-translate-y-1\/2.p-2.text-\[#f6339a\].hover\:bg-pink-500.rounded-full.transition-all.duration-300.disabled\:opacity-30 {
-  background: white;
-  box-shadow: 0 4px 12px rgba(246, 51, 154, 0.2);
-}
-
-.absolute.-left-2.top-1\/2.-translate-y-1\/2.p-2.text-\[#f6339a\].hover\:bg-pink-500.rounded-full.transition-all.duration-300.disabled\:opacity-30:hover,
-.absolute.-right-2.top-1\/2.-translate-y-1\/2.p-2.text-\[#f6339a\].hover\:bg-pink-500.rounded-full.transition-all.duration-300.disabled\:opacity-30:hover {
-  background: rgba(246, 51, 154, 0.1);
-}
-
-.fixed.inset-0.z-\[9999\].flex.items-center.justify-center.p-4 {
-  background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
-}
-
-.bg-white\/95.backdrop-blur-sm.rounded-2xl.sm\:rounded-3xl.p-4.sm\:p-6.md\:p-8.w-full.max-w-2xl.shadow-2xl.transform.transition-all.duration-300.max-h-\[90vh\].overflow-y-auto {
-  border: 1px solid rgba(246, 51, 154, 0.1);
-  box-shadow: 0 25px 50px -12px rgba(246, 51, 154, 0.25);
-}
-
-.relative.mb-4.sm\:mb-6.rounded-xl.sm\:rounded-2xl.overflow-hidden.shadow-xl.bg-gray-100 {
-  border: 2px solid rgba(246, 51, 154, 0.1);
-  box-shadow: 0 10px 25px -5px rgba(246, 51, 154, 0.2);
-}
-
-.rounded-xl.sm\:rounded-2xl.overflow-hidden.shadow-xl.bg-gray-100.transition-all.duration-300 {
-  border: 2px solid rgba(246, 51, 154, 0.1);
-  box-shadow: 0 10px 25px -5px rgba(246, 51, 154, 0.2);
-}
-
-.inline-flex.rounded-full.p-1.bg-gray-100 {
-  padding: 0.25rem;
-  background: rgba(246, 51, 154, 0.1);
-  box-shadow: 0 2px 8px -2px rgba(246, 51, 154, 0.15);
-}
-
-.px-4.sm\:px-6.py-2.rounded-full.transition-all.duration-300.text-sm.sm\:text-base {
-  font-weight: 500;
-}
-
-.fixed.inset-0.z-\[10000\].flex.items-center.justify-center.p-4 {
-  background-color: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(8px);
-}
-
-.bg-white\/95.backdrop-blur-sm.rounded-2xl.sm\:rounded-3xl.p-4.sm\:p-6.md\:p-8.w-full.max-w-7xl.shadow-2xl.\`\`\`html
-  relative.h-\[90vh\].sm\:h-5\/6 {
-  border: 1px solid rgba(246, 51, 154, 0.1);
-  box-shadow: 0 25px 50px -12px rgba(246, 51, 154, 0.3);
-}
-
-.text-xl.sm\:text-2xl.md\:text-3xl.font-bold.bg-gradient-to-r.from-\[#f6339a\].to-\[#db2777\].bg-clip-text.text-transparent {
-  background-size: 200% auto;
-  animation: gradientShift 3s ease infinite;
-}
-
-@keyframes gradientShift {
-  0% {
-    background-position: 0% center;
-  }
-  50% {
-    background-position: 100% center;
-  }
-  100% {
-    background-position: 0% center;
-  }
-}
-
-/* Enhanced recommendation modal */
-.fixed.inset-0.z-\[10000\].flex.items-center.justify-center.p-4.bg-black\/60.backdrop-blur-sm {
-  animation: fadeIn 0.3s ease-out;
-}
-
-.bg-white.rounded-xl.shadow-lg.overflow-hidden.w-full.max-w-md.mx-auto {
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
-    0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
-
-.bg-white.rounded-xl.shadow-lg.overflow-hidden.w-full.max-w-md.mx-auto:hover {
-  transform: translateY(-5px);
-}
-
-.relative.aspect-\[3\/4\].w-full {
-  overflow: hidden;
-}
-
-.relative.aspect-\[3\/4\].w-full img {
-  transition: transform 0.5s ease;
-}
-
-.relative.aspect-\[3\/4\].w-full:hover img {
-  transform: scale(1.05);
 }
 
 @keyframes fadeIn {

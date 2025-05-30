@@ -1,7 +1,9 @@
 <template>
   <ProfileLayout>
-    <div>
-      <h1 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+    <div class="overflow-x-hidden">
+      <h1
+        class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-6 sm:mb-8 flex items-center gap-3"
+      >
         <span
           class="bg-gradient-to-r from-pink-500 to-pink-600 bg-clip-text text-transparent"
           >My Profile</span
@@ -51,13 +53,15 @@
 
       <!-- Profile content -->
       <div v-else class="animate-fade-in">
-        <div class="flex flex-col md:flex-row items-start gap-8 mb-12">
+        <div
+          class="flex flex-col md:flex-row items-start gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-12"
+        >
           <div
-            class="w-28 h-28 rounded-full bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center border-4 border-white shadow-lg"
+            class="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center border-4 border-white shadow-lg"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-16 w-16 text-pink-500"
+              class="h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-pink-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -71,13 +75,19 @@
             </svg>
           </div>
           <div>
-            <h2 class="text-2xl font-bold text-gray-900 mb-1">
+            <h2
+              class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-1"
+            >
               {{ profile.fullname || "Your Name" }}
             </h2>
-            <p class="text-pink-500 font-medium mb-3">
+            <p
+              class="text-sm sm:text-base text-pink-500 font-medium mb-2 sm:mb-3"
+            >
               {{ profile.role || "Member" }}
             </p>
-            <p class="text-gray-500 flex items-center gap-2">
+            <p
+              class="text-xs sm:text-sm md:text-base text-gray-500 flex items-center gap-2"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-5 w-5"
@@ -97,8 +107,8 @@
           </div>
         </div>
 
-        <form @submit.prevent="saveProfile" class="space-y-8">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form @submit.prevent="saveProfile" class="space-y-6 sm:space-y-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div class="space-y-2">
               <label class="block text-sm font-medium text-gray-700"
                 >Full Name</label
@@ -125,7 +135,7 @@
                 <input
                   v-model="profile.fullname"
                   type="text"
-                  class="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+                  class="w-full pl-8 sm:pl-10 pr-4 py-2.5 sm:py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 text-sm sm:text-base"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -156,7 +166,7 @@
                 <input
                   v-model="profile.username"
                   type="text"
-                  class="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+                  class="w-full pl-8 sm:pl-10 pr-4 py-2.5 sm:py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 text-sm sm:text-base"
                   placeholder="Enter your username"
                 />
               </div>
@@ -187,7 +197,7 @@
                 <input
                   v-model="profile.email"
                   type="email"
-                  class="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+                  class="w-full pl-8 sm:pl-10 pr-4 py-2.5 sm:py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 text-sm sm:text-base"
                   placeholder="Enter your email"
                 />
               </div>
@@ -218,7 +228,7 @@
                 <input
                   v-model="profile.phone_number"
                   type="tel"
-                  class="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+                  class="w-full pl-8 sm:pl-10 pr-4 py-2.5 sm:py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 text-sm sm:text-base"
                   placeholder="Enter your phone number"
                 />
               </div>
@@ -265,7 +275,7 @@
           <div class="flex justify-end pt-4">
             <button
               type="submit"
-              class="px-8 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:from-pink-600 hover:to-pink-700 transition-all duration-300 shadow-lg hover:shadow-pink-200 flex items-center gap-2 font-medium"
+              class="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:from-pink-600 hover:to-pink-700 transition-all duration-300 shadow-lg hover:shadow-pink-200 flex items-center justify-center gap-2 font-medium text-sm sm:text-base"
               :disabled="loading"
             >
               <svg
@@ -315,7 +325,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useCookie } from "nuxt/app";
+import { useCookie, useRuntimeConfig } from "nuxt/app";
 
 const config = useRuntimeConfig();
 

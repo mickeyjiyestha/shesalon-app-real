@@ -226,12 +226,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div class="overflow-x-hidden">
     <!-- Add the PromoOverlay component -->
     <PromoOverlay @book-now="scrollToBooking" />
 
-    <div class="scroll-smooth">
-      <header class="w-full h-screen mb-20 md:mb-40 relative overflow-hidden">
+    <div class="scroll-smooth overflow-x-hidden">
+      <header class="w-full h-screen mb-10 md:mb-20 relative overflow-hidden">
         <!-- Background with parallax effect -->
         <div class="absolute inset-0 w-full h-full">
           <!-- Main background image with overlay -->
@@ -252,10 +252,10 @@ onMounted(() => {
 
           <!-- Animated decorative elements -->
           <div
-            class="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-pink-500/20 filter blur-3xl animate-pulse-slow z-5"
+            class="absolute top-1/4 right-1/4 w-32 h-32 md:w-64 md:h-64 rounded-full bg-pink-500/20 filter blur-3xl animate-pulse-slow z-5"
           ></div>
           <div
-            class="absolute bottom-1/3 left-1/3 w-96 h-96 rounded-full bg-purple-500/20 filter blur-3xl animate-pulse-slower z-5"
+            class="absolute bottom-1/3 left-1/3 w-48 h-48 md:w-96 md:h-96 rounded-full bg-purple-500/20 filter blur-3xl animate-pulse-slower z-5"
           ></div>
 
           <!-- Floating particles effect -->
@@ -270,7 +270,7 @@ onMounted(() => {
 
         <!-- Navigation -->
         <nav
-          class="absolute top-0 left-0 w-full px-4 md:px-20 py-4 md:py-6 transition-all duration-300 z-50"
+          class="absolute top-0 left-0 w-full px-4 md:px-20 py-3 md:py-6 transition-all duration-300 z-50"
         >
           <div class="max-w-7xl mx-auto flex justify-between items-center">
             <!-- Logo with animation -->
@@ -279,7 +279,7 @@ onMounted(() => {
                 class="relative overflow-hidden rounded-full p-1 bg-white/10 backdrop-blur-sm"
               >
                 <img
-                  class="w-10 md:w-14 transform hover:scale-110 transition-transform duration-300 ease-out"
+                  class="w-8 md:w-14 transform hover:scale-110 transition-transform duration-300 ease-out"
                   src="~/assets/images/shesalon-logo.png"
                   alt="She Salon"
                 />
@@ -288,7 +288,7 @@ onMounted(() => {
                 ></div>
               </div>
               <span
-                class="ml-3 text-white text-xl md:text-2xl font-bold opacity-0 animate-fadeIn"
+                class="ml-2 md:ml-3 text-white text-lg md:text-2xl font-bold opacity-0 animate-fadeIn"
                 style="animation-delay: 300ms; animation-fill-mode: forwards"
               >
                 She<span class="text-pink-400">Salon</span>
@@ -312,14 +312,14 @@ onMounted(() => {
             </div>
 
             <!-- Profile Dropdown -->
-            <div class="ml-8 opacity-100 z-50">
+            <div class="ml-4 md:ml-8 opacity-100 z-50">
               <ProfileDropdown :user="user" @logout="logoutUser" />
             </div>
 
             <!-- Mobile menu toggle button -->
             <button @click="toggleMenu" class="md:hidden z-30 p-2 text-white">
               <svg
-                class="w-6 h-6"
+                class="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -349,7 +349,7 @@ onMounted(() => {
               ]"
             >
               <div
-                class="flex flex-col items-center justify-center h-full space-y-8 text-white font-semibold text-xl"
+                class="flex flex-col items-center justify-center h-full space-y-6 text-white font-semibold text-lg"
               >
                 <p
                   v-for="(item, index) in menuItems"
@@ -368,14 +368,14 @@ onMounted(() => {
         <div class="absolute inset-0 flex items-center z-20">
           <div class="container mx-auto px-4 md:px-20">
             <div class="max-w-3xl">
-              <div class="space-y-6">
+              <div class="space-y-4 md:space-y-6">
                 <!-- Welcome text with animated underline -->
                 <div class="relative inline-block slide-in from-left">
                   <div class="flex items-center gap-2">
                     <div
-                      class="w-10 h-1 bg-gradient-to-r from-pink-400 to-pink-600 rounded-full"
+                      class="w-6 md:w-10 h-0.5 md:h-1 bg-gradient-to-r from-pink-400 to-pink-600 rounded-full"
                     ></div>
-                    <p class="text-xl md:text-2xl text-white font-light">
+                    <p class="text-lg md:text-2xl text-white font-light">
                       Hello
                       <span class="font-medium">{{
                         user?.username || "Guest"
@@ -386,7 +386,7 @@ onMounted(() => {
 
                 <!-- Main heading with gradient text and animated reveal -->
                 <h1
-                  class="text-4xl md:text-7xl font-extrabold text-white leading-tight slide-in from-left delay-200 relative overflow-hidden"
+                  class="text-2xl sm:text-3xl md:text-7xl font-extrabold text-white leading-tight slide-in from-left delay-200 relative overflow-hidden"
                 >
                   <span class="block">Discover Your</span>
                   <span class="block">
@@ -396,7 +396,7 @@ onMounted(() => {
                         >Perfect Style</span
                       >
                       <span
-                        class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-pink-400 to-pink-600 animate-width-grow"
+                        class="absolute bottom-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-pink-400 to-pink-600 animate-width-grow"
                       ></span>
                     </span>
                   </span>
@@ -405,33 +405,33 @@ onMounted(() => {
 
                 <!-- Description with subtle animation and improved typography -->
                 <p
-                  class="text-lg md:text-2xl text-white/90 font-light max-w-2xl slide-in from-left delay-400 leading-relaxed"
+                  class="text-sm sm:text-base md:text-2xl text-white/90 font-light max-w-2xl slide-in from-left delay-400 leading-relaxed"
                 >
                   Professional hair, skin, and beauty treatments tailored just
                   for you.
-                  <span class="block mt-2 text-pink-300"
+                  <span class="block mt-1 md:mt-2 text-pink-300"
                     >Feel confident and radiant every day!</span
                   >
                 </p>
 
                 <!-- CTA Buttons with enhanced styling -->
                 <div
-                  class="flex flex-wrap gap-4 mt-8 slide-in from-left delay-600"
+                  class="flex flex-wrap gap-3 md:gap-4 mt-6 md:mt-8 slide-in from-left delay-600"
                 >
                   <template v-if="!user">
                     <button
                       @click="router.push('/login')"
-                      class="group relative inline-flex items-center px-6 py-3 overflow-hidden rounded-full bg-white text-gray-900 transition-all duration-300 hover:scale-105 shadow-lg shadow-pink-500/20"
+                      class="group relative inline-flex items-center px-4 md:px-6 py-2 md:py-3 overflow-hidden rounded-full bg-white text-gray-900 transition-all duration-300 hover:scale-105 shadow-lg shadow-pink-500/20 text-sm md:text-base"
                     >
                       <span
                         class="absolute w-0 h-full bg-gradient-to-r from-pink-500 to-pink-600 top-0 left-0 transition-all duration-300 group-hover:w-full"
                       ></span>
                       <span
-                        class="relative flex items-center gap-2 group-hover:text-white transition-colors duration-300"
+                        class="relative flex items-center gap-1 md:gap-2 group-hover:text-white transition-colors duration-300"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5"
+                          class="h-4 w-4 md:h-5 md:w-5"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
@@ -446,17 +446,17 @@ onMounted(() => {
                     </button>
                     <button
                       @click="router.push('/register')"
-                      class="group relative inline-flex items-center px-6 py-3 overflow-hidden rounded-full bg-transparent border-2 border-white text-white transition-all duration-300 hover:scale-105 shadow-lg shadow-pink-500/10"
+                      class="group relative inline-flex items-center px-4 md:px-6 py-2 md:py-3 overflow-hidden rounded-full bg-transparent border-2 border-white text-white transition-all duration-300 hover:scale-105 shadow-lg shadow-pink-500/10 text-sm md:text-base"
                     >
                       <span
                         class="absolute w-0 h-full bg-white top-0 left-0 transition-all duration-300 group-hover:w-full"
                       ></span>
                       <span
-                        class="relative flex items-center gap-2 group-hover:text-gray-900 transition-colors duration-300"
+                        class="relative flex items-center gap-1 md:gap-2 group-hover:text-gray-900 transition-colors duration-300"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5"
+                          class="h-4 w-4 md:h-5 md:w-5"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
@@ -472,17 +472,17 @@ onMounted(() => {
                   <template v-else>
                     <button
                       @click="openBookingModal"
-                      class="group relative inline-flex items-center px-6 py-3 overflow-hidden rounded-full bg-gradient-to-r from-pink-500 to-pink-600 text-white transition-all duration-300 hover:scale-105 shadow-lg shadow-pink-500/30"
+                      class="group relative inline-flex items-center px-4 md:px-6 py-2 md:py-3 overflow-hidden rounded-full bg-gradient-to-r from-pink-500 to-pink-600 text-white transition-all duration-300 hover:scale-105 shadow-lg shadow-pink-500/30 text-sm md:text-base"
                     >
                       <span
                         class="absolute inset-0 w-full h-full bg-gradient-to-r from-pink-600 to-pink-700 scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"
                       ></span>
                       <span
-                        class="relative flex items-center gap-2 transition-colors duration-300"
+                        class="relative flex items-center gap-1 md:gap-2 transition-colors duration-300"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5"
+                          class="h-4 w-4 md:h-5 md:w-5"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
@@ -496,17 +496,17 @@ onMounted(() => {
                       </span>
                     </button>
                     <button
-                      class="group relative inline-flex items-center px-6 py-3 overflow-hidden rounded-full bg-white/10 backdrop-blur-sm border border-white/30 text-white transition-all duration-300 hover:scale-105 shadow-lg shadow-pink-500/10"
+                      class="group relative inline-flex items-center px-4 md:px-6 py-2 md:py-3 overflow-hidden rounded-full bg-white/10 backdrop-blur-sm border border-white/30 text-white transition-all duration-300 hover:scale-105 shadow-lg shadow-pink-500/10 text-sm md:text-base"
                     >
                       <span
                         class="absolute inset-0 w-full h-full bg-white scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"
                       ></span>
                       <span
-                        class="relative flex items-center gap-2 group-hover:text-gray-900 transition-colors duration-300"
+                        class="relative flex items-center gap-1 md:gap-2 group-hover:text-gray-900 transition-colors duration-300"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5"
+                          class="h-4 w-4 md:h-5 md:w-5"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
@@ -527,14 +527,18 @@ onMounted(() => {
         </div>
 
         <!-- Scroll indicator with improved animation -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+        <div
+          class="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 z-20"
+        >
           <div class="flex flex-col items-center">
-            <span class="text-white text-sm mb-2 opacity-80">Scroll Down</span>
+            <span class="text-white text-xs md:text-sm mb-2 opacity-80"
+              >Scroll Down</span
+            >
             <div
-              class="w-8 h-12 border-2 border-white/50 rounded-full flex justify-center p-1"
+              class="w-6 h-8 md:w-8 md:h-12 border-2 border-white/50 rounded-full flex justify-center p-1"
             >
               <div
-                class="w-1.5 h-1.5 bg-white rounded-full animate-scroll-down"
+                class="w-1 h-1 md:w-1.5 md:h-1.5 bg-white rounded-full animate-scroll-down"
               ></div>
             </div>
           </div>
@@ -542,30 +546,36 @@ onMounted(() => {
 
         <!-- Decorative elements -->
         <div
-          class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-white to-transparent z-10"
+          class="absolute bottom-0 left-0 w-full h-12 md:h-24 bg-gradient-to-t from-white to-transparent z-10"
         ></div>
         <div
           class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-pink-500/50 to-transparent"
         ></div>
       </header>
 
-      <Brands />
+      <div class="px-4 md:px-0">
+        <Brands />
+      </div>
 
       <div class="flex justify-center slide-in from-bottom px-4 md:px-0">
-        <p class="text-3xl md:text-4xl font-semibold mb-10 relative">
+        <p
+          class="text-xl sm:text-2xl md:text-4xl font-semibold mb-6 md:mb-10 relative text-center"
+        >
           What is
           <span class="text-pink-600 transition-colors duration-300 relative">
             She Salon?
             <span
-              class="absolute -bottom-2 left-0 w-full h-1 bg-pink-200 rounded-full"
+              class="absolute -bottom-1 md:-bottom-2 left-0 w-full h-0.5 md:h-1 bg-pink-200 rounded-full"
             ></span>
           </span>
         </p>
       </div>
       <div
-        class="flex justify-center mb-20 md:mb-30 items-center text-center fade-in px-4 md:px-0"
+        class="flex justify-center mb-10 md:mb-20 items-center text-center fade-in px-4 md:px-0"
       >
-        <p class="text-lg md:text-xl font-regular max-w-4xl text-[#696984]">
+        <p
+          class="text-sm sm:text-base md:text-xl font-regular max-w-4xl text-[#696984]"
+        >
           She Salon is a beauty studio that offers professional hair, skin, and
           nail services whereby clients can enjoy expert styling, receive
           personalized treatments, relax in a luxurious space, and indulge in
@@ -573,28 +583,34 @@ onMounted(() => {
         </p>
       </div>
 
-      <Founder />
+      <div class="px-4 md:px-0">
+        <Founder />
+      </div>
 
       <div class="flex justify-center slide-in from-bottom px-4 md:px-0">
-        <p class="text-3xl md:text-4xl font-semibold mb-20 md:mb-30 relative">
+        <p
+          class="text-xl sm:text-2xl md:text-4xl font-semibold mb-10 md:mb-20 relative text-center"
+        >
           Our
           <span class="text-pink-600 relative">
             Services
             <span
-              class="absolute -bottom-2 left-0 w-full h-1 bg-pink-200 rounded-full"
+              class="absolute -bottom-1 md:-bottom-2 left-0 w-full h-0.5 md:h-1 bg-pink-200 rounded-full"
             ></span>
           </span>
         </p>
       </div>
 
-      <Services />
+      <div class="px-4 md:px-0">
+        <Services />
+      </div>
 
       <div
-        class="flex items-center justify-center -mt-10 md:-mt-20 mb-40 md:mb-60 px-4 md:px-0"
+        class="flex items-center justify-center -mt-5 md:-mt-10 mb-20 md:mb-40 px-4 md:px-0"
         id="booking-section"
       >
         <button
-          class="group relative inline-flex items-center px-8 py-4 overflow-hidden rounded-xl bg-[#f6339a] text-white shadow-lg hover:shadow-xl transition-all duration-300"
+          class="group relative inline-flex items-center px-6 md:px-8 py-3 md:py-4 overflow-hidden rounded-xl bg-[#f6339a] text-white shadow-lg hover:shadow-xl transition-all duration-300 text-sm md:text-base"
           @click="openBookingModal"
         >
           <span
@@ -604,7 +620,7 @@ onMounted(() => {
             Book Now
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
+              class="h-4 w-4 md:h-5 md:w-5"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -618,36 +634,40 @@ onMounted(() => {
         </button>
       </div>
 
-      <section class="py-32 bg-gray-50 mb-10 relative overflow-hidden">
+      <section
+        class="py-16 md:py-32 bg-gray-50 mb-5 md:mb-10 relative overflow-hidden"
+      >
         <div
           class="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100 opacity-30"
         ></div>
         <div class="max-w-7xl mx-auto px-4 md:px-20 relative z-10">
-          <div class="text-center mb-16 slide-in from-bottom">
+          <div class="text-center mb-8 md:mb-16 slide-in from-bottom">
             <h2
-              class="text-3xl md:text-4xl font-semibold mb-6 relative inline-block"
+              class="text-xl sm:text-2xl md:text-4xl font-semibold mb-4 md:mb-6 relative inline-block"
             >
               Not Sure About Your Style?
               <span
-                class="absolute -bottom-2 left-0 w-full h-1 bg-pink-200 rounded-full"
+                class="absolute -bottom-1 md:-bottom-2 left-0 w-full h-0.5 md:h-1 bg-pink-200 rounded-full"
               ></span>
             </h2>
-            <p class="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
+            <p
+              class="text-sm sm:text-base md:text-lg text-gray-600 mb-6 md:mb-12 max-w-2xl mx-auto"
+            >
               Let our AI analyze your face shape and recommend the perfect
               hairstyle for you!
             </p>
             <FaceScanner />
           </div>
 
-          <div class="relative overflow-hidden py-4 md:py-8">
-            <div class="animate-scroll flex gap-4 md:gap-8 whitespace-normal">
+          <div class="relative overflow-hidden py-2 md:py-8">
+            <div class="animate-scroll flex gap-3 md:gap-8 whitespace-normal">
               <HairstyleCard
                 v-for="style in [...hairstyles, ...hairstyles]"
                 :key="style.title"
                 :image-url="style.imageUrl"
                 :title="style.title"
                 :description="style.description"
-                class="w-[280px] md:w-[350px] flex-shrink-0"
+                class="w-[200px] sm:w-[250px] md:w-[350px] flex-shrink-0"
               />
             </div>
           </div>
@@ -662,11 +682,14 @@ onMounted(() => {
         @submit="handleBookingSubmit"
       />
 
-      <WhyChoosingUs></WhyChoosingUs>
+      <div class="px-4 md:px-0">
+        <WhyChoosingUs></WhyChoosingUs>
+      </div>
 
-      <div class="mb-20 md:mb-40">
+      <div class="mb-10 md:mb-20 px-4 md:px-0">
         <Testimonial />
       </div>
+
       <Footer></Footer>
 
       <Falcon />

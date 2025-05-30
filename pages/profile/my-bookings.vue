@@ -1,7 +1,9 @@
 <template>
   <ProfileLayout>
-    <div>
-      <h1 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+    <div class="overflow-x-hidden">
+      <h1
+        class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-6 sm:mb-8 flex items-center gap-3"
+      >
         <span
           class="bg-gradient-to-r from-pink-500 to-pink-600 bg-clip-text text-transparent"
           >My Bookings</span
@@ -51,7 +53,7 @@
 
       <div v-else>
         <!-- Booking filters -->
-        <div class="mb-8 flex flex-wrap gap-3">
+        <div class="mb-6 sm:mb-8 flex flex-wrap gap-2 sm:gap-3">
           <button
             v-for="status in [
               'All',
@@ -62,7 +64,7 @@
             ]"
             :key="status"
             @click="activeFilter = status"
-            class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300"
+            class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300"
             :class="
               activeFilter === status
                 ? 'bg-pink-500 text-white shadow-md'
@@ -76,14 +78,14 @@
         <!-- Empty state -->
         <div
           v-if="filteredBookings.length === 0"
-          class="bg-gray-50 rounded-2xl p-12 text-center"
+          class="bg-gray-50 rounded-2xl p-6 sm:p-8 md:p-12 text-center"
         >
           <div
-            class="w-20 h-20 mx-auto mb-4 bg-pink-100 rounded-full flex items-center justify-center"
+            class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 bg-pink-100 rounded-full flex items-center justify-center"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-10 w-10 text-pink-500"
+              class="h-8 w-8 sm:h-10 sm:w-10 text-pink-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -133,14 +135,14 @@
             :key="booking.id"
             class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
           >
-            <div class="p-6">
+            <div class="p-4 sm:p-6">
               <div
                 class="flex flex-col md:flex-row justify-between md:items-center gap-4"
               >
                 <div>
                   <div class="flex items-center gap-3 mb-2">
                     <div
-                      class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center"
+                      class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -158,16 +160,20 @@
                       </svg>
                     </div>
                     <div>
-                      <h3 class="text-xl font-bold text-gray-900">
+                      <h3
+                        class="text-base sm:text-lg md:text-xl font-bold text-gray-900 leading-tight"
+                      >
                         {{ booking.layanan_names }}
                       </h3>
-                      <p class="text-sm text-gray-500">
+                      <p class="text-xs sm:text-sm text-gray-500">
                         #{{ booking.booking_number }}
                       </p>
                     </div>
                   </div>
-                  <div class="space-y-1 ml-13 mt-3">
-                    <p class="text-gray-600 flex items-center gap-2">
+                  <div class="space-y-1 ml-0 sm:ml-13 mt-3">
+                    <p
+                      class="text-xs sm:text-sm md:text-base text-gray-600 flex items-center gap-2"
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         class="h-4 w-4 text-gray-400"
@@ -184,7 +190,9 @@
                       </svg>
                       <span>{{ formatDate(booking.tanggal) }}</span>
                     </p>
-                    <p class="text-gray-600 flex items-center gap-2">
+                    <p
+                      class="text-xs sm:text-sm md:text-base text-gray-600 flex items-center gap-2"
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         class="h-4 w-4 text-gray-400"
@@ -206,7 +214,7 @@
                     </p>
                     <p
                       v-if="booking.special_request"
-                      class="text-gray-600 flex items-center gap-2"
+                      class="text-xs sm:text-sm md:text-base text-gray-600 flex items-center gap-2"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -248,7 +256,7 @@
               </div>
 
               <div
-                class="mt-6 pt-6 border-t border-gray-100 flex flex-wrap gap-3"
+                class="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-100 flex flex-wrap gap-2 sm:gap-3"
               >
                 <button
                   v-if="
@@ -256,7 +264,7 @@
                     booking.status === 'confirmed'
                   "
                   @click="rescheduleBooking(booking.id)"
-                  class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-pink-200 text-pink-500 rounded-lg hover:bg-pink-50 transition-colors duration-300 text-sm font-medium"
+                  class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-white border border-pink-200 text-pink-500 rounded-lg hover:bg-pink-50 transition-colors duration-300 text-xs sm:text-sm font-medium"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -280,7 +288,7 @@
                     booking.status === 'confirmed'
                   "
                   @click="cancelBooking(booking.id)"
-                  class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-500 rounded-lg hover:bg-gray-50 transition-colors duration-300 text-sm font-medium"
+                  class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-white border border-gray-200 text-gray-500 rounded-lg hover:bg-gray-50 transition-colors duration-300 text-xs sm:text-sm font-medium"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -301,7 +309,7 @@
                 <button
                   v-if="booking.status === 'completed'"
                   @click="leaveReview(booking.id)"
-                  class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-yellow-200 text-yellow-600 rounded-lg hover:bg-yellow-50 transition-colors duration-300 text-sm font-medium"
+                  class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-white border border-yellow-200 text-yellow-600 rounded-lg hover:bg-yellow-50 transition-colors duration-300 text-xs sm:text-sm font-medium"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -321,7 +329,7 @@
                 </button>
                 <button
                   @click="viewDetails(booking.id)"
-                  class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-300 text-sm font-medium ml-auto"
+                  class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-300 text-xs sm:text-sm font-medium ml-auto"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -465,7 +473,7 @@ const rescheduleBooking = async (id) => {
   );
 };
 
-// Cancel booking - Improved version with better error handling
+// Cancel booking
 const cancelBooking = async (id) => {
   if (!confirm("Are you sure you want to cancel this booking?")) {
     return;
@@ -478,11 +486,6 @@ const cancelBooking = async (id) => {
       throw new Error("Authentication token not found. Please login again.");
     }
 
-    console.log(`Attempting to cancel booking ID: ${id}`);
-    console.log(
-      `API URL: ${config.public.apiBaseUrl}/api/booking/${id}/cancel`
-    );
-
     const response = await fetch(
       `${config.public.apiBaseUrl}/api/booking/${id}/cancel`,
       {
@@ -490,43 +493,13 @@ const cancelBooking = async (id) => {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",
         },
-        body: JSON.stringify({
-          status: "cancelled",
-        }),
       }
     );
 
-    console.log(`Response status: ${response.status}`);
-
-    // Get response text for better error debugging
-    const responseText = await response.text();
-    console.log(`Response body: ${responseText}`);
-
     if (!response.ok) {
-      let errorMessage = "Failed to cancel booking";
-
-      try {
-        const errorData = JSON.parse(responseText);
-        errorMessage = errorData.message || errorData.error || errorMessage;
-      } catch (e) {
-        // If response is not JSON, use the text as error message
-        errorMessage = responseText || errorMessage;
-      }
-
-      throw new Error(`${errorMessage} (Status: ${response.status})`);
+      throw new Error("Failed to cancel booking");
     }
-
-    // Parse successful response
-    let result;
-    try {
-      result = JSON.parse(responseText);
-    } catch (e) {
-      result = { message: "Booking cancelled successfully" };
-    }
-
-    console.log("Cancel response:", result);
 
     // Refresh booking data
     await fetchBookings();
