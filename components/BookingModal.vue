@@ -499,11 +499,11 @@
                         <option value="">Pilih Produk</option>
                         <option
                           v-for="product in getProductsByBrand(index)"
-                          :key="product.product_id"
-                          :value="product.product_id"
+                          :key="product.product_id || product.id"
+                          :value="product.product_id || product.id"
                         >
-                          {{ product.product.nama }} -
-                          {{ product.product.jenis }}
+                          {{ product.product?.nama || product.nama }} -
+                          {{ product.product?.jenis || product.jenis }}
                         </option>
                       </select>
                       <div
@@ -574,6 +574,27 @@
                       </div>
                     </div>
                   </div>
+                  <!-- Add this after each service selection box -->
+                  <button
+                    v-if="index > 0"
+                    type="button"
+                    @click="removeService(index)"
+                    class="mt-2 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200 flex items-center gap-2 text-sm"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    Hapus Service
+                  </button>
                 </div>
 
                 <button
@@ -1083,18 +1104,31 @@
                   Payment Summary
                 </h3>
 
+                <!-- Replace the existing payment summary content -->
                 <div class="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                   <div
                     class="flex justify-between items-center pb-3 sm:pb-4 border-b-2 border-gray-200"
                   >
                     <p class="text-gray-600 font-semibold text-sm sm:text-base">
-                      Date & Time
+                      Date
                     </p>
                     <p class="font-bold text-gray-800 text-sm sm:text-lg">
-                      {{ formattedSelectedDate }}, {{ bookingTime }}
+                      {{ formattedSelectedDate }}
                     </p>
                   </div>
 
+                  <div
+                    class="flex justify-between items-center pb-3 sm:pb-4 border-b-2 border-gray-200"
+                  >
+                    <p class="text-gray-600 font-semibold text-sm sm:text-base">
+                      Time
+                    </p>
+                    <p class="font-bold text-gray-800 text-sm sm:text-lg">
+                      {{ bookingTime }}
+                    </p>
+                  </div>
+
+                  <!-- Services and Products Details -->
                   <div
                     v-if="selectedServices.length > 0"
                     class="space-y-3 sm:space-y-4"
@@ -1105,7 +1139,7 @@
                       class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200 shadow-sm"
                       v-if="serviceId && getServiceById(serviceId)"
                     >
-                      <!-- Base Service -->
+                      <!-- Service Details -->
                       <div class="flex justify-between items-start mb-2">
                         <div>
                           <p class="font-bold text-gray-800 text-sm sm:text-lg">
@@ -1114,7 +1148,7 @@
                           <p
                             class="text-xs sm:text-sm text-gray-500 font-medium"
                           >
-                            Base Price
+                            Service
                           </p>
                         </div>
                         <p class="font-bold text-gray-800 text-sm sm:text-lg">
@@ -1126,26 +1160,24 @@
                         </p>
                       </div>
 
-                      <!-- Selected Product and Color (if applicable) -->
+                      <!-- Product Details (if applicable) -->
                       <div
-                        v-if="getSelectedColor(index)"
-                        class="flex justify-between items-start pl-3 sm:pl-4 border-l-4 border-[#F97474] bg-pink-50 rounded-r-xl p-2 sm:p-3"
+                        v-if="getSelectedProduct(index)"
+                        class="flex justify-between items-start pl-3 sm:pl-4 border-l-4 border-[#F97474] bg-pink-50 rounded-r-xl p-2 sm:p-3 mt-2"
                       >
                         <div>
                           <p
                             class="font-semibold text-gray-700 text-xs sm:text-sm"
                           >
-                            {{ getSelectedProduct(index)?.product?.nama }} -
-                            {{ getSelectedColor(index)?.nama }}
+                            {{
+                              getSelectedProduct(index)?.nama ||
+                              getSelectedProduct(index)?.product?.nama
+                            }}
                           </p>
+                          <p class="text-xs text-gray-500">Product</p>
                         </div>
                         <p class="font-bold text-gray-800 text-xs sm:text-sm">
-                          + Rp{{
-                            getAdditionalPrice(
-                              serviceId,
-                              index
-                            ).toLocaleString()
-                          }}
+                          Rp{{ getProductPrice(index).toLocaleString() }}
                         </p>
                       </div>
                     </div>
@@ -1365,9 +1397,27 @@ const getUniqueBrands = (index) => {
   const brandIds = new Set();
 
   products.value[index].forEach((product) => {
-    if (!brandIds.has(product.brand.id)) {
-      brandIds.add(product.brand.id);
-      uniqueBrands.push(product.brand);
+    let brandId, brandName;
+
+    // Handle different response formats
+    if (product.brand && product.brand.id) {
+      // Format for hair coloring products (nested brand object)
+      brandId = product.brand.id;
+      brandName = product.brand.nama;
+    } else if (product.brand_id && product.brand_nama) {
+      // Format for smoothing/keratin products (flat structure)
+      brandId = product.brand_id;
+      brandName = product.brand_nama;
+    } else {
+      return; // Skip if neither format is found
+    }
+
+    if (!brandIds.has(brandId)) {
+      brandIds.add(brandId);
+      uniqueBrands.push({
+        id: brandId,
+        nama: brandName,
+      });
     }
   });
 
@@ -1376,9 +1426,11 @@ const getUniqueBrands = (index) => {
 
 const getSelectedProduct = (index) => {
   if (!selectedProducts.value[index] || !products.value[index]) return null;
-  return products.value[index].find(
-    (product) => product.product_id === selectedProducts.value[index]
-  );
+
+  return products.value[index].find((product) => {
+    const productId = product.product_id || product.id;
+    return productId === selectedProducts.value[index];
+  });
 };
 
 const getSelectedColor = (index) => {
@@ -1420,9 +1472,18 @@ const getServicePrice = (serviceId, index) => {
 
 const getProductsByBrand = (index) => {
   if (!products.value[index] || !selectedBrands.value[index]) return [];
-  return products.value[index].filter(
-    (product) => product.brand.id === selectedBrands.value[index]
-  );
+
+  return products.value[index].filter((product) => {
+    // Handle different response formats
+    if (product.brand && product.brand.id) {
+      // Format for hair coloring products (nested brand object)
+      return product.brand.id === selectedBrands.value[index];
+    } else if (product.brand_id) {
+      // Format for smoothing/keratin products (flat structure)
+      return product.brand_id === selectedBrands.value[index];
+    }
+    return false;
+  });
 };
 
 const onBrandSelect = (index) => {
@@ -1480,22 +1541,29 @@ const checkServiceCategory = async (index) => {
   if (service && [2, 3, 4].includes(service.kategori_id)) {
     try {
       const token = Cookies.get("token");
-      const response = await fetch(
-        `${config.public.apiBaseUrl}/api/products/hair/products`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "ngrok-skip-browser-warning": "true",
-          },
-        }
-      );
+
+      // Determine the correct API endpoint based on the service category
+      let apiEndpoint = `${config.public.apiBaseUrl}/api/products/hair/products`;
+
+      if (service.kategori_id === 3) {
+        apiEndpoint = `${config.public.apiBaseUrl}/api/products/smoothing`;
+      } else if (service.kategori_id === 4) {
+        apiEndpoint = `${config.public.apiBaseUrl}/api/products/keratin`;
+      }
+
+      const response = await fetch(apiEndpoint, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "true",
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const result = await response.json();
-      products.value[index] = result.data;
+      products.value[index] = result.data || result; // Handle both response formats
 
       selectedBrands.value[index] = "";
       selectedProducts.value[index] = "";
@@ -1582,7 +1650,16 @@ const formattedSelectedDate = computed(() => {
 const totalPrice = computed(() => {
   return selectedServices.value.reduce((sum, serviceId, index) => {
     if (!serviceId) return sum;
-    return sum + getServicePrice(serviceId, index);
+
+    const service = getServiceById(serviceId);
+    let servicePrice = Number(service?.harga || 0);
+
+    // Add product price if applicable
+    if (service && [2, 3, 4].includes(service.kategori_id)) {
+      servicePrice += getProductPrice(index);
+    }
+
+    return sum + servicePrice;
   }, 0);
 });
 
@@ -1773,19 +1850,22 @@ const submitBooking = async () => {
       return;
     }
 
-    const hasIncompleteHairColorService = selectedServices.value.some(
+    // Validation for services that require products
+    const hasIncompleteProductService = selectedServices.value.some(
       (serviceId, index) => {
         const service = getServiceById(serviceId);
         return (
           service &&
           [2, 3, 4].includes(service.kategori_id) &&
-          (!selectedBrands.value[index] || !selectedColors.value[index])
+          (!selectedBrands.value[index] || !selectedProducts.value[index])
         );
       }
     );
 
-    if (hasIncompleteHairColorService) {
-      alert("Untuk layanan pewarnaan rambut, harap pilih brand dan warna.");
+    if (hasIncompleteProductService) {
+      alert(
+        "Untuk layanan yang memerlukan produk, harap pilih brand dan produk."
+      );
       return;
     }
 
@@ -1796,16 +1876,17 @@ const submitBooking = async () => {
       special_request: specialRequest.value,
     };
 
-    const colorServiceIndex = selectedServices.value.findIndex((serviceId) => {
-      const service = getServiceById(serviceId);
-      return service && [2, 3, 4].includes(service.kategori_id);
-    });
+    // Add brand_id and product_id for services that require products
+    const productServiceIndex = selectedServices.value.findIndex(
+      (serviceId) => {
+        const service = getServiceById(serviceId);
+        return service && [2, 3, 4].includes(service.kategori_id);
+      }
+    );
 
-    if (colorServiceIndex !== -1) {
-      bookingPayload.hair_color = {
-        color_id: selectedColors.value[colorServiceIndex],
-        brand_id: selectedBrands.value[colorServiceIndex],
-      };
+    if (productServiceIndex !== -1) {
+      bookingPayload.brand_id = selectedBrands.value[productServiceIndex];
+      bookingPayload.product_id = selectedProducts.value[productServiceIndex];
     }
 
     // Create booking
@@ -1916,7 +1997,7 @@ watch(
 
       if (productId) {
         const selectedProduct = products.value[index].find(
-          (product) => product.product_id === productId
+          (product) => product.product_id === selectedProducts.value[index]
         );
         if (
           selectedProduct &&
@@ -1939,6 +2020,40 @@ function ensureIndexExists(array, index) {
     array.value[index] = [];
   }
 }
+
+const removeService = (index) => {
+  selectedServices.value.splice(index, 1);
+  selectedBrands.value.splice(index, 1);
+  selectedProducts.value.splice(index, 1);
+  selectedColors.value.splice(index, 1);
+  products.value.splice(index, 1);
+  availableColors.value.splice(index, 1);
+};
+
+const getProductPrice = (index) => {
+  const selectedProduct = getSelectedProduct(index);
+  if (!selectedProduct) return 0;
+
+  // Handle different response formats
+  if (selectedProduct.harga) {
+    return Number(selectedProduct.harga);
+  } else if (selectedProduct.product?.harga) {
+    return Number(selectedProduct.product.harga);
+  }
+  return 0;
+};
+
+// Move showDisclaimer ref and related logic outside the conditional rendering
+const showDisclaimerRef = ref(true);
+
+watch(
+  () => props.isOpen,
+  (newIsOpen) => {
+    if (newIsOpen) {
+      showDisclaimerRef.value = true; // Reset disclaimer state when modal opens
+    }
+  }
+);
 </script>
 
 <style>

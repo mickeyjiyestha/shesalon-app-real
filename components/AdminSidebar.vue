@@ -73,6 +73,7 @@ const menuItems = [
   { name: "User", path: "/admin/user", icon: UserGroupIcon },
   { name: "Layanan", path: "/admin/layanan", icon: ScissorsIcon },
   { name: "Stok", path: "/admin/stock", icon: CubeIcon },
+  { name: "Testimoni", path: "/admin/testimoni", icon: CubeIcon },
   { name: "Settings", path: "/admin/settings", icon: Cog6ToothIcon },
 ];
 

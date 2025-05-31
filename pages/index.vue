@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import Cookies from "js-cookie";
 import { useRouter } from "vue-router";
 import ProfileDropdown from "@/components/ProfileDropdown.vue";
@@ -15,6 +15,7 @@ import Testimonial from "@/components/Testimonial.vue";
 import Footer from "@/components/Footer.vue";
 import Falcon from "@/components/Falcon.vue";
 import PromoOverlay from "~/components/PromoOverlay.vue";
+import { useRuntimeConfig } from "#app";
 
 const config = useRuntimeConfig();
 
@@ -25,6 +26,8 @@ const loading = ref(true);
 const errorMessage = ref("");
 const isBookingModalOpen = ref(false);
 const isLoginModalOpen = ref(false);
+const isScrolled = ref(false);
+
 const hairstyles = [
   {
     imageUrl: "https://storage.googleapis.com/shesalon-hairstyle/Blunt%20Bangs",
@@ -62,20 +65,38 @@ const hairstyles = [
   },
 ];
 
-const menuItems = ["Home", "Order", "Blog", "About", "Contact Us"];
+const menuItems = [
+  { name: "About", id: "about-section" },
+  { name: "Services", id: "services-section" },
+  { name: "AI Stylist", id: "ai-section" },
+  { name: "Why Us", id: "why-section" },
+  { name: "Reviews", id: "testimonials-section" },
+];
+
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 100;
+};
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
-  if (isMenuOpen.value) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "";
-  }
+  document.body.style.overflow = isMenuOpen.value ? "hidden" : "";
 };
 
 const handleMenuClick = (item) => {
-  console.log(`Clicked: ${item}`);
+  scrollToSection(item.id);
   toggleMenu();
+};
+
+const scrollToSection = (sectionId) => {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    const offset = 80;
+    const elementPosition = element.offsetTop - offset;
+    window.scrollTo({
+      top: elementPosition,
+      behavior: "smooth",
+    });
+  }
 };
 
 const openBookingModal = () => {
@@ -118,8 +139,6 @@ const fetchUser = async () => {
     }
 
     const result = await response.json();
-    console.log("Response API:", result);
-
     user.value = result;
   } catch (error) {
     errorMessage.value = error.message;
@@ -173,153 +192,87 @@ const handleBookingSubmit = (bookingData) => {
 };
 
 const scrollToBooking = () => {
-  // Scroll to booking section or open booking modal
-  const bookingSection = document.getElementById("booking-section");
-  if (bookingSection) {
-    bookingSection.scrollIntoView({ behavior: "smooth" });
-  } else {
-    // If no booking section exists, you might want to open the booking modal
-    openBookingModal();
-  }
+  scrollToSection("booking-section");
 };
 
 definePageMeta({
-  middleware: ["auth"], // Apply auth middleware to this page
+  middleware: ["auth"],
 });
 
 onMounted(() => {
   fetchUser();
+  window.addEventListener("scroll", handleScroll);
+});
 
-  document.documentElement.style.scrollBehavior = "smooth";
-
-  const observerOptions = {
-    threshold: 0.2,
-    rootMargin: "0px 0px -50px 0px",
-  };
-
-  const createObserver = (className, delay = 0) => {
-    return new IntersectionObserver((entries) => {
-      entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => {
-            entry.target.classList.add("show");
-          }, delay * index);
-        }
-      });
-    }, observerOptions);
-  };
-
-  const fadeObserver = createObserver("fade-in", 100);
-  const slideObserver = createObserver("slide-in", 150);
-  const scaleObserver = createObserver("scale-in", 200);
-
-  document
-    .querySelectorAll(".fade-in")
-    .forEach((el) => fadeObserver.observe(el));
-  document
-    .querySelectorAll(".slide-in")
-    .forEach((el) => slideObserver.observe(el));
-  document
-    .querySelectorAll(".scale-in")
-    .forEach((el) => scaleObserver.observe(el));
+onUnmounted(() => {
+  window.removeEventListener("scroll", handleScroll);
 });
 </script>
 
 <template>
-  <div class="overflow-x-hidden">
-    <!-- Add the PromoOverlay component -->
-    <PromoOverlay @book-now="scrollToBooking" />
-
-    <div class="scroll-smooth overflow-x-hidden">
-      <header class="w-full h-screen mb-10 md:mb-20 relative overflow-hidden">
-        <!-- Background with parallax effect -->
-        <div class="absolute inset-0 w-full h-full">
-          <!-- Main background image with overlay -->
-          <div
-            class="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-transparent z-10"
-          ></div>
-          <div
-            class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/30 z-10"
-          ></div>
-
-          <!-- Dynamic background with multiple layers for depth -->
-          <div
-            class="w-full h-full bg-cover bg-center bg-no-repeat transform scale-105 transition-all duration-700 ease-out"
-            style="
-              background-image: url('https://storage.googleapis.com/shesalon-assets/base-bg.webp');
-            "
-          ></div>
-
-          <!-- Animated decorative elements -->
-          <div
-            class="absolute top-1/4 right-1/4 w-32 h-32 md:w-64 md:h-64 rounded-full bg-pink-500/20 filter blur-3xl animate-pulse-slow z-5"
-          ></div>
-          <div
-            class="absolute bottom-1/3 left-1/3 w-48 h-48 md:w-96 md:h-96 rounded-full bg-purple-500/20 filter blur-3xl animate-pulse-slower z-5"
-          ></div>
-
-          <!-- Floating particles effect -->
-          <div class="absolute inset-0 z-10 opacity-30">
-            <div class="particle particle-1"></div>
-            <div class="particle particle-2"></div>
-            <div class="particle particle-3"></div>
-            <div class="particle particle-4"></div>
-            <div class="particle particle-5"></div>
-          </div>
-        </div>
-
-        <!-- Navigation -->
-        <nav
-          class="absolute top-0 left-0 w-full px-4 md:px-20 py-3 md:py-6 transition-all duration-300 z-50"
-        >
-          <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <!-- Logo with animation -->
-            <div class="logo scale-in z-30 flex items-center">
-              <div
-                class="relative overflow-hidden rounded-full p-1 bg-white/10 backdrop-blur-sm"
-              >
-                <img
-                  class="w-8 md:w-14 transform hover:scale-110 transition-transform duration-300 ease-out"
-                  src="~/assets/images/shesalon-logo.png"
-                  alt="She Salon"
-                />
-                <div
-                  class="absolute inset-0 bg-gradient-to-tr from-pink-500/20 to-transparent animate-spin-slow"
-                ></div>
-              </div>
-              <span
-                class="ml-2 md:ml-3 text-white text-lg md:text-2xl font-bold opacity-0 animate-fadeIn"
-                style="animation-delay: 300ms; animation-fill-mode: forwards"
-              >
-                She<span class="text-pink-400">Salon</span>
-              </span>
-            </div>
-
-            <!-- Desktop Menu -->
+  <div class="min-h-screen bg-white">
+    <!-- Sticky Navigation -->
+    <nav
+      :class="[
+        'fixed top-0 left-0 w-full z-50 transition-all duration-300',
+        isScrolled
+          ? 'bg-white/95 backdrop-blur-lg shadow-sm border-b border-gray-100'
+          : 'bg-transparent',
+      ]"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16 lg:h-20">
+          <!-- Logo -->
+          <div class="flex items-center space-x-3">
             <div
-              class="hidden md:flex text-white font-semibold text-lg space-x-8"
+              class="w-10 h-10 bg-gradient-to-br from-pink-500 to-rose-500 rounded-xl flex items-center justify-center"
             >
-              <p
-                v-for="(item, index) in menuItems"
-                :key="index"
-                class="hover:text-pink-400 cursor-pointer transition-all duration-300 ease-out hover:translate-y-[-2px] relative after:content-[''] after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-[2px] after:bg-pink-400 after:transition-all after:duration-300 hover:after:w-full opacity-0 animate-fadeIn"
-                :style="`animation-delay: ${
-                  300 + index * 100
-                }ms; animation-fill-mode: forwards;`"
-              >
-                {{ item }}
-              </p>
+              <span class="text-white font-bold text-lg">S</span>
             </div>
+            <span
+              :class="[
+                'text-xl font-bold transition-colors duration-300',
+                isScrolled ? 'text-gray-900' : 'text-white',
+              ]"
+            >
+              She<span class="text-pink-500">Salon</span>
+            </span>
+          </div>
 
-            <!-- Profile Dropdown -->
-            <div class="ml-4 md:ml-8 opacity-100 z-50">
-              <ProfileDropdown :user="user" @logout="logoutUser" />
-            </div>
+          <!-- Desktop Menu -->
+          <div class="hidden lg:flex items-center space-x-8">
+            <button
+              v-for="item in menuItems"
+              :key="item.id"
+              @click="scrollToSection(item.id)"
+              :class="[
+                'text-sm font-medium transition-all duration-300 hover:text-pink-500 relative group',
+                isScrolled ? 'text-gray-700' : 'text-white/90',
+              ]"
+            >
+              {{ item.name }}
+              <span
+                class="absolute -bottom-1 left-0 w-0 h-0.5 bg-pink-500 transition-all duration-300 group-hover:w-full"
+              ></span>
+            </button>
+          </div>
 
-            <!-- Mobile menu toggle button -->
-            <button @click="toggleMenu" class="md:hidden z-30 p-2 text-white">
+          <!-- Right Side -->
+          <div class="flex items-center space-x-4">
+            <ProfileDropdown :user="user" @logout="logoutUser" />
+
+            <!-- Mobile Menu Button -->
+            <button
+              @click="toggleMenu"
+              :class="[
+                'lg:hidden p-2 rounded-lg transition-colors duration-300',
+                isScrolled
+                  ? 'text-gray-700 hover:bg-gray-100'
+                  : 'text-white hover:bg-white/10',
+              ]"
+            >
               <svg
-                class="w-5 h-5"
+                class="w-6 h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -340,364 +293,369 @@ onMounted(() => {
                 />
               </svg>
             </button>
+          </div>
+        </div>
+      </div>
 
-            <!-- Mobile menu (when toggled) -->
-            <div
-              :class="[
-                'fixed inset-0 bg-black/95 backdrop-blur-md z-20 transition-all duration-500 md:hidden',
-                isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible',
-              ]"
+      <!-- Mobile Menu -->
+      <div
+        :class="[
+          'lg:hidden fixed inset-0 bg-white z-40 transition-all duration-300',
+          isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible',
+        ]"
+      >
+        <div class="flex flex-col items-center justify-center h-full space-y-8">
+          <button
+            v-for="item in menuItems"
+            :key="item.id"
+            @click="handleMenuClick(item)"
+            class="text-xl font-medium text-gray-700 hover:text-pink-500 transition-colors duration-300"
+          >
+            {{ item.name }}
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section
+      class="relative min-h-screen flex items-center justify-center overflow-hidden"
+    >
+      <!-- Background -->
+      <div class="absolute inset-0">
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
+        ></div>
+        <div
+          class="absolute inset-0 bg-cover bg-center opacity-20"
+          style="
+            background-image: url('https://storage.googleapis.com/shesalon-assets/base-bg.webp');
+          "
+        ></div>
+      </div>
+
+      <!-- Content -->
+      <div
+        class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+      >
+        <div class="max-w-4xl mx-auto">
+          <!-- Badge -->
+          <div
+            class="inline-flex items-center px-4 py-2 bg-pink-500/10 border border-pink-500/20 rounded-full text-pink-400 text-sm font-medium mb-8"
+          >
+            <span
+              class="w-2 h-2 bg-pink-500 rounded-full mr-2 animate-pulse"
+            ></span>
+            Welcome to She Salon
+          </div>
+
+          <!-- Main Heading -->
+          <h1
+            class="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+          >
+            Your Beauty Journey
+            <span
+              class="block text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-400"
             >
-              <div
-                class="flex flex-col items-center justify-center h-full space-y-6 text-white font-semibold text-lg"
+              Starts Here
+            </span>
+          </h1>
+
+          <!-- Description -->
+          <p
+            class="text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed"
+          >
+            Experience professional hair, skin, and beauty treatments with our
+            expert stylists in a luxurious, modern environment.
+          </p>
+
+          <!-- CTA Buttons -->
+          <div
+            class="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          >
+            <template v-if="!user">
+              <button
+                @click="router.push('/login')"
+                class="group relative px-8 py-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300 hover:scale-105"
               >
-                <p
-                  v-for="(item, index) in menuItems"
-                  :key="index"
-                  @click="handleMenuClick(item)"
-                  class="hover:text-pink-400 cursor-pointer transition-all duration-300 relative after:content-[''] after:absolute after:bottom-[-5px] after:left-1/2 after:transform after:-translate-x-1/2 after:w-0 after:h-[2px] after:bg-pink-400 after:transition-all after:duration-300 hover:after:w-full"
+                Get Started
+                <svg
+                  class="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  {{ item }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </nav>
-
-        <!-- Hero Content -->
-        <div class="absolute inset-0 flex items-center z-20">
-          <div class="container mx-auto px-4 md:px-20">
-            <div class="max-w-3xl">
-              <div class="space-y-4 md:space-y-6">
-                <!-- Welcome text with animated underline -->
-                <div class="relative inline-block slide-in from-left">
-                  <div class="flex items-center gap-2">
-                    <div
-                      class="w-6 md:w-10 h-0.5 md:h-1 bg-gradient-to-r from-pink-400 to-pink-600 rounded-full"
-                    ></div>
-                    <p class="text-lg md:text-2xl text-white font-light">
-                      Hello
-                      <span class="font-medium">{{
-                        user?.username || "Guest"
-                      }}</span>
-                    </p>
-                  </div>
-                </div>
-
-                <!-- Main heading with gradient text and animated reveal -->
-                <h1
-                  class="text-2xl sm:text-3xl md:text-7xl font-extrabold text-white leading-tight slide-in from-left delay-200 relative overflow-hidden"
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
+              </button>
+              <button
+                @click="scrollToSection('services-section')"
+                class="px-8 py-4 border-2 border-white/20 text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-300"
+              >
+                Explore Services
+              </button>
+            </template>
+            <template v-else>
+              <button
+                @click="openBookingModal"
+                class="group relative px-8 py-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300 hover:scale-105"
+              >
+                Book Appointment
+                <svg
+                  class="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <span class="block">Discover Your</span>
-                  <span class="block">
-                    <span class="relative">
-                      <span
-                        class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-pink-600"
-                        >Perfect Style</span
-                      >
-                      <span
-                        class="absolute bottom-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-pink-400 to-pink-600 animate-width-grow"
-                      ></span>
-                    </span>
-                  </span>
-                  <span class="block">with She Salon</span>
-                </h1>
-
-                <!-- Description with subtle animation and improved typography -->
-                <p
-                  class="text-sm sm:text-base md:text-2xl text-white/90 font-light max-w-2xl slide-in from-left delay-400 leading-relaxed"
-                >
-                  Professional hair, skin, and beauty treatments tailored just
-                  for you.
-                  <span class="block mt-1 md:mt-2 text-pink-300"
-                    >Feel confident and radiant every day!</span
-                  >
-                </p>
-
-                <!-- CTA Buttons with enhanced styling -->
-                <div
-                  class="flex flex-wrap gap-3 md:gap-4 mt-6 md:mt-8 slide-in from-left delay-600"
-                >
-                  <template v-if="!user">
-                    <button
-                      @click="router.push('/login')"
-                      class="group relative inline-flex items-center px-4 md:px-6 py-2 md:py-3 overflow-hidden rounded-full bg-white text-gray-900 transition-all duration-300 hover:scale-105 shadow-lg shadow-pink-500/20 text-sm md:text-base"
-                    >
-                      <span
-                        class="absolute w-0 h-full bg-gradient-to-r from-pink-500 to-pink-600 top-0 left-0 transition-all duration-300 group-hover:w-full"
-                      ></span>
-                      <span
-                        class="relative flex items-center gap-1 md:gap-2 group-hover:text-white transition-colors duration-300"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-4 w-4 md:h-5 md:w-5"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fill-rule="evenodd"
-                            d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
-                            clip-rule="evenodd"
-                          />
-                        </svg>
-                        Login
-                      </span>
-                    </button>
-                    <button
-                      @click="router.push('/register')"
-                      class="group relative inline-flex items-center px-4 md:px-6 py-2 md:py-3 overflow-hidden rounded-full bg-transparent border-2 border-white text-white transition-all duration-300 hover:scale-105 shadow-lg shadow-pink-500/10 text-sm md:text-base"
-                    >
-                      <span
-                        class="absolute w-0 h-full bg-white top-0 left-0 transition-all duration-300 group-hover:w-full"
-                      ></span>
-                      <span
-                        class="relative flex items-center gap-1 md:gap-2 group-hover:text-gray-900 transition-colors duration-300"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-4 w-4 md:h-5 md:w-5"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z"
-                          />
-                        </svg>
-                        Register
-                      </span>
-                    </button>
-                  </template>
-
-                  <template v-else>
-                    <button
-                      @click="openBookingModal"
-                      class="group relative inline-flex items-center px-4 md:px-6 py-2 md:py-3 overflow-hidden rounded-full bg-gradient-to-r from-pink-500 to-pink-600 text-white transition-all duration-300 hover:scale-105 shadow-lg shadow-pink-500/30 text-sm md:text-base"
-                    >
-                      <span
-                        class="absolute inset-0 w-full h-full bg-gradient-to-r from-pink-600 to-pink-700 scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"
-                      ></span>
-                      <span
-                        class="relative flex items-center gap-1 md:gap-2 transition-colors duration-300"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-4 w-4 md:h-5 md:w-5"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fill-rule="evenodd"
-                            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                            clip-rule="evenodd"
-                          />
-                        </svg>
-                        Book Now
-                      </span>
-                    </button>
-                    <button
-                      class="group relative inline-flex items-center px-4 md:px-6 py-2 md:py-3 overflow-hidden rounded-full bg-white/10 backdrop-blur-sm border border-white/30 text-white transition-all duration-300 hover:scale-105 shadow-lg shadow-pink-500/10 text-sm md:text-base"
-                    >
-                      <span
-                        class="absolute inset-0 w-full h-full bg-white scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"
-                      ></span>
-                      <span
-                        class="relative flex items-center gap-1 md:gap-2 group-hover:text-gray-900 transition-colors duration-300"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-4 w-4 md:h-5 md:w-5"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fill-rule="evenodd"
-                            d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V4a2 2 0 00-2-2H7zm3 14a1 1 0 100-2 1 1 0 000 2z"
-                            clip-rule="evenodd"
-                          />
-                        </svg>
-                        Our Services
-                      </span>
-                    </button>
-                  </template>
-                </div>
-              </div>
-            </div>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </button>
+              <button
+                @click="scrollToSection('ai-section')"
+                class="px-8 py-4 border-2 border-white/20 text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-300"
+              >
+                Try AI Stylist
+              </button>
+            </template>
           </div>
         </div>
 
-        <!-- Scroll indicator with improved animation -->
+        <!-- Scroll Indicator -->
         <div
-          class="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 z-20"
+          class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce"
         >
-          <div class="flex flex-col items-center">
-            <span class="text-white text-xs md:text-sm mb-2 opacity-80"
-              >Scroll Down</span
-            >
-            <div
-              class="w-6 h-8 md:w-8 md:h-12 border-2 border-white/50 rounded-full flex justify-center p-1"
-            >
-              <div
-                class="w-1 h-1 md:w-1.5 md:h-1.5 bg-white rounded-full animate-scroll-down"
-              ></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Decorative elements -->
-        <div
-          class="absolute bottom-0 left-0 w-full h-12 md:h-24 bg-gradient-to-t from-white to-transparent z-10"
-        ></div>
-        <div
-          class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-pink-500/50 to-transparent"
-        ></div>
-      </header>
-
-      <div class="px-4 md:px-0">
-        <Brands />
-      </div>
-
-      <div class="flex justify-center slide-in from-bottom px-4 md:px-0">
-        <p
-          class="text-xl sm:text-2xl md:text-4xl font-semibold mb-6 md:mb-10 relative text-center"
-        >
-          What is
-          <span class="text-pink-600 transition-colors duration-300 relative">
-            She Salon?
-            <span
-              class="absolute -bottom-1 md:-bottom-2 left-0 w-full h-0.5 md:h-1 bg-pink-200 rounded-full"
-            ></span>
-          </span>
-        </p>
-      </div>
-      <div
-        class="flex justify-center mb-10 md:mb-20 items-center text-center fade-in px-4 md:px-0"
-      >
-        <p
-          class="text-sm sm:text-base md:text-xl font-regular max-w-4xl text-[#696984]"
-        >
-          She Salon is a beauty studio that offers professional hair, skin, and
-          nail services whereby clients can enjoy expert styling, receive
-          personalized treatments, relax in a luxurious space, and indulge in
-          premium care all in one place.
-        </p>
-      </div>
-
-      <div class="px-4 md:px-0">
-        <Founder />
-      </div>
-
-      <div class="flex justify-center slide-in from-bottom px-4 md:px-0">
-        <p
-          class="text-xl sm:text-2xl md:text-4xl font-semibold mb-10 md:mb-20 relative text-center"
-        >
-          Our
-          <span class="text-pink-600 relative">
-            Services
-            <span
-              class="absolute -bottom-1 md:-bottom-2 left-0 w-full h-0.5 md:h-1 bg-pink-200 rounded-full"
-            ></span>
-          </span>
-        </p>
-      </div>
-
-      <div class="px-4 md:px-0">
-        <Services />
-      </div>
-
-      <div
-        class="flex items-center justify-center -mt-5 md:-mt-10 mb-20 md:mb-40 px-4 md:px-0"
-        id="booking-section"
-      >
-        <button
-          class="group relative inline-flex items-center px-6 md:px-8 py-3 md:py-4 overflow-hidden rounded-xl bg-[#f6339a] text-white shadow-lg hover:shadow-xl transition-all duration-300 text-sm md:text-base"
-          @click="openBookingModal"
-        >
-          <span
-            class="absolute w-0 h-full bg-[#e02d8a] top-0 left-0 transition-all duration-300 group-hover:w-full"
-          ></span>
-          <span class="relative flex items-center gap-2">
-            Book Now
+          <button
+            @click="scrollToSection('about-section')"
+            class="text-white/60 hover:text-white transition-colors duration-300"
+          >
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4 md:h-5 md:w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
               <path
-                fill-rule="evenodd"
-                d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                clip-rule="evenodd"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
               />
             </svg>
-          </span>
-        </button>
+          </button>
+        </div>
       </div>
+    </section>
 
-      <section
-        class="py-16 md:py-32 bg-gray-50 mb-5 md:mb-10 relative overflow-hidden"
-      >
-        <div
-          class="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100 opacity-30"
-        ></div>
-        <div class="max-w-7xl mx-auto px-4 md:px-20 relative z-10">
-          <div class="text-center mb-8 md:mb-16 slide-in from-bottom">
-            <h2
-              class="text-xl sm:text-2xl md:text-4xl font-semibold mb-4 md:mb-6 relative inline-block"
+    <!-- About Section -->
+    <section id="about-section" class="py-20 lg:py-32">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
+            What is <span class="text-pink-500">She Salon?</span>
+          </h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            She Salon is a premium beauty studio offering professional hair,
+            skin, and nail services. Experience expert styling, personalized
+            treatments, and luxurious care all in one place.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div
+            class="text-center p-8 rounded-2xl bg-gradient-to-br from-pink-50 to-rose-50 hover:shadow-lg transition-all duration-300"
+          >
+            <div
+              class="w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-6"
             >
-              Not Sure About Your Style?
-              <span
-                class="absolute -bottom-1 md:-bottom-2 left-0 w-full h-0.5 md:h-1 bg-pink-200 rounded-full"
-              ></span>
-            </h2>
-            <p
-              class="text-sm sm:text-base md:text-lg text-gray-600 mb-6 md:mb-12 max-w-2xl mx-auto"
-            >
-              Let our AI analyze your face shape and recommend the perfect
-              hairstyle for you!
+              <svg
+                class="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">
+              Expert Stylists
+            </h3>
+            <p class="text-gray-600">
+              Professional stylists with years of experience in the latest
+              trends and techniques.
             </p>
-            <FaceScanner />
           </div>
 
-          <div class="relative overflow-hidden py-2 md:py-8">
-            <div class="animate-scroll flex gap-3 md:gap-8 whitespace-normal">
-              <HairstyleCard
-                v-for="style in [...hairstyles, ...hairstyles]"
-                :key="style.title"
-                :image-url="style.imageUrl"
-                :title="style.title"
-                :description="style.description"
-                class="w-[200px] sm:w-[250px] md:w-[350px] flex-shrink-0"
-              />
+          <div
+            class="text-center p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 hover:shadow-lg transition-all duration-300"
+          >
+            <div
+              class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6"
+            >
+              <svg
+                class="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                />
+              </svg>
             </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">
+              AI Technology
+            </h3>
+            <p class="text-gray-600">
+              Advanced AI hair analysis to recommend the perfect hairstyle for
+              your face shape.
+            </p>
+          </div>
+
+          <div
+            class="text-center p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 hover:shadow-lg transition-all duration-300"
+          >
+            <div
+              class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6"
+            >
+              <svg
+                class="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">
+              Premium Care
+            </h3>
+            <p class="text-gray-600">
+              Luxurious treatments using high-quality products in a relaxing
+              environment.
+            </p>
           </div>
         </div>
-      </section>
-
-      <LoginModal :is-open="isLoginModalOpen" @close="closeLoginModal" />
-
-      <BookingModal
-        :is-open="isBookingModalOpen"
-        @close="closeBookingModal"
-        @submit="handleBookingSubmit"
-      />
-
-      <div class="px-4 md:px-0">
-        <WhyChoosingUs></WhyChoosingUs>
       </div>
+    </section>
 
-      <div class="mb-10 md:mb-20 px-4 md:px-0">
+    <!-- Services Section -->
+    <section id="services-section" class="py-20 lg:py-32 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
+            Our <span class="text-pink-500">Services</span>
+          </h2>
+        </div>
+        <Services />
+
+        <!-- CTA -->
+        <div class="text-center mt-16" id="booking-section">
+          <button
+            @click="openBookingModal"
+            class="group relative px-8 py-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300 hover:scale-105"
+          >
+            Book Now
+            <svg
+              class="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI Section -->
+    <section id="ai-section" class="py-20 lg:py-32">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
+            Our AI Hair <span class="text-pink-500">Stylist</span>
+          </h2>
+          <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-12">
+            Let our AI analyze your face shape and recommend the perfect
+            hairstyle for you!
+          </p>
+          <FaceScanner />
+        </div>
+
+        <!-- Hairstyles Showcase -->
+        <div class="relative overflow-hidden">
+          <div class="flex gap-6 animate-scroll">
+            <HairstyleCard
+              v-for="style in [...hairstyles, ...hairstyles]"
+              :key="style.title"
+              :image-url="style.imageUrl"
+              :title="style.title"
+              :description="style.description"
+              class="w-80 flex-shrink-0"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section id="why-section" class="py-20 lg:py-32 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <WhyChoosingUs />
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials-section" class="py-20 lg:py-32">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Testimonial />
       </div>
+    </section>
 
-      <Footer></Footer>
+    <!-- Footer -->
+    <Footer />
 
-      <Falcon />
-    </div>
+    <!-- Modals -->
+    <LoginModal :is-open="isLoginModalOpen" @close="closeLoginModal" />
+    <BookingModal
+      :is-open="isBookingModalOpen"
+      @close="closeBookingModal"
+      @submit="handleBookingSubmit"
+    />
+
+    <Falcon />
   </div>
 </template>
 
-<style>
+<style scoped>
 @keyframes scroll {
   0% {
     transform: translateX(0);
@@ -711,270 +669,7 @@ onMounted(() => {
   animation: scroll 30s linear infinite;
 }
 
-.fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.fade-in.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.slide-in {
-  opacity: 0;
-  transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.slide-in.from-left {
-  transform: translateX(-100px);
-}
-
-.slide-in.from-right {
-  transform: translateX(100px);
-}
-
-.slide-in.from-bottom {
-  transform: translateY(50px);
-}
-
-.slide-in.show {
-  opacity: 1;
-  transform: translate(0);
-}
-
-.scale-in {
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.scale-in.show {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.delay-200 {
-  transition-delay: 200ms;
-}
-
-.delay-400 {
-  transition-delay: 400ms;
-}
-
-.delay-600 {
-  transition-delay: 600ms;
-}
-
 html {
   scroll-behavior: smooth;
-}
-
-.hover-lift {
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.hover-lift:hover {
-  transform: translateY(-5px);
-}
-
-.parallax-header {
-  background-attachment: fixed;
-}
-
-@media (max-width: 768px) {
-  .parallax-header {
-    background-attachment: scroll;
-  }
-}
-
-/* Modern button hover effect */
-.btn-hover-slide {
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.btn-hover-slide::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
-  transition: all 0.6s;
-  z-index: -1;
-}
-
-.btn-hover-slide:hover::before {
-  left: 100%;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.5s ease-in-out forwards;
-}
-
-@keyframes widthGrow {
-  0% {
-    width: 0;
-  }
-  100% {
-    width: 100%;
-  }
-}
-
-.animate-width-grow {
-  animation: widthGrow 0.7s ease-out forwards;
-}
-
-@keyframes pulseSlow {
-  0%,
-  100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.animate-pulse-slow {
-  animation: pulseSlow 4s infinite;
-}
-
-@keyframes pulseSlower {
-  0%,
-  100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-.animate-pulse-slower {
-  animation: pulseSlower 6s infinite;
-}
-
-/* Scroll down animation */
-@keyframes scrollDown {
-  0% {
-    transform: translateY(0);
-    opacity: 0;
-  }
-  40% {
-    opacity: 1;
-  }
-  80% {
-    transform: translateY(8px);
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-.animate-scroll-down {
-  animation: scrollDown 2s linear infinite;
-}
-
-/* Particle animations */
-.particle {
-  position: absolute;
-  border-radius: 50%;
-  animation: float 4s infinite linear;
-}
-
-.particle-1 {
-  top: 10%;
-  left: 20%;
-  width: 8px;
-  height: 8px;
-  background-color: rgba(255, 255, 255, 0.3);
-  animation-delay: 0s;
-}
-
-.particle-2 {
-  top: 30%;
-  right: 15%;
-  width: 6px;
-  height: 6px;
-  background-color: rgba(255, 255, 255, 0.5);
-  animation-delay: 1s;
-}
-
-.particle-3 {
-  bottom: 20%;
-  left: 10%;
-  width: 10px;
-  height: 10px;
-  background-color: rgba(255, 255, 255, 0.4);
-  animation-delay: 2s;
-}
-
-.particle-4 {
-  bottom: 30%;
-  right: 20%;
-  width: 7px;
-  height: 7px;
-  background-color: rgba(255, 255, 255, 0.6);
-  animation-delay: 3s;
-}
-
-.particle-5 {
-  top: 40%;
-  left: 30%;
-  width: 9px;
-  height: 9px;
-  background-color: rgba(255, 255, 255, 0.7);
-  animation-delay: 1.5s;
-}
-
-/* Spin animation for logo */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin-slow {
-  animation: spin 20s linear infinite;
-}
-
-/* Float animation for particles */
-@keyframes float {
-  0% {
-    transform: translateY(0) translateX(0);
-  }
-  25% {
-    transform: translateY(-10px) translateX(10px);
-  }
-  50% {
-    transform: translateY(0) translateX(20px);
-  }
-  75% {
-    transform: translateY(10px) translateX(10px);
-  }
-  100% {
-    transform: translateY(0) translateX(0);
-  }
 }
 </style>

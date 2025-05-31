@@ -140,6 +140,11 @@
                   >
                     STATUS
                   </th>
+                  <th
+                    class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    ACTIONS
+                  </th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-50">
@@ -178,6 +183,43 @@
                     >
                       {{ booking.status }}
                     </span>
+                  </td>
+                  <td
+                    class="py-4 px-6 text-sm text-gray-500 flex items-center gap-2"
+                  >
+                    <button
+                      @click.stop="editBooking(booking.id)"
+                      class="text-blue-500 hover:text-blue-700"
+                    >
+                      <PencilSquareIcon class="w-5 h-5" />
+                    </button>
+                    <button
+                      @click.stop="deleteBooking(booking.id)"
+                      class="text-red-500 hover:text-red-700"
+                    >
+                      <TrashIcon class="w-5 h-5" />
+                    </button>
+                    <button
+                      @click.stop="updateBookingStatus(booking.id, 'confirm')"
+                      class="flex items-center gap-2 px-3 py-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200"
+                    >
+                      <CheckCircleIcon class="w-5 h-5" />
+                      Confirm
+                    </button>
+                    <button
+                      @click.stop="updateBookingStatus(booking.id, 'complete')"
+                      class="flex items-center gap-2 px-3 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"
+                    >
+                      <CheckIcon class="w-5 h-5" />
+                      Complete
+                    </button>
+                    <button
+                      @click.stop="updateBookingStatus(booking.id, 'cancel')"
+                      class="flex items-center gap-2 px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
+                    >
+                      <XCircleIcon class="w-5 h-5" />
+                      Cancel
+                    </button>
                   </td>
                 </tr>
               </tbody>
@@ -222,6 +264,22 @@
                   <span class="font-medium">Services:</span>
                   {{ booking.services }}
                 </p>
+                <div
+                  class="flex justify-between pt-2 mt-2 border-t border-gray-100"
+                >
+                  <button
+                    @click.stop="editBooking(booking.id)"
+                    class="flex items-center gap-1 text-blue-500 text-sm"
+                  >
+                    <PencilSquareIcon class="w-4 h-4" /> Edit
+                  </button>
+                  <button
+                    @click.stop="deleteBooking(booking.id)"
+                    class="flex items-center gap-1 text-red-500 text-sm"
+                  >
+                    <TrashIcon class="w-4 h-4" /> Delete
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -250,7 +308,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
+import { PencilSquareIcon, TrashIcon } from "@heroicons/vue/24/solid";
 import Cookies from "js-cookie";
 import {
   Bars3Icon,
@@ -259,11 +318,14 @@ import {
   Squares2X2Icon,
   FunnelIcon,
   ArrowPathIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  CheckIcon,
 } from "@heroicons/vue/24/outline";
 
 // State variables
 const bookings = ref([]);
-const config = useRuntimeConfig();  
+const config = useRuntimeConfig();
 const sidebarOpen = ref(false);
 const loading = ref(true);
 const error = ref(null);
@@ -349,6 +411,48 @@ const filteredBookings = computed(() => {
     return true;
   });
 });
+
+// Update booking status
+const updateBookingStatus = async (id, status) => {
+  try {
+    const token = Cookies.get("token");
+
+    if (!token) {
+      throw new Error("Authentication token not found");
+    }
+
+    const response = await fetch(
+      `${config.public.apiBaseUrl}/api/admin/bookings/${id}/${status}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ status }), // Ensure proper JSON body
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({
+        message: "Invalid JSON response from server",
+      }));
+      console.error("API Response:", errorData); // Log the response for debugging
+      throw new Error(
+        errorData.message ||
+          `Failed to update booking status: ${response.status}`
+      );
+    }
+
+    // Refresh bookings after successful update
+    fetchBookings();
+  } catch (err) {
+    console.error("Error updating booking status:", err);
+    error.value =
+      err.message || "An error occurred while updating booking status";
+  }
+};
 
 // Watch for page changes
 watch(currentPage, () => {

@@ -3,7 +3,7 @@
     <!-- Mobile Sidebar Toggle -->
     <div class="md:hidden p-2 bg-white border-b border-gray-200">
       <button @click="toggleSidebar" class="p-2 text-gray-500">
-        <Bars3Icon class="w-6 h-6" />
+        <Menu class="w-6 h-6" />
       </button>
     </div>
 
@@ -14,6 +14,7 @@
 
     <div class="flex-1 flex flex-col overflow-hidden">
       <AdminHeader />
+
       <div class="p-4 md:p-8 overflow-auto">
         <div
           class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4"
@@ -24,10 +25,10 @@
             </h1>
             <div class="flex gap-2">
               <button class="text-gray-400 hover:text-gray-600">
-                <LinkIcon class="w-5 h-5" />
+                <Link class="w-5 h-5" />
               </button>
               <button class="text-gray-400 hover:text-gray-600">
-                <EyeIcon class="w-5 h-5" />
+                <Eye class="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -36,12 +37,30 @@
               @click="showAddModal = true"
               class="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-lg border border-pink-500 text-sm hover:bg-pink-600 transition-colors"
             >
-              <PlusIcon class="w-4 h-4" />
+              <Plus class="w-4 h-4" />
               Tambah Produk
             </button>
             <button class="p-2 text-gray-400 hover:text-gray-600">
-              <Squares2X2Icon class="w-5 h-5" />
+              <Grid3X3 class="w-5 h-5" />
             </button>
+          </div>
+        </div>
+
+        <!-- Product Type Selector -->
+        <div class="bg-white rounded-2xl shadow-sm mb-6 p-4">
+          <div class="flex items-center gap-4">
+            <label class="text-sm font-medium text-gray-700"
+              >Tipe Produk:</label
+            >
+            <select
+              v-model="currentProductType"
+              @change="onProductTypeChange"
+              class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm min-w-[180px]"
+            >
+              <option value="hair">Hair Colors</option>
+              <option value="smoothing">Smoothing Products</option>
+              <option value="keratin">Keratin Products</option>
+            </select>
           </div>
         </div>
 
@@ -67,19 +86,10 @@
               class="flex flex-col md:flex-row items-start md:items-center p-4 gap-4"
             >
               <div class="flex items-center gap-2 min-w-[100px]">
-                <FunnelIcon class="w-5 h-5 text-gray-400" />
+                <Filter class="w-5 h-5 text-gray-400" />
                 <span class="text-sm font-medium">Filter By</span>
               </div>
               <div class="flex flex-wrap items-center gap-3 flex-1 w-full">
-                <select
-                  v-model="filters.type"
-                  class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm min-w-[140px] mb-2 md:mb-0"
-                >
-                  <option value="">Semua Tipe</option>
-                  <option value="hair">Hair Products</option>
-                  <option value="smoothing">Smoothing Products</option>
-                  <option value="keratin">Keratin Products</option>
-                </select>
                 <select
                   v-model="filters.brand"
                   class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm min-w-[140px] mb-2 md:mb-0"
@@ -93,6 +103,54 @@
                     {{ brand }}
                   </option>
                 </select>
+
+                <!-- Hair-specific filters -->
+                <template v-if="currentProductType === 'hair'">
+                  <select
+                    v-model="filters.kategori"
+                    class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm min-w-[140px] mb-2 md:mb-0"
+                  >
+                    <option value="">Semua Kategori</option>
+                    <option
+                      v-for="kategori in uniqueKategori"
+                      :key="kategori"
+                      :value="kategori"
+                    >
+                      {{ kategori }}
+                    </option>
+                  </select>
+                  <select
+                    v-model="filters.level"
+                    class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm min-w-[140px] mb-2 md:mb-0"
+                  >
+                    <option value="">Semua Level</option>
+                    <option
+                      v-for="level in uniqueLevels"
+                      :key="level"
+                      :value="level"
+                    >
+                      Level {{ level }}
+                    </option>
+                  </select>
+                </template>
+
+                <!-- Smoothing/Keratin-specific filters -->
+                <template v-else>
+                  <select
+                    v-model="filters.jenis"
+                    class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm min-w-[140px] mb-2 md:mb-0"
+                  >
+                    <option value="">Semua Jenis</option>
+                    <option
+                      v-for="jenis in uniqueJenis"
+                      :key="jenis"
+                      :value="jenis"
+                    >
+                      {{ jenis }}
+                    </option>
+                  </select>
+                </template>
+
                 <select
                   v-model="filters.harga"
                   class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm min-w-[140px] mb-2 md:mb-0"
@@ -102,11 +160,12 @@
                   <option value="medium">Rp300.000 - Rp600.000</option>
                   <option value="high">> Rp600.000</option>
                 </select>
+
                 <button
                   @click="resetFilters"
                   class="flex items-center gap-2 text-pink-500 font-medium text-sm"
                 >
-                  <ArrowPathIcon class="w-4 h-4" />
+                  <RotateCcw class="w-4 h-4" />
                   Reset
                 </button>
               </div>
@@ -120,146 +179,368 @@
             <table class="w-full border-collapse">
               <thead>
                 <tr class="border-b border-gray-100">
-                  <th
-                    class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    ID
-                  </th>
-                  <th
-                    class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    NAMA PRODUK
-                  </th>
-                  <th
-                    class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    TIPE
-                  </th>
-                  <th
-                    class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    JENIS
-                  </th>
-                  <th
-                    class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    BRAND
-                  </th>
-                  <th
-                    class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    HARGA
-                  </th>
-                  <th
-                    class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    AKSI
-                  </th>
+                  <!-- Hair Colors Headers -->
+                  <template v-if="currentProductType === 'hair'">
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Product ID
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Brand
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Nama Produk
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Warna
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Kategori
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Level
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Harga Dasar
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Tambahan
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Total
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Stok
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Aksi
+                    </th>
+                  </template>
+
+                  <!-- Smoothing/Keratin Headers -->
+                  <template v-else>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Product ID
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Brand
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Nama Produk
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Jenis
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Harga
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Stok
+                    </th>
+                    <th
+                      class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Aksi
+                    </th>
+                  </template>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-50">
-                <tr
-                  v-for="product in filteredProducts"
-                  :key="`${product.type}-${product.id}`"
-                  class="hover:bg-gray-50"
-                >
-                  <td class="py-4 px-6 text-sm font-medium text-gray-900">
-                    {{ product.id }}
-                  </td>
-                  <td class="py-4 px-6 text-sm text-gray-900">
-                    {{ product.nama }}
-                  </td>
-                  <td class="py-4 px-6 text-sm text-gray-500">
-                    <span
-                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                      :class="getTypeClass(product.type)"
-                    >
-                      {{ getTypeName(product.type) }}
-                    </span>
-                  </td>
-                  <td class="py-4 px-6 text-sm text-gray-500">
-                    {{ product.jenis }}
-                  </td>
-                  <td class="py-4 px-6 text-sm text-gray-500">
-                    {{ product.brand_nama }}
-                  </td>
-                  <td class="py-4 px-6 text-sm text-gray-500">
-                    {{ formatRupiah(product.harga) }}
-                  </td>
-                  <td class="py-4 px-6">
-                    <div class="flex items-center gap-2">
-                      <button
-                        @click="editProduct(product)"
-                        class="p-1.5 bg-blue-50 text-blue-500 rounded-md hover:bg-blue-100"
+                <!-- Hair Colors Rows -->
+                <template v-if="currentProductType === 'hair'">
+                  <tr
+                    v-for="product in filteredProducts"
+                    :key="`hair-${product.product_id}-${
+                      product.color_id || 'no-color'
+                    }`"
+                    class="hover:bg-gray-50"
+                  >
+                    <td class="py-4 px-6 text-sm font-medium text-gray-900">
+                      {{ product.product_id }}
+                    </td>
+                    <td class="py-4 px-6 text-sm text-gray-900">
+                      {{ product.brand_nama }}
+                    </td>
+                    <td class="py-4 px-6 text-sm text-gray-900">
+                      {{ product.product_nama }}
+                    </td>
+                    <td class="py-4 px-6 text-sm text-gray-900">
+                      {{ product.warna || "Tidak ada warna" }}
+                    </td>
+                    <td class="py-4 px-6 text-sm text-gray-500">
+                      <span
+                        v-if="product.kategori"
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
                       >
-                        <PencilIcon class="w-4 h-4" />
-                      </button>
-                      <button
-                        @click="confirmDelete(product)"
-                        class="p-1.5 bg-red-50 text-red-500 rounded-md hover:bg-red-100"
+                        {{ product.kategori }}
+                      </span>
+                      <span v-else class="text-gray-400">-</span>
+                    </td>
+                    <td class="py-4 px-6 text-sm text-gray-500">
+                      {{ product.level || "-" }}
+                    </td>
+                    <td class="py-4 px-6 text-sm text-gray-500">
+                      {{ formatRupiah(product.harga_dasar) }}
+                    </td>
+                    <td class="py-4 px-6 text-sm text-gray-500">
+                      {{ formatRupiah(product.tambahan_harga || 0) }}
+                    </td>
+                    <td class="py-4 px-6 text-sm font-medium text-gray-900">
+                      {{
+                        formatRupiah(product.harga_total || product.harga_dasar)
+                      }}
+                    </td>
+                    <td class="py-4 px-6 text-sm text-gray-500">
+                      <span
+                        :class="[
+                          'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+                          product.stok > 5
+                            ? 'bg-green-100 text-green-800'
+                            : product.stok > 0
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800',
+                        ]"
                       >
-                        <TrashIcon class="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                        {{ product.stok || 0 }}
+                      </span>
+                    </td>
+                    <td class="py-4 px-6">
+                      <div class="flex items-center gap-2">
+                        <button
+                          @click="editProduct(product)"
+                          class="p-1.5 bg-blue-50 text-blue-500 rounded-md hover:bg-blue-100"
+                        >
+                          <Pencil class="w-4 h-4" />
+                        </button>
+                        <button
+                          @click="confirmDelete(product)"
+                          class="p-1.5 bg-red-50 text-red-500 rounded-md hover:bg-red-100"
+                        >
+                          <Trash2 class="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </template>
+
+                <!-- Smoothing/Keratin Rows -->
+                <template v-else>
+                  <tr
+                    v-for="product in filteredProducts"
+                    :key="`${currentProductType}-${product.product_id}`"
+                    class="hover:bg-gray-50"
+                  >
+                    <td class="py-4 px-6 text-sm font-medium text-gray-900">
+                      {{ product.product_id }}
+                    </td>
+                    <td class="py-4 px-6 text-sm text-gray-900">
+                      {{ product.brand.nama }}
+                    </td>
+                    <td class="py-4 px-6 text-sm text-gray-900">
+                      {{ product.product.nama }}
+                    </td>
+                    <td class="py-4 px-6 text-sm text-gray-500">
+                      {{ product.product.jenis }}
+                    </td>
+                    <td class="py-4 px-6 text-sm text-gray-500">
+                      {{ formatRupiah(product.product.harga) }}
+                    </td>
+                    <td class="py-4 px-6 text-sm text-gray-500">
+                      <span
+                        :class="[
+                          'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+                          product.stok > 5
+                            ? 'bg-green-100 text-green-800'
+                            : product.stok > 0
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800',
+                        ]"
+                      >
+                        {{ product.stok }}
+                      </span>
+                    </td>
+                    <td class="py-4 px-6">
+                      <div class="flex items-center gap-2">
+                        <button
+                          @click="editProduct(product)"
+                          class="p-1.5 bg-blue-50 text-blue-500 rounded-md hover:bg-blue-100"
+                        >
+                          <Pencil class="w-4 h-4" />
+                        </button>
+                        <button
+                          @click="confirmDelete(product)"
+                          class="p-1.5 bg-red-50 text-red-500 rounded-md hover:bg-red-100"
+                        >
+                          <Trash2 class="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </template>
               </tbody>
             </table>
           </div>
 
           <!-- Products Cards for Mobile -->
           <div class="md:hidden space-y-4">
-            <div
-              v-for="product in filteredProducts"
-              :key="`${product.type}-${product.id}`"
-              class="bg-white rounded-2xl shadow-sm p-4"
-            >
-              <div class="flex justify-between items-start mb-3">
-                <div>
-                  <h3 class="font-medium text-gray-900">
-                    {{ product.nama }}
-                  </h3>
-                  <p class="text-sm text-gray-500">ID: {{ product.id }}</p>
+            <!-- Hair Colors Cards -->
+            <template v-if="currentProductType === 'hair'">
+              <div
+                v-for="product in filteredProducts"
+                :key="`hair-${product.product_id}-${
+                  product.color_id || 'no-color'
+                }`"
+                class="bg-white rounded-2xl shadow-sm p-4"
+              >
+                <div class="flex justify-between items-start mb-3">
+                  <div>
+                    <h3 class="font-medium text-gray-900">
+                      {{ product.product_nama }}
+                    </h3>
+                    <p class="text-sm text-gray-500">
+                      ID: {{ product.product_id }}
+                    </p>
+                    <p class="text-sm text-pink-600 font-medium">
+                      {{ product.warna || "Tidak ada warna" }}
+                    </p>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button
+                      @click="editProduct(product)"
+                      class="p-1.5 bg-blue-50 text-blue-500 rounded-md hover:bg-blue-100"
+                    >
+                      <Pencil class="w-4 h-4" />
+                    </button>
+                    <button
+                      @click="confirmDelete(product)"
+                      class="p-1.5 bg-red-50 text-red-500 rounded-md hover:bg-red-100"
+                    >
+                      <Trash2 class="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-                <div class="flex items-center gap-2">
-                  <button
-                    @click="editProduct(product)"
-                    class="p-1.5 bg-blue-50 text-blue-500 rounded-md hover:bg-blue-100"
-                  >
-                    <PencilIcon class="w-4 h-4" />
-                  </button>
-                  <button
-                    @click="confirmDelete(product)"
-                    class="p-1.5 bg-red-50 text-red-500 rounded-md hover:bg-red-100"
-                  >
-                    <TrashIcon class="w-4 h-4" />
-                  </button>
+                <div class="space-y-1">
+                  <p class="text-sm text-gray-500">
+                    <span class="font-medium">Brand:</span>
+                    {{ product.brand_nama }}
+                  </p>
+                  <p class="text-sm text-gray-500" v-if="product.kategori">
+                    <span class="font-medium">Kategori:</span>
+                    {{ product.kategori }}
+                  </p>
+                  <p class="text-sm text-gray-500" v-if="product.level">
+                    <span class="font-medium">Level:</span> {{ product.level }}
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    <span class="font-medium">Total Harga:</span>
+                    {{
+                      formatRupiah(product.harga_total || product.harga_dasar)
+                    }}
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    <span class="font-medium">Stok:</span>
+                    {{ product.stok || 0 }}
+                  </p>
                 </div>
               </div>
-              <div class="flex flex-col gap-1 mb-3">
-                <p class="text-sm text-gray-500">
-                  <span class="font-medium">Tipe:</span>
-                  <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ml-2"
-                    :class="getTypeClass(product.type)"
-                  >
-                    {{ getTypeName(product.type) }}
-                  </span>
-                </p>
-                <p class="text-sm text-gray-500">
-                  <span class="font-medium">Jenis:</span>
-                  {{ product.jenis }}
-                </p>
-                <p class="text-sm text-gray-500">
-                  <span class="font-medium">Brand:</span>
-                  {{ product.brand_nama }}
-                </p>
-                <p class="text-sm text-gray-500">
-                  <span class="font-medium">Harga:</span>
-                  {{ formatRupiah(product.harga) }}
-                </p>
+            </template>
+
+            <!-- Smoothing/Keratin Cards -->
+            <template v-else>
+              <div
+                v-for="product in filteredProducts"
+                :key="`${currentProductType}-${product.product_id}`"
+                class="bg-white rounded-2xl shadow-sm p-4"
+              >
+                <div class="flex justify-between items-start mb-3">
+                  <div>
+                    <h3 class="font-medium text-gray-900">
+                      {{ product.product.nama }}
+                    </h3>
+                    <p class="text-sm text-gray-500">
+                      ID: {{ product.product_id }}
+                    </p>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button
+                      @click="editProduct(product)"
+                      class="p-1.5 bg-blue-50 text-blue-500 rounded-md hover:bg-blue-100"
+                    >
+                      <Pencil class="w-4 h-4" />
+                    </button>
+                    <button
+                      @click="confirmDelete(product)"
+                      class="p-1.5 bg-red-50 text-red-500 rounded-md hover:bg-red-100"
+                    >
+                      <Trash2 class="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <p class="text-sm text-gray-500">
+                    <span class="font-medium">Brand:</span>
+                    {{ product.brand.nama }}
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    <span class="font-medium">Jenis:</span>
+                    {{ product.product.jenis }}
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    <span class="font-medium">Harga:</span>
+                    {{ formatRupiah(product.product.harga) }}
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    <span class="font-medium">Stok:</span> {{ product.stok }}
+                  </p>
+                </div>
               </div>
+            </template>
+          </div>
+
+          <!-- Empty State -->
+          <div v-if="filteredProducts.length === 0" class="text-center py-12">
+            <div class="text-gray-400 mb-4">
+              <Package class="w-16 h-16 mx-auto" />
             </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">
+              Tidak ada produk
+            </h3>
+            <p class="text-gray-500">
+              Tidak ada produk yang sesuai dengan filter yang dipilih.
+            </p>
           </div>
         </template>
       </div>
@@ -278,7 +559,7 @@
           @click="closeModals"
           class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
         >
-          <XMarkIcon class="w-5 h-5" />
+          <X class="w-5 h-5" />
         </button>
         <h2 class="text-xl font-bold text-gray-900 mb-6">
           {{ showEditModal ? "Edit Produk" : "Tambah Produk Baru" }}
@@ -293,59 +574,6 @@
               <input
                 v-model="formData.nama"
                 type="text"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"
-                >Tipe Produk</label
-              >
-              <select
-                v-model="formData.type"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-                required
-              >
-                <option value="hair">Hair Products</option>
-                <option value="smoothing">Smoothing Products</option>
-                <option value="keratin">Keratin Products</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"
-                >Jenis</label
-              >
-              <input
-                v-model="formData.jenis"
-                type="text"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"
-                >Brand</label
-              >
-              <input
-                v-model="formData.brand_nama"
-                type="text"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"
-                >Harga (Rp)</label
-              >
-              <input
-                v-model="formData.harga"
-                type="number"
-                min="0"
-                step="1000"
                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
                 required
               />
@@ -391,18 +619,18 @@
           @click="showDeleteModal = false"
           class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
         >
-          <XMarkIcon class="w-5 h-5" />
+          <X class="w-5 h-5" />
         </button>
         <div class="flex items-center gap-4 mb-4">
           <div class="bg-red-100 p-2 rounded-full">
-            <ExclamationTriangleIcon class="w-6 h-6 text-red-500" />
+            <AlertTriangle class="w-6 h-6 text-red-500" />
           </div>
           <h2 class="text-xl font-bold text-gray-900">Hapus Produk</h2>
         </div>
 
         <p class="text-gray-600 mb-6">
-          Apakah Anda yakin ingin menghapus produk "{{ deleteProduct?.nama }}"?
-          Tindakan ini tidak dapat dibatalkan.
+          Apakah Anda yakin ingin menghapus produk ini? Tindakan ini tidak dapat
+          dibatalkan.
         </p>
 
         <div class="flex justify-end gap-3">
@@ -431,28 +659,30 @@
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import Cookies from "js-cookie";
-import {
-  Bars3Icon,
-  LinkIcon,
-  EyeIcon,
-  Squares2X2Icon,
-  FunnelIcon,
-  ArrowPathIcon,
-  PlusIcon,
-  PencilIcon,
-  TrashIcon,
-  XMarkIcon,
-  ExclamationTriangleIcon,
-} from "@heroicons/vue/24/outline";
-
 const config = useRuntimeConfig();
+import {
+  Menu,
+  Link,
+  Eye,
+  Grid3X3,
+  Filter,
+  RotateCcw,
+  Plus,
+  Pencil,
+  Trash2,
+  X,
+  AlertTriangle,
+  Package,
+} from "lucide-vue-next";
+import AdminSidebar from "../components/AdminSidebar.vue";
+import AdminHeader from "../components/AdminHeader.vue";
 
 // State variables
 const productsList = ref([]);
 const sidebarOpen = ref(false);
 const loading = ref(true);
 const error = ref(null);
+const currentProductType = ref("hair"); // Default to hair colors
 
 // Modal states
 const showAddModal = ref(false);
@@ -474,8 +704,10 @@ const deleteProduct = ref(null);
 
 // Filters
 const filters = ref({
-  type: "",
   brand: "",
+  kategori: "",
+  level: "",
+  jenis: "",
   harga: "",
 });
 
@@ -486,55 +718,153 @@ const toggleSidebar = () => {
 
 // Format price to Rupiah
 const formatRupiah = (price) => {
+  if (!price) return "Rp 0";
+  const numPrice = typeof price === "string" ? parseFloat(price) : price;
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
     minimumFractionDigits: 0,
-  }).format(price);
+  }).format(numPrice);
 };
 
-// Get type name display
-const getTypeName = (type) => {
-  const types = {
-    hair: "Hair Products",
-    smoothing: "Smoothing Products",
-    keratin: "Keratin Products",
-  };
-  return types[type] || type;
+// Transform hair colors data to flatten color variants
+const transformHairColorsData = (data) => {
+  const transformedData = [];
+
+  data.forEach((product) => {
+    if (product.available_colors && product.available_colors.length > 0) {
+      // Check if colors have valid data
+      const validColors = product.available_colors.filter(
+        (color) => color.nama !== null && color.stok !== null
+      );
+
+      if (validColors.length > 0) {
+        validColors.forEach((color) => {
+          transformedData.push({
+            product_id: product.product_id,
+            brand_nama: product.brand.nama,
+            product_nama: product.product.nama,
+            product_jenis: product.product.jenis,
+            product_deskripsi: product.product.deskripsi,
+            harga_dasar: product.product.harga_dasar,
+            color_id: color.color_id,
+            warna: color.nama,
+            stok: color.stok,
+            level: color.level,
+            kategori: color.kategori,
+            tambahan_harga: color.tambahan_harga || 0,
+            harga_total:
+              color.harga_total ||
+              product.product.harga_dasar + (color.tambahan_harga || 0),
+          });
+        });
+      } else {
+        // Product without valid colors
+        transformedData.push({
+          product_id: product.product_id,
+          brand_nama: product.brand.nama,
+          product_nama: product.product.nama,
+          product_jenis: product.product.jenis,
+          product_deskripsi: product.product.deskripsi,
+          harga_dasar: product.product.harga_dasar,
+          color_id: null,
+          warna: null,
+          stok: 0,
+          level: null,
+          kategori: null,
+          tambahan_harga: 0,
+          harga_total: product.product.harga_dasar,
+        });
+      }
+    } else {
+      // Product without colors array
+      transformedData.push({
+        product_id: product.product_id,
+        brand_nama: product.brand.nama,
+        product_nama: product.product.nama,
+        product_jenis: product.product.jenis,
+        product_deskripsi: product.product.deskripsi,
+        harga_dasar: product.product.harga_dasar,
+        color_id: null,
+        warna: null,
+        stok: 0,
+        level: null,
+        kategori: null,
+        tambahan_harga: 0,
+        harga_total: product.product.harga_dasar,
+      });
+    }
+  });
+
+  return transformedData;
 };
 
-// Get type class for styling
-const getTypeClass = (type) => {
-  const classes = {
-    hair: "bg-blue-100 text-blue-800",
-    smoothing: "bg-green-100 text-green-800",
-    keratin: "bg-purple-100 text-purple-800",
-  };
-  return classes[type] || "bg-gray-100 text-gray-800";
-};
-
-// Get unique brands for filter
+// Get unique values for filters
 const uniqueBrands = computed(() => {
   const brands = new Set();
   productsList.value.forEach((product) => {
-    brands.add(product.brand_nama);
+    if (currentProductType.value === "hair") {
+      brands.add(product.brand_nama);
+    } else {
+      brands.add(product.brand?.nama);
+    }
   });
-  return Array.from(brands).sort();
+  return Array.from(brands).filter(Boolean).sort();
 });
 
-// Fetch products from API
+const uniqueKategori = computed(() => {
+  if (currentProductType.value !== "hair") return [];
+  const kategori = new Set();
+  productsList.value.forEach((product) => {
+    if (product.kategori) kategori.add(product.kategori);
+  });
+  return Array.from(kategori).sort();
+});
+
+const uniqueLevels = computed(() => {
+  if (currentProductType.value !== "hair") return [];
+  const levels = new Set();
+  productsList.value.forEach((product) => {
+    if (product.level) levels.add(product.level);
+  });
+  return Array.from(levels).sort();
+});
+
+const uniqueJenis = computed(() => {
+  if (currentProductType.value === "hair") return [];
+  const jenis = new Set();
+  productsList.value.forEach((product) => {
+    if (product.product?.jenis) jenis.add(product.product.jenis);
+  });
+  return Array.from(jenis).sort();
+});
+
+// Fetch products based on current type
 const fetchProducts = async () => {
   loading.value = true;
   error.value = null;
 
   try {
-    const token = Cookies.get("token");
+    // Get token from cookies
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="))
+      ?.split("=")[1];
 
     if (!token) {
       throw new Error("Authentication token not found");
     }
 
-    const response = await fetch(`${config.public.apiBaseUrl}/api/products`, {
+    let url = "";
+    if (currentProductType.value === "hair") {
+      url = `${config.public.apiBaseUrl}/api/products/hair/products`;
+    } else if (currentProductType.value === "smoothing") {
+      url = `${config.public.apiBaseUrl}/api/admin/products/smoothing`;
+    } else if (currentProductType.value === "keratin") {
+      url = `${config.public.apiBaseUrl}/api/admin/products/keratin`;
+    }
+
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -550,19 +880,15 @@ const fetchProducts = async () => {
 
     const data = await response.json();
 
-    // Flatten the products from different categories
-    const allProducts = [];
-    if (data.data.hair_products) {
-      allProducts.push(...data.data.hair_products);
+    // Handle different response structures
+    if (currentProductType.value === "hair") {
+      // Hair colors API returns { success: true, data: [...] }
+      const rawData = data.data || [];
+      productsList.value = transformHairColorsData(rawData);
+    } else {
+      // Smoothing/Keratin APIs return { success: true, data: [...] }
+      productsList.value = data.data || [];
     }
-    if (data.data.smoothing_products) {
-      allProducts.push(...data.data.smoothing_products);
-    }
-    if (data.data.keratin_products) {
-      allProducts.push(...data.data.keratin_products);
-    }
-
-    productsList.value = allProducts;
   } catch (err) {
     console.error("Error fetching products:", err);
     error.value = err.message || "An error occurred while fetching products";
@@ -571,11 +897,19 @@ const fetchProducts = async () => {
   }
 };
 
+// Handle product type change
+const onProductTypeChange = () => {
+  resetFilters();
+  fetchProducts();
+};
+
 // Reset all filters
 const resetFilters = () => {
   filters.value = {
-    type: "",
     brand: "",
+    kategori: "",
+    level: "",
+    jenis: "",
     harga: "",
   };
 };
@@ -583,31 +917,50 @@ const resetFilters = () => {
 // Computed property for filtered products
 const filteredProducts = computed(() => {
   return productsList.value.filter((product) => {
-    // Filter by type
-    if (filters.value.type && product.type !== filters.value.type) {
-      return false;
+    // Filter by brand
+    if (filters.value.brand) {
+      const brandName =
+        currentProductType.value === "hair"
+          ? product.brand_nama
+          : product.brand?.nama;
+      if (brandName !== filters.value.brand) return false;
     }
 
-    // Filter by brand
-    if (filters.value.brand && product.brand_nama !== filters.value.brand) {
-      return false;
+    // Hair-specific filters
+    if (currentProductType.value === "hair") {
+      if (
+        filters.value.kategori &&
+        product.kategori !== filters.value.kategori
+      ) {
+        return false;
+      }
+      if (filters.value.level && product.level !== filters.value.level) {
+        return false;
+      }
+    } else {
+      // Smoothing/Keratin-specific filters
+      if (
+        filters.value.jenis &&
+        product.product?.jenis !== filters.value.jenis
+      ) {
+        return false;
+      }
     }
 
     // Filter by price range
     if (filters.value.harga) {
-      const price = parseFloat(product.harga);
-      if (filters.value.harga === "low" && price >= 300000) {
-        return false;
-      }
+      const price =
+        currentProductType.value === "hair"
+          ? product.harga_total || product.harga_dasar
+          : product.product?.harga;
+
+      if (filters.value.harga === "low" && price >= 300000) return false;
       if (
         filters.value.harga === "medium" &&
         (price < 300000 || price > 600000)
-      ) {
+      )
         return false;
-      }
-      if (filters.value.harga === "high" && price <= 600000) {
-        return false;
-      }
+      if (filters.value.harga === "high" && price <= 600000) return false;
     }
 
     return true;
@@ -616,14 +969,7 @@ const filteredProducts = computed(() => {
 
 // Open edit modal and populate form
 const editProduct = (product) => {
-  formData.value = {
-    id: product.id,
-    nama: product.nama,
-    type: product.type,
-    jenis: product.jenis,
-    brand_nama: product.brand_nama,
-    harga: product.harga,
-  };
+  formData.value = { ...product };
   showEditModal.value = true;
 };
 
@@ -636,114 +982,32 @@ const confirmDelete = (product) => {
 // Submit form (create or update)
 const submitProduct = async () => {
   isSubmitting.value = true;
-
   try {
-    const token = Cookies.get("token");
-
-    if (!token) {
-      throw new Error("Authentication token not found");
-    }
-
-    const url = showEditModal.value
-      ? `${config.public.apiBaseUrl}/api/products/${formData.value.id}`
-      : `${config.public.apiBaseUrl}/api/products`;
-
-    const method = showEditModal.value ? "PUT" : "POST";
-
-    const response = await fetch(url, {
-      method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "69420",
-      },
-      body: JSON.stringify({
-        nama: formData.value.nama,
-        type: formData.value.type,
-        jenis: formData.value.jenis,
-        brand_nama: formData.value.brand_nama,
-        harga: formData.value.harga,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(
-        errorData.message ||
-          `Failed to ${showEditModal.value ? "update" : "create"} product`
-      );
-    }
-
-    // Refresh the list
-    await fetchProducts();
-
-    // Close modal and reset form
-    closeModals();
-
-    // Show success message
-    alert(
-      `Produk berhasil ${showEditModal.value ? "diperbarui" : "ditambahkan"}`
-    );
+    // Implementation for create/update
+    console.log("Submitting product:", formData.value);
+    // Add your API call here
   } catch (err) {
-    console.error(
-      `Error ${showEditModal.value ? "updating" : "creating"} product:`,
-      err
-    );
-    alert(
-      err.message ||
-        `An error occurred while ${
-          showEditModal.value ? "updating" : "creating"
-        } product`
-    );
+    console.error("Error submitting product:", err);
   } finally {
     isSubmitting.value = false;
+    closeModals();
   }
 };
 
 // Delete product
 const deleteProductConfirm = async () => {
   if (!deleteProduct.value) return;
-
   isSubmitting.value = true;
-
   try {
-    const token = Cookies.get("token");
-
-    if (!token) {
-      throw new Error("Authentication token not found");
-    }
-
-    const response = await fetch(
-      `${config.public.apiBaseUrl}/api/products/${deleteProduct.value.id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "69420",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to delete product");
-    }
-
-    // Refresh the list
-    await fetchProducts();
-
-    // Close modal
-    showDeleteModal.value = false;
-    deleteProduct.value = null;
-
-    // Show success message
-    alert("Produk berhasil dihapus");
+    // Implementation for delete
+    console.log("Deleting product:", deleteProduct.value);
+    // Add your API call here
   } catch (err) {
     console.error("Error deleting product:", err);
-    alert(err.message || "An error occurred while deleting product");
   } finally {
     isSubmitting.value = false;
+    showDeleteModal.value = false;
+    deleteProduct.value = null;
   }
 };
 

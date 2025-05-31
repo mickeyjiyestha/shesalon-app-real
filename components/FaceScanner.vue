@@ -149,6 +149,7 @@
                 playsinline
                 muted
                 class="absolute inset-0 w-full h-full object-cover"
+                @loadedmetadata="onVideoLoaded"
               ></video>
 
               <!-- Face Detection Canvas - This will show the tracking box -->
@@ -180,13 +181,23 @@
               <div
                 v-if="faceDetectionStatus && !isLoading"
                 class="absolute top-2 right-2 px-3 py-1 rounded-full text-xs z-40"
-                :class="
+                :class="[
                   faceDetected
                     ? 'bg-green-500/80 text-white'
-                    : 'bg-red-500/80 text-white'
-                "
+                    : 'bg-red-500/80 text-white',
+                ]"
               >
                 {{ faceDetectionStatus }}
+              </div>
+
+              <!-- Debug Info -->
+              <div
+                v-if="debugInfo"
+                class="absolute bottom-2 left-2 bg-black/70 text-white text-xs p-2 rounded z-40"
+              >
+                <div>Skin pixels: {{ debugInfo.skinPixels }}</div>
+                <div>Face found: {{ debugInfo.faceFound }}</div>
+                <div>Detection active: {{ debugInfo.detectionActive }}</div>
               </div>
 
               <!-- Scanning Animation Overlay -->
@@ -729,18 +740,21 @@ const uploadedImage = ref(null);
 const isDragging = ref(false);
 const faceDetected = ref(false);
 const faceDetectionStatus = ref("");
+const debugInfo = ref(null);
 
 // Face detection variables
 let animationFrameId = null;
 let cameraInitialized = false;
+let lastFacePosition = null;
+let faceStabilityCounter = 0;
 
 const currentRecommendation = computed(() => {
   if (recommendations.value.length === 0) return null;
   return recommendations.value[currentRecommendationIndex.value];
 });
 
-// Real-time face detection using skin color analysis
-const detectFacesSimple = async () => {
+// Improved face detection with better reliability
+const detectFacesImproved = async () => {
   if (!videoRef.value || !faceDetectionCanvasRef.value || isLoading.value) {
     return;
   }
@@ -749,23 +763,20 @@ const detectFacesSimple = async () => {
   const canvas = faceDetectionCanvasRef.value;
   const ctx = canvas.getContext("2d");
 
-  // Force canvas to match video element exactly
+  // Ensure canvas matches video dimensions
   const videoRect = video.getBoundingClientRect();
-  canvas.width = videoRect.width;
-  canvas.height = videoRect.height;
-  canvas.style.width = videoRect.width + "px";
-  canvas.style.height = videoRect.height + "px";
-  canvas.style.position = "absolute";
-  canvas.style.top = "0";
-  canvas.style.left = "0";
-  canvas.style.pointerEvents = "none";
-  canvas.style.zIndex = "30";
+  if (canvas.width !== videoRect.width || canvas.height !== videoRect.height) {
+    canvas.width = videoRect.width;
+    canvas.height = videoRect.height;
+    canvas.style.width = videoRect.width + "px";
+    canvas.style.height = videoRect.height + "px";
+  }
 
   // Clear canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   try {
-    // Create a temporary canvas to analyze the video frame
+    // Create temporary canvas for analysis
     const tempCanvas = document.createElement("canvas");
     const tempCtx = tempCanvas.getContext("2d");
     tempCanvas.width = video.videoWidth;
@@ -774,7 +785,7 @@ const detectFacesSimple = async () => {
     // Draw current video frame
     tempCtx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
 
-    // Get image data for analysis
+    // Get image data
     const imageData = tempCtx.getImageData(
       0,
       0,
@@ -783,158 +794,72 @@ const detectFacesSimple = async () => {
     );
     const data = imageData.data;
 
-    // Focus on the upper portion of the frame for face detection
-    const faceRegionHeight = Math.floor(tempCanvas.height * 0.7); // Only check upper 70% of frame
-    const faceRegionWidth = tempCanvas.width;
+    // Multiple detection methods for better reliability
+    const faceRegions = [];
 
-    // Scan for skin-colored regions in face area only
-    const skinPixels = [];
-    const blockSize = 6; // Smaller block size for better precision
+    // Method 1: Skin color detection (improved)
+    const skinRegion = detectSkinRegion(
+      data,
+      tempCanvas.width,
+      tempCanvas.height
+    );
+    if (skinRegion) faceRegions.push(skinRegion);
 
-    for (let y = 0; y < faceRegionHeight; y += blockSize) {
-      for (let x = 0; x < faceRegionWidth; x += blockSize) {
-        const i = (y * tempCanvas.width + x) * 4;
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
+    // Method 2: Brightness variation detection (for better lighting conditions)
+    const brightnessRegion = detectBrightnessVariation(
+      data,
+      tempCanvas.width,
+      tempCanvas.height
+    );
+    if (brightnessRegion) faceRegions.push(brightnessRegion);
 
-        // More strict skin color detection for face
-        if (isFaceSkinColor(r, g, b)) {
-          skinPixels.push({ x, y });
-        }
+    // Method 3: Edge detection for face outline
+    const edgeRegion = detectFaceEdges(
+      data,
+      tempCanvas.width,
+      tempCanvas.height
+    );
+    if (edgeRegion) faceRegions.push(edgeRegion);
+
+    // Combine and validate face regions
+    const bestFace = findBestFaceRegion(
+      faceRegions,
+      tempCanvas.width,
+      tempCanvas.height
+    );
+
+    debugInfo.value = {
+      skinPixels: skinRegion ? skinRegion.confidence : 0,
+      faceFound: !!bestFace,
+      detectionActive: true,
+      regions: faceRegions.length,
+    };
+
+    if (bestFace) {
+      // Stabilize detection to reduce flickering
+      if (lastFacePosition && isPositionSimilar(bestFace, lastFacePosition)) {
+        faceStabilityCounter++;
+      } else {
+        faceStabilityCounter = 0;
       }
-    }
 
-    let faceFound = false;
-    let faceX = 0,
-      faceY = 0,
-      faceWidth = 0,
-      faceHeight = 0;
+      lastFacePosition = bestFace;
 
-    if (skinPixels.length > 25) {
-      // Reduced minimum skin pixels for better detection
-      // Find bounding box of skin pixels
-      const minX = Math.min(...skinPixels.map((p) => p.x));
-      const maxX = Math.max(...skinPixels.map((p) => p.x));
-      const minY = Math.min(...skinPixels.map((p) => p.y));
-      const maxY = Math.max(...skinPixels.map((p) => p.y));
-
-      // Calculate initial face region
-      const rawWidth = maxX - minX;
-      const rawHeight = maxY - minY;
-
-      // Apply face-specific constraints
-      const aspectRatio = rawWidth / rawHeight;
-
-      // Face should have aspect ratio between 0.6 and 1.4 (width/height)
-      if (
-        aspectRatio > 0.6 &&
-        aspectRatio < 1.4 &&
-        rawWidth > 40 &&
-        rawHeight > 50
-      ) {
-        // Refine the face boundaries to be more precise
-        const centerX = (minX + maxX) / 2;
-        const centerY = (minY + maxY) / 2;
-
-        // Use larger, more comprehensive face dimensions with extra height
-        faceWidth = Math.min(rawWidth * 1.3, tempCanvas.width * 0.6); // Max 60% of frame width
-        faceHeight = Math.min(rawHeight * 1.5, tempCanvas.height * 0.8); // Max 80% of frame height, increased multiplier
-
-        // Ensure good face size that covers full face including forehead and chin
-        faceWidth = Math.max(faceWidth, 120);
-        faceHeight = Math.max(faceHeight, 180); // Increased minimum height
-
-        // Center the face box with slight upward adjustment to capture more forehead
-        faceX = Math.max(0, centerX - faceWidth / 2);
-        faceY = Math.max(0, centerY - faceHeight / 2 - 10); // Shift up by 10 pixels to capture more forehead
-
-        // Ensure face box doesn't go outside frame
-        if (faceX + faceWidth > tempCanvas.width) {
-          faceX = tempCanvas.width - faceWidth;
-        }
-        if (faceY + faceHeight > tempCanvas.height) {
-          faceY = tempCanvas.height - faceHeight;
-        }
-
-        // Additional validation: face should be in upper portion of frame
-        if (faceY < tempCanvas.height * 0.75) {
-          // Face center should be in upper 75% (increased from 70%)
-          faceFound = true;
-        }
+      // Only show detection box if position is stable
+      if (faceStabilityCounter >= 2) {
+        drawFaceBox(
+          ctx,
+          bestFace,
+          canvas.width / video.videoWidth,
+          canvas.height / video.videoHeight
+        );
+        faceDetected.value = true;
+        faceDetectionStatus.value = "Face detected";
       }
-    }
-
-    if (faceFound) {
-      // Scale coordinates from video resolution to display size
-      const scaleX = canvas.width / video.videoWidth;
-      const scaleY = canvas.height / video.videoHeight;
-
-      const displayX = faceX * scaleX;
-      const displayY = faceY * scaleY;
-      const displayWidth = faceWidth * scaleX;
-      const displayHeight = faceHeight * scaleY;
-
-      // Draw face tracking box
-      ctx.strokeStyle = "#ff0066";
-      ctx.lineWidth = 3;
-      ctx.shadowColor = "#ff0066";
-      ctx.shadowBlur = 10;
-
-      // Main bounding box
-      ctx.strokeRect(displayX, displayY, displayWidth, displayHeight);
-
-      // Corner markers
-      const cornerSize = 20;
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = "#00ff66";
-
-      // Top-left
-      ctx.beginPath();
-      ctx.moveTo(displayX, displayY + cornerSize);
-      ctx.lineTo(displayX, displayY);
-      ctx.lineTo(displayX + cornerSize, displayY);
-      ctx.stroke();
-
-      // Top-right
-      ctx.beginPath();
-      ctx.moveTo(displayX + displayWidth - cornerSize, displayY);
-      ctx.lineTo(displayX + displayWidth, displayY);
-      ctx.lineTo(displayX + displayWidth, displayY + cornerSize);
-      ctx.stroke();
-
-      // Bottom-left
-      ctx.beginPath();
-      ctx.moveTo(displayX, displayY + displayHeight - cornerSize);
-      ctx.lineTo(displayX, displayY + displayHeight);
-      ctx.lineTo(displayX + cornerSize, displayY + displayHeight);
-      ctx.stroke();
-
-      // Bottom-right
-      ctx.beginPath();
-      ctx.moveTo(
-        displayX + displayWidth - cornerSize,
-        displayY + displayHeight
-      );
-      ctx.lineTo(displayX + displayWidth, displayY + displayHeight);
-      ctx.lineTo(
-        displayX + displayWidth,
-        displayY + displayHeight - cornerSize
-      );
-      ctx.stroke();
-
-      // Add text
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = "#ff0066";
-      ctx.font = "bold 16px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText("FACE TRACKED", displayX + displayWidth / 2, displayY - 8);
-
-      faceDetected.value = true;
-      faceDetectionStatus.value = "Face tracked";
     } else {
       faceDetected.value = false;
-      faceDetectionStatus.value = "Searching for face...";
+      faceDetectionStatus.value = "Looking for face...";
+      faceStabilityCounter = 0;
     }
   } catch (error) {
     console.error("Face detection error:", error);
@@ -944,50 +869,357 @@ const detectFacesSimple = async () => {
 
   // Continue detection loop
   if (activeTab.value === "camera" && isModalOpen.value && !isLoading.value) {
-    animationFrameId = requestAnimationFrame(detectFacesSimple);
+    animationFrameId = requestAnimationFrame(detectFacesImproved);
   }
 };
 
-// Improved skin color detection specifically for faces
-function isFaceSkinColor(r, g, b) {
-  // Less restrictive skin color detection for better face coverage
+// Improved skin color detection
+function detectSkinRegion(data, width, height) {
+  const skinPixels = [];
+  const blockSize = 4; // Smaller blocks for better precision
 
-  // Primary face skin detection
-  const isFaceSkin1 =
-    r > 95 &&
+  for (let y = 0; y < height * 0.8; y += blockSize) {
+    // Focus on upper 80%
+    for (let x = 0; x < width; x += blockSize) {
+      const i = (y * width + x) * 4;
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+
+      if (isImprovedSkinColor(r, g, b)) {
+        skinPixels.push({ x, y });
+      }
+    }
+  }
+
+  if (skinPixels.length < 20) return null;
+
+  const minX = Math.min(...skinPixels.map((p) => p.x));
+  const maxX = Math.max(...skinPixels.map((p) => p.x));
+  const minY = Math.min(...skinPixels.map((p) => p.y));
+  const maxY = Math.max(...skinPixels.map((p) => p.y));
+
+  const faceWidth = maxX - minX;
+  const faceHeight = maxY - minY;
+  const aspectRatio = faceWidth / faceHeight;
+
+  // Face validation
+  if (
+    aspectRatio > 0.5 &&
+    aspectRatio < 1.8 &&
+    faceWidth > 60 &&
+    faceHeight > 80
+  ) {
+    return {
+      x: minX,
+      y: minY,
+      width: faceWidth,
+      height: faceHeight,
+      confidence: skinPixels.length,
+      method: "skin",
+    };
+  }
+
+  return null;
+}
+
+// Brightness variation detection for faces
+function detectBrightnessVariation(data, width, height) {
+  const regions = [];
+  const blockSize = 20;
+
+  for (let y = 0; y < height - blockSize; y += blockSize) {
+    for (let x = 0; x < width - blockSize; x += blockSize) {
+      let totalBrightness = 0;
+      let variations = 0;
+      let lastBrightness = 0;
+
+      for (let dy = 0; dy < blockSize; dy += 2) {
+        for (let dx = 0; dx < blockSize; dx += 2) {
+          const i = ((y + dy) * width + (x + dx)) * 4;
+          const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3;
+
+          if (lastBrightness > 0) {
+            variations += Math.abs(brightness - lastBrightness);
+          }
+          totalBrightness += brightness;
+          lastBrightness = brightness;
+        }
+      }
+
+      const avgBrightness = totalBrightness / ((blockSize * blockSize) / 4);
+      const avgVariation = variations / ((blockSize * blockSize) / 4);
+
+      // Face regions typically have moderate brightness and variation
+      if (
+        avgBrightness > 80 &&
+        avgBrightness < 200 &&
+        avgVariation > 10 &&
+        avgVariation < 50
+      ) {
+        regions.push({
+          x: x,
+          y: y,
+          width: blockSize * 3,
+          height: blockSize * 4,
+          confidence: avgVariation,
+          method: "brightness",
+        });
+      }
+    }
+  }
+
+  return regions.length > 0 ? regions[0] : null;
+}
+
+// Simple edge detection for face outline
+function detectFaceEdges(data, width, height) {
+  const edges = [];
+
+  for (let y = 1; y < height - 1; y += 3) {
+    for (let x = 1; x < width - 1; x += 3) {
+      const i = (y * width + x) * 4;
+
+      // Simple Sobel edge detection
+      const gx =
+        -data[((y - 1) * width + (x - 1)) * 4] +
+        data[((y - 1) * width + (x + 1)) * 4] +
+        -2 * data[(y * width + (x - 1)) * 4] +
+        2 * data[(y * width + (x + 1)) * 4] +
+        -data[((y + 1) * width + (x - 1)) * 4] +
+        data[((y + 1) * width + (x + 1)) * 4];
+
+      const gy =
+        -data[((y - 1) * width + (x - 1)) * 4] -
+        2 * data[((y - 1) * width + x) * 4] -
+        data[((y - 1) * width + (x + 1)) * 4] +
+        data[((y + 1) * width + (x - 1)) * 4] +
+        2 * data[((y + 1) * width + x) * 4] +
+        data[((y + 1) * width + (x + 1)) * 4];
+
+      const magnitude = Math.sqrt(gx * gx + gy * gy);
+
+      if (magnitude > 30) {
+        // Edge threshold
+        edges.push({ x, y });
+      }
+    }
+  }
+
+  if (edges.length < 50) return null;
+
+  const minX = Math.min(...edges.map((p) => p.x));
+  const maxX = Math.max(...edges.map((p) => p.x));
+  const minY = Math.min(...edges.map((p) => p.y));
+  const maxY = Math.max(...edges.map((p) => p.y));
+
+  const faceWidth = maxX - minX;
+  const faceHeight = maxY - minY;
+
+  if (faceWidth > 80 && faceHeight > 100) {
+    return {
+      x: minX,
+      y: minY,
+      width: faceWidth,
+      height: faceHeight,
+      confidence: edges.length,
+      method: "edges",
+    };
+  }
+
+  return null;
+}
+
+// Find the best face region from multiple detection methods
+function findBestFaceRegion(regions, width, height) {
+  if (regions.length === 0) return null;
+
+  // Score each region based on multiple factors
+  const scoredRegions = regions.map((region) => {
+    let score = 0;
+
+    // Size score (prefer medium-sized faces)
+    const sizeRatio = (region.width * region.height) / (width * height);
+    if (sizeRatio > 0.05 && sizeRatio < 0.4) score += 30;
+
+    // Position score (prefer center-upper area)
+    const centerX = region.x + region.width / 2;
+    const centerY = region.y + region.height / 2;
+    const distanceFromCenter = Math.abs(centerX - width / 2) / width;
+    const heightPosition = centerY / height;
+
+    if (distanceFromCenter < 0.3) score += 20;
+    if (heightPosition > 0.2 && heightPosition < 0.7) score += 20;
+
+    // Aspect ratio score
+    const aspectRatio = region.width / region.height;
+    if (aspectRatio > 0.6 && aspectRatio < 1.4) score += 25;
+
+    // Confidence score
+    score += Math.min(region.confidence / 10, 20);
+
+    return { ...region, score };
+  });
+
+  // Return the highest scoring region
+  return scoredRegions.reduce((best, current) =>
+    current.score > best.score ? current : best
+  );
+}
+
+// Check if two face positions are similar (for stability)
+function isPositionSimilar(face1, face2, threshold = 30) {
+  const dx = Math.abs(face1.x - face2.x);
+  const dy = Math.abs(face1.y - face2.y);
+  const dw = Math.abs(face1.width - face2.width);
+  const dh = Math.abs(face1.height - face2.height);
+
+  return dx < threshold && dy < threshold && dw < threshold && dh < threshold;
+}
+
+// Improved skin color detection
+function isImprovedSkinColor(r, g, b) {
+  // Multiple skin tone ranges for better coverage
+
+  // Range 1: Light skin tones
+  const light =
+    r > 180 &&
     r < 255 &&
-    g > 75 &&
-    g < 225 &&
-    b > 55 &&
-    b < 205 &&
+    g > 160 &&
+    g < 220 &&
+    b > 140 &&
+    b < 200 &&
     r > g &&
     r > b &&
-    r - g > 8 &&
-    r - b > 12 &&
-    Math.abs(g - b) < 25;
+    r - g < 40 &&
+    r - b < 60;
 
-  // Secondary face skin detection for lighter tones
-  const isFaceSkin2 =
-    r > 170 &&
-    r < 255 &&
-    g > 150 &&
-    g < 245 &&
-    b > 130 &&
-    b < 225 &&
-    Math.abs(r - g) < 30 &&
-    Math.abs(r - b) < 40 &&
-    Math.abs(g - b) < 30 &&
+  // Range 2: Medium skin tones
+  const medium =
+    r > 120 &&
+    r < 200 &&
+    g > 90 &&
+    g < 160 &&
+    b > 70 &&
+    b < 130 &&
+    r > g &&
+    r > b &&
+    r - g > 5 &&
+    r - b > 15;
+
+  // Range 3: Darker skin tones
+  const dark =
+    r > 80 &&
+    r < 150 &&
+    g > 60 &&
+    g < 120 &&
+    b > 40 &&
+    b < 100 &&
     r >= g &&
-    r >= b;
+    r >= b &&
+    r - b > 10;
 
-  return isFaceSkin1 || isFaceSkin2;
+  // Range 4: Asian skin tones
+  const asian =
+    r > 160 &&
+    r < 220 &&
+    g > 140 &&
+    g < 190 &&
+    b > 100 &&
+    b < 160 &&
+    Math.abs(r - g) < 30 &&
+    r > b &&
+    r - b > 20;
+
+  return light || medium || dark || asian;
 }
+
+// Draw face detection box
+function drawFaceBox(ctx, face, scaleX, scaleY) {
+  const displayX = face.x * scaleX;
+  const displayY = face.y * scaleY;
+  const displayWidth = face.width * scaleX;
+  const displayHeight = face.height * scaleY;
+
+  // Main face box
+  ctx.strokeStyle = "#00ff66";
+  ctx.lineWidth = 3;
+  ctx.shadowColor = "#00ff66";
+  ctx.shadowBlur = 10;
+  ctx.strokeRect(displayX, displayY, displayWidth, displayHeight);
+
+  // Corner markers
+  const cornerSize = 15;
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = "#ff0066";
+
+  // Draw corners
+  drawCorner(ctx, displayX, displayY, cornerSize, "top-left");
+  drawCorner(ctx, displayX + displayWidth, displayY, cornerSize, "top-right");
+  drawCorner(
+    ctx,
+    displayX,
+    displayY + displayHeight,
+    cornerSize,
+    "bottom-left"
+  );
+  drawCorner(
+    ctx,
+    displayX + displayWidth,
+    displayY + displayHeight,
+    cornerSize,
+    "bottom-right"
+  );
+
+  // Label
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#00ff66";
+  ctx.font = "bold 14px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("FACE DETECTED", displayX + displayWidth / 2, displayY - 10);
+}
+
+// Draw corner markers
+function drawCorner(ctx, x, y, size, position) {
+  ctx.beginPath();
+  switch (position) {
+    case "top-left":
+      ctx.moveTo(x, y + size);
+      ctx.lineTo(x, y);
+      ctx.lineTo(x + size, y);
+      break;
+    case "top-right":
+      ctx.moveTo(x - size, y);
+      ctx.lineTo(x, y);
+      ctx.lineTo(x, y + size);
+      break;
+    case "bottom-left":
+      ctx.moveTo(x, y - size);
+      ctx.lineTo(x, y);
+      ctx.lineTo(x + size, y);
+      break;
+    case "bottom-right":
+      ctx.moveTo(x - size, y);
+      ctx.lineTo(x, y);
+      ctx.lineTo(x, y - size);
+      break;
+  }
+  ctx.stroke();
+}
+
+// Video loaded event handler
+const onVideoLoaded = () => {
+  console.log("Video loaded, starting face detection");
+  setTimeout(() => {
+    startFaceDetection();
+  }, 500);
+};
 
 // Start face detection loop
 const startFaceDetection = () => {
+  console.log("Starting improved face detection");
   if (videoRef.value && activeTab.value === "camera") {
-    // Use improved face detection that actually tracks faces
-    detectFacesSimple();
+    detectFacesImproved();
   }
 };
 
@@ -999,6 +1231,8 @@ const stopFaceDetection = () => {
   }
   faceDetected.value = false;
   faceDetectionStatus.value = "";
+  lastFacePosition = null;
+  faceStabilityCounter = 0;
 
   // Clear detection canvas
   if (faceDetectionCanvasRef.value) {
@@ -1158,11 +1392,10 @@ const initializeCamera = async () => {
         videoRef.value.onerror = reject;
       });
 
-      // Initialize guide canvas and start face detection after video is ready
+      // Initialize guide canvas after video is ready
       setTimeout(() => {
         initializeGuideCanvas();
-        startFaceDetection();
-      }, 500);
+      }, 300);
     }
   } catch (error) {
     console.error("Error accessing camera:", error);
@@ -1221,6 +1454,9 @@ const drawFaceShape = (ctx, detection) => {
   );
   textGradient.addColorStop(0, "#f6339a");
   textGradient.addColorStop(1, "#db2777");
+
+  ctx.fillStyle = textGradient;
+  ctx.font = "600 20px 'Inter', sans-serif";
 
   ctx.fillStyle = textGradient;
   ctx.font = "600 20px 'Inter', sans-serif";
@@ -1554,134 +1790,6 @@ onBeforeUnmount(() => {
   }
   100% {
     background-position: 0% 50%;
-  }
-}
-
-/* Improved camera guide */
-.absolute.inset-0.flex.items-center.justify-center.bg-white\/70.backdrop-blur-sm {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(4px);
-}
-
-/* Enhanced loading animation */
-.animate-spin.rounded-full.h-10.w-10.sm\:h-12.sm\:w-12.border-4.border-t-\[#f6339a\].border-gray-200.mb-3.sm\:mb-4 {
-  box-shadow: 0 0 15px rgba(246, 51, 154, 0.3);
-}
-
-/* Improved recommendation cards */
-.bg-white.rounded-2xl.shadow-xl.overflow-hidden.h-full {
-  border: 1px solid rgba(246, 51, 154, 0.1);
-  transition: all 0.3s ease;
-}
-
-.bg-white.rounded-2xl.shadow-xl.overflow-hidden.h-full:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 25px -5px rgba(246, 51, 154, 0.2);
-}
-
-/* Enhanced navigation buttons */
-.absolute.-left-2.top-1\/2.-translate-y-1\/2.p-2.text-\[#f6339a\].hover\:bg-pink-500.rounded-full.transition-all.duration-300.disabled\:opacity-30,
-.absolute.-right-2.top-1\/2.-translate-y-1\/2.p-2.text-\[#f6339a\].hover\:bg-pink-500.rounded-full.transition-all.duration-300.disabled\:opacity-30 {
-  background: white;
-  box-shadow: 0 4px 12px rgba(246, 51, 154, 0.2);
-}
-
-.absolute.-left-2.top-1\/2.-translate-y-1\/2.p-2.text-\[#f6339a\].hover\:bg-pink-500.rounded-full.transition-all.duration-300.disabled\:opacity-30:hover,
-.absolute.-right-2.top-1\/2.-translate-y-1\/2.p-2.text-\[#f6339a\].hover\:bg-pink-500.rounded-full.transition-all.duration-300.disabled\:opacity-30:hover {
-  background: rgba(246, 51, 154, 0.1);
-}
-
-.fixed.inset-0.z-\[9999\].flex.items-center.justify-center.p-4 {
-  background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
-}
-
-.bg-white\/95.backdrop-blur-sm.rounded-2xl.sm\:rounded-3xl.p-4.sm\:p-6.md\:p-8.w-full.max-w-2xl.shadow-2xl.transform.transition-all.duration-300.max-h-\[90vh\].overflow-y-auto {
-  border: 1px solid rgba(246, 51, 154, 0.1);
-  box-shadow: 0 25px 50px -12px rgba(246, 51, 154, 0.25);
-}
-
-.relative.mb-4.sm\:mb-6.rounded-xl.sm\:rounded-2xl.overflow-hidden.shadow-xl.bg-gray-100 {
-  border: 2px solid rgba(246, 51, 154, 0.1);
-  box-shadow: 0 10px 25px -5px rgba(246, 51, 154, 0.2);
-}
-
-.rounded-xl.sm\:rounded-2xl.overflow-hidden.shadow-xl.bg-gray-100.transition-all.duration-300 {
-  border: 2px solid rgba(246, 51, 154, 0.1);
-  box-shadow: 0 10px 25px -5px rgba(246, 51, 154, 0.2);
-}
-
-.inline-flex.rounded-full.p-1.bg-gray-100 {
-  padding: 0.25rem;
-  background: rgba(246, 51, 154, 0.1);
-  box-shadow: 0 2px 8px -2px rgba(246, 51, 154, 0.15);
-}
-
-.px-4.sm\:px-6.py-2.rounded-full.transition-all.duration-300.text-sm.sm\:text-base {
-  font-weight: 500;
-}
-
-.fixed.inset-0.z-\[10000\].flex.items-center.justify-center.p-4 {
-  background-color: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(8px);
-}
-
-.bg-white\/95.backdrop-blur-sm.rounded-2xl.sm\:rounded-3xl.p-4.sm\:p-6.md\:p-8.w-full.max-w-7xl.shadow-2xl.\`\`\`html
-  relative.h-\[90vh\].sm\:h-5\/6 {
-  border: 1px solid rgba(246, 51, 154, 0.1);
-  box-shadow: 0 25px 50px -12px rgba(246, 51, 154, 0.3);
-}
-
-.text-xl.sm\:text-2xl.md\:text-3xl.font-bold.bg-gradient-to-r.from-\[#f6339a\].to-\[#db2777\].bg-clip-text.text-transparent {
-  background-size: 200% auto;
-  animation: gradientShift 3s ease infinite;
-}
-
-@keyframes gradientShift {
-  0% {
-    background-position: 0% center;
-  }
-  50% {
-    background-position: 100% center;
-  }
-  100% {
-    background-position: 0% center;
-  }
-}
-
-/* Enhanced recommendation modal */
-.fixed.inset-0.z-\[10000\].flex.items-center.justify-center.p-4.bg-black\/60.backdrop-blur-sm {
-  animation: fadeIn 0.3s ease-out;
-}
-
-.bg-white.rounded-xl.shadow-lg.overflow-hidden.w-full.max-w-md.mx-auto {
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
-    0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
-
-.bg-white.rounded-xl.shadow-lg.overflow-hidden.w-full.max-w-md.mx-auto:hover {
-  transform: translateY(-5px);
-}
-
-.relative.aspect-\[3\/4\].w-full {
-  overflow: hidden;
-}
-
-.relative.aspect-\[3\/4\].w-full img {
-  transition: transform 0.5s ease;
-}
-
-.relative.aspect-\[3\/4\].w-full:hover img {
-  transform: scale(1.05);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }
 </style>

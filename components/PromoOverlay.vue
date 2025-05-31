@@ -31,25 +31,29 @@
           <div class="promo-badge">LIMITED TIME OFFER</div>
         </div>
 
-        <h2 class="promo-title">GRAND OPENING SPECIAL</h2>
+        <h2 class="promo-title">SPECIAL PROMOTION</h2>
 
-        <div class="promo-details">
+        <div v-if="promoDetails" class="promo-details">
           <div class="discount">
-            <span class="percentage">30%</span>
+            <span class="percentage">{{ promoDetails.discount_percent }}%</span>
             <span class="off">OFF</span>
           </div>
           <div class="services">
-            <p>ALL PREMIUM TREATMENTS</p>
+            <p>{{ promoDetails.message }}</p>
             <ul>
-              <li>Hair Coloring & Styling</li>
-              <li>Keratin Treatments</li>
-              <li>Premium Facials</li>
-              <li>Nail Art Services</li>
+              <li>Discount Amount: Rp {{ promoDetails.discount_amount }}</li>
+              <li>Total Price: Rp {{ promoDetails.total_harga }}</li>
+              <li>
+                Price After Discount: Rp {{ promoDetails.harga_setelah_diskon }}
+              </li>
+              <li>
+                Service Price: Rp {{ promoDetails.promo_target_layanan_harga }}
+              </li>
             </ul>
           </div>
         </div>
 
-        <div class="valid-until">
+        <div v-if="promoDetails && promoDetails.tanggal" class="valid-until">
           <div class="calendar-icon">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -68,12 +72,7 @@
               <line x1="3" y1="10" x2="21" y2="10"></line>
             </svg>
           </div>
-          <span>Valid until May 31, 2025</span>
-        </div>
-
-        <div class="promo-code-container">
-          <p>Use Promo Code:</p>
-          <div class="promo-code">WELCOME30</div>
+          <span>Valid until {{ promoDetails.tanggal }}</span>
         </div>
 
         <button @click="bookNow" class="book-now-button">
@@ -88,35 +87,57 @@
   </transition>
 </template>
 
-<script>
-export default {
-  name: "PromoOverlay",
-  data() {
-    return {
-      isVisible: true,
-    };
-  },
-  mounted() {
-    // Check if the user has already seen the promo
-    const hasSeenPromo = localStorage.getItem("hasSeenPromo");
-    if (hasSeenPromo) {
-      this.isVisible = false;
+<script setup>
+import Cookies from "js-cookie";
+const config = useRuntimeConfig();
+import { ref, onMounted } from "vue";
+
+const isVisible = ref(true);
+const promoDetails = ref(null);
+
+const fetchPromoDetails = async () => {
+  try {
+    const token = Cookies.get("token");
+    const response = await fetch(
+      `${config.public.apiBaseUrl}/api/booking/new-user-promo?layanan_id=5&tanggal=2024-06-30&jam_mulai=10:00`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "true",
+        },
+      }
+    );
+
+    // Ensure the response is valid JSON
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  },
-  methods: {
-    closePromo() {
-      this.isVisible = false;
-      // Set a flag in localStorage so the promo doesn't show again in this session
-      localStorage.setItem("hasSeenPromo", "true");
-    },
-    bookNow() {
-      // Close the promo
-      this.closePromo();
-      // Scroll to booking section or open booking modal
-      this.$emit("book-now");
-    },
-  },
+
+    const data = await response.json();
+    if (data && data.eligible) {
+      promoDetails.value = data;
+    } else {
+      console.warn("Promo not eligible or missing required data.");
+    }
+  } catch (error) {
+    console.error("Failed to fetch promo details:", error);
+  }
 };
+
+const closePromo = () => {
+  isVisible.value = false;
+  localStorage.setItem("hasSeenPromo", "true");
+};
+
+const bookNow = () => {
+  closePromo();
+  // Emit event for booking action
+  // Replace with actual implementation if needed
+};
+
+onMounted(() => {
+  fetchPromoDetails();
+});
 </script>
 
 <style scoped>

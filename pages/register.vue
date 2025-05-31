@@ -21,6 +21,21 @@ const errorMessage = ref("");
 const successMessage = ref("");
 const isLoading = ref(false);
 
+// State untuk modal
+const showErrorModal = ref(false);
+const showSuccessModal = ref(false);
+
+const closeErrorModal = () => {
+  showErrorModal.value = false;
+  errorMessage.value = "";
+};
+
+const closeSuccessModal = () => {
+  showSuccessModal.value = false;
+  successMessage.value = "";
+  router.push("/login");
+};
+
 const registerUser = async () => {
   // Reset messages
   errorMessage.value = "";
@@ -37,11 +52,13 @@ const registerUser = async () => {
     !confirmPassword.value
   ) {
     errorMessage.value = "Semua field harus diisi!";
+    showErrorModal.value = true;
     return;
   }
 
   if (password.value !== confirmPassword.value) {
     errorMessage.value = "Password dan konfirmasi password tidak cocok!";
+    showErrorModal.value = true;
     return;
   }
 
@@ -82,10 +99,13 @@ const registerUser = async () => {
     console.log("Registration response:", data);
 
     if (!response.ok) {
-      throw new Error(data.message || "Registrasi gagal");
+      errorMessage.value = data.message || "Registrasi gagal";
+      showErrorModal.value = true;
+      return;
     }
 
     successMessage.value = "Registrasi berhasil! Silakan login.";
+    showSuccessModal.value = true;
 
     // Reset form fields
     fullname.value = "";
@@ -95,15 +115,11 @@ const registerUser = async () => {
     address.value = "";
     password.value = "";
     confirmPassword.value = "";
-
-    // Redirect ke login setelah 2 detik
-    setTimeout(() => {
-      router.push("/login");
-    }, 2000);
   } catch (error) {
     console.error("Registration error:", error);
     errorMessage.value =
       error.message || "Terjadi kesalahan saat registrasi. Silakan coba lagi.";
+    showErrorModal.value = true;
   } finally {
     isLoading.value = false;
   }
@@ -119,22 +135,6 @@ const registerUser = async () => {
         >
           Register
         </p>
-
-        <!-- Feedback messages -->
-        <div class="mb-4">
-          <p
-            v-if="errorMessage"
-            class="text-red-500 text-sm md:text-base bg-red-50 p-3 rounded-lg"
-          >
-            {{ errorMessage }}
-          </p>
-          <p
-            v-if="successMessage"
-            class="text-green-500 text-sm md:text-base bg-green-50 p-3 rounded-lg"
-          >
-            {{ successMessage }}
-          </p>
-        </div>
 
         <input-box
           label="Full Name"
@@ -258,6 +258,266 @@ const registerUser = async () => {
       </div>
     </template>
   </AuthLayout>
+
+  <!-- Error Modal -->
+  <Teleport to="body">
+    <Transition
+      enter-active-class="transition-all duration-300 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-all duration-200 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="showErrorModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        @click="closeErrorModal"
+      >
+        <Transition
+          enter-active-class="transition-all duration-300 ease-out"
+          enter-from-class="opacity-0 scale-95 translate-y-4"
+          enter-to-class="opacity-100 scale-100 translate-y-0"
+          leave-active-class="transition-all duration-200 ease-in"
+          leave-from-class="opacity-100 scale-100 translate-y-0"
+          leave-to-class="opacity-0 scale-95 translate-y-4"
+        >
+          <div
+            v-if="showErrorModal"
+            class="relative w-full max-w-md mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden"
+            @click.stop
+          >
+            <!-- Header dengan gradient -->
+            <div class="bg-gradient-to-r from-red-500 to-pink-500 px-6 py-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="flex-shrink-0">
+                    <div
+                      class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
+                    >
+                      <svg
+                        class="w-6 h-6 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-semibold text-white">
+                      Registrasi Gagal
+                    </h3>
+                    <p class="text-white/80 text-sm">Terjadi kesalahan</p>
+                  </div>
+                </div>
+                <button
+                  @click="closeErrorModal"
+                  class="text-white/80 hover:text-white transition-colors duration-200 p-1 rounded-full hover:bg-white/10"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="px-6 py-6">
+              <div class="text-center">
+                <div
+                  class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4"
+                >
+                  <svg
+                    class="w-8 h-8 text-red-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </div>
+                <p class="text-gray-700 text-base leading-relaxed mb-6">
+                  {{ errorMessage }}
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <button
+                    @click="closeErrorModal"
+                    class="flex-1 px-4 py-2 bg-gradient-to-r from-[#f6339a] to-[#ff5757] text-white rounded-xl font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                  >
+                    Coba Lagi
+                  </button>
+                  <button
+                    @click="closeErrorModal"
+                    class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-all duration-200"
+                  >
+                    Tutup
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Decorative elements -->
+            <div
+              class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"
+            ></div>
+            <div
+              class="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-8 -translate-x-8"
+            ></div>
+          </div>
+        </Transition>
+      </div>
+    </Transition>
+  </Teleport>
+
+  <!-- Success Modal -->
+  <Teleport to="body">
+    <Transition
+      enter-active-class="transition-all duration-300 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-all duration-200 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="showSuccessModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        @click="closeSuccessModal"
+      >
+        <Transition
+          enter-active-class="transition-all duration-300 ease-out"
+          enter-from-class="opacity-0 scale-95 translate-y-4"
+          enter-to-class="opacity-100 scale-100 translate-y-0"
+          leave-active-class="transition-all duration-200 ease-in"
+          leave-from-class="opacity-100 scale-100 translate-y-0"
+          leave-to-class="opacity-0 scale-95 translate-y-4"
+        >
+          <div
+            v-if="showSuccessModal"
+            class="relative w-full max-w-md mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden"
+            @click.stop
+          >
+            <!-- Header dengan gradient -->
+            <div
+              class="bg-gradient-to-r from-green-500 to-emerald-500 px-6 py-4"
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="flex-shrink-0">
+                    <div
+                      class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
+                    >
+                      <svg
+                        class="w-6 h-6 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-semibold text-white">
+                      Registrasi Berhasil
+                    </h3>
+                    <p class="text-white/80 text-sm">Selamat!</p>
+                  </div>
+                </div>
+                <button
+                  @click="closeSuccessModal"
+                  class="text-white/80 hover:text-white transition-colors duration-200 p-1 rounded-full hover:bg-white/10"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="px-6 py-6">
+              <div class="text-center">
+                <div
+                  class="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4"
+                >
+                  <svg
+                    class="w-8 h-8 text-green-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <p class="text-gray-700 text-base leading-relaxed mb-6">
+                  {{ successMessage }}
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <button
+                    @click="closeSuccessModal"
+                    class="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                  >
+                    Lanjut ke Login
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Decorative elements -->
+            <div
+              class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"
+            ></div>
+            <div
+              class="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-8 -translate-x-8"
+            ></div>
+          </div>
+        </Transition>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <script>
@@ -265,3 +525,10 @@ definePageMeta({
   middleware: "guest", // Apply guest middleware to register page
 });
 </script>
+
+<style scoped>
+/* Additional custom styles if needed */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+</style>

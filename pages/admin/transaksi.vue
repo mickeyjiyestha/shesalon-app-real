@@ -145,6 +145,11 @@
                   >
                     STATUS
                   </th>
+                  <th
+                    class="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    AKSI
+                  </th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-50">
@@ -190,6 +195,22 @@
                     >
                       {{ transaction.status }}
                     </span>
+                  </td>
+                  <td class="py-4 px-6">
+                    <div class="flex items-center gap-2">
+                      <button
+                        @click="editTransaksi(transaksi)"
+                        class="p-1.5 bg-blue-50 text-blue-500 rounded-md hover:bg-blue-100"
+                      >
+                        <PencilIcon class="w-4 h-4" />
+                      </button>
+                      <button
+                        @click="confirmDelete(transaksi)"
+                        class="p-1.5 bg-red-50 text-red-500 rounded-md hover:bg-red-100"
+                      >
+                        <TrashIcon class="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -250,6 +271,20 @@
                 </span>
               </div>
             </div>
+            <div class="flex items-center gap-2">
+              <button
+                @click="editTransaksi(transaksi)"
+                class="p-1.5 bg-blue-50 text-blue-500 rounded-md hover:bg-blue-100"
+              >
+                <PencilIcon class="w-4 h-4" />
+              </button>
+              <button
+                @click="confirmDelete(transaksi)"
+                class="p-1.5 bg-red-50 text-red-500 rounded-md hover:bg-red-100"
+              >
+                <TrashIcon class="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           <!-- Pagination -->
@@ -286,6 +321,8 @@ import {
   LinkIcon,
   EyeIcon,
   Squares2X2Icon,
+  TrashIcon,
+  PencilIcon,
   FunnelIcon,
   ArrowPathIcon,
 } from "@heroicons/vue/24/outline";

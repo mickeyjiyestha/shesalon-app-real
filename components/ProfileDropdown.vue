@@ -1,5 +1,8 @@
 <template>
-  <div class="profile-dropdown-container">
+  <div
+    v-if="user && Object.keys(user).length > 0"
+    class="profile-dropdown-container"
+  >
     <!-- Debug info -->
     <div style="display: none">
       <p>Is dropdown open: {{ isOpen }}</p>
@@ -44,7 +47,10 @@
     </button>
 
     <!-- Dropdown menu -->
-    <div v-show="isOpen" class="dropdown-menu">
+    <div
+      v-show="isOpen && user && Object.keys(user).length > 0"
+      class="dropdown-menu"
+    >
       <div class="user-info">
         <p class="username">{{ user?.username || "Guest" }}</p>
         <p class="email">{{ user?.email || "Not logged in" }}</p>
@@ -98,8 +104,14 @@ const isOpen = ref(false);
 
 const toggleDropdown = (event) => {
   event.stopPropagation();
+
+  // Gunakan props.user untuk cek status login
+  if (!props.user || Object.keys(props.user).length === 0) {
+    isOpen.value = false;
+    return;
+  }
+
   isOpen.value = !isOpen.value;
-  console.log("Dropdown toggled, now:", isOpen.value);
 };
 
 const handleOutsideClick = (event) => {
